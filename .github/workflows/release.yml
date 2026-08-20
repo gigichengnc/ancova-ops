@@ -1,0 +1,81 @@
+name: Release checkpoint
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/release.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Read project version
+        id: project
+        shell: bash
+        run: |
+          version="$(python - <<'PY'
+          import tomllib
+          from pathlib import Path
+
+          project = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))["project"]
+          print(project["version"])
+          PY
+          )"
+          echo "version=${version}" >> "${GITHUB_OUTPUT}"
+
+      - name: Build release notes from changelog
+        env:
+          VERSION: ${{ steps.project.outputs.version }}
+        run: |
+          python - <<'PY'
+          import os
+          import re
+          from pathlib import Path
+
+          version = os.environ["VERSION"]
+          changelog = Path("CHANGELOG.md").read_text(encoding="utf-8")
+          pattern = rf"^## \[{re.escape(version)}\].*?(?=^## \[|\Z)"
+          match = re.search(pattern, changelog, flags=re.MULTILINE | re.DOTALL)
+          if match is None:
+              raise SystemExit(f"CHANGELOG.md has no section for {version}")
+
+          notes = match.group(0).strip()
+          notes += (
+              "\n\n---\n\n"
+              "**Evidence boundary:** this release remains a synthetic/hand-authored research "
+              "prototype. It does not authorize real private-data pilot use or production "
+              "deployment.\n"
+          )
+          Path("/tmp/ancova-release-notes.md").write_text(notes, encoding="utf-8")
+          PY
+
+      - name: Create GitHub release if missing
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.project.outputs.version }}
+        shell: bash
+        run: |
+          tag="v${VERSION}"
+          if gh release view "${tag}" >/dev/null 2>&1; then
+            echo "Release ${tag} already exists; nothing to do."
+            exit 0
+          fi
+
+          gh release create "${tag}" \
+            --target "${GITHUB_SHA}" \
+            --title "ANCOVA Ops ${tag}" \
+            --notes-file /tmp/ancova-release-notes.md
