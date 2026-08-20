@@ -19,6 +19,7 @@ dependencies = [
 
 [project.scripts]
 ancova-evaluate = "ancova_ops.evaluation:main"
+ancova-governance-check = "ancova_ops.governance:main"
 
 [project.optional-dependencies]
 dev = [
