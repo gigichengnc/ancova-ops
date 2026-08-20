@@ -1,4 +1,4 @@
-# Release Readiness — v0.5.1
+# Release Readiness — v0.5.2
 
 This checklist distinguishes three different meanings of "ready":
 
@@ -6,11 +6,11 @@ This checklist distinguishes three different meanings of "ready":
 2. **pilot ready** — approved to process real private service data in a controlled study;
 3. **production ready** — approved to operate as a real service-routing system.
 
-ANCOVA Ops v0.5.1 is intended to satisfy the first category only. The v0.5.1 portfolio showcase improves reviewability; it does not change the pilot or production boundary.
+ANCOVA Ops v0.5.2 is intended to satisfy the first category only. The portfolio showcase and Apache-2.0 licensing improve repository reviewability and reuse clarity; they do not change the pilot or production boundary.
 
 ## Repository checkpoint readiness
 
-- [x] package version is `0.5.1` in both project metadata and `ancova_ops.__version__`;
+- [x] package version is `0.5.2` in both project metadata and `ancova_ops.__version__`;
 - [x] Python 3.11 and 3.12 CI coverage;
 - [x] lint and unit tests;
 - [x] smoke tests for every major CLI workflow;
@@ -20,13 +20,14 @@ ANCOVA Ops v0.5.1 is intended to satisfy the first category only. The v0.5.1 por
 - [x] architecture documentation reflects Phases 0–4;
 - [x] project status and evidence boundaries documented;
 - [x] changelog added;
+- [x] root Apache License 2.0 text and SPDX `Apache-2.0` package metadata;
 - [x] synthetic/private-data governance boundary validated in CI;
 - [x] adaptive-policy research remains separated from the operational route path;
 - [x] sequence-model work remains explicitly deferred rather than implied to be complete.
 
-### Repository checkpoint caveat
+### Licensing boundary
 
-A licence has not yet been selected. The repository can be reviewed publicly, but reuse, modification and redistribution rights are not defined until a licence is chosen.
+ANCOVA Ops project material distributed under the repository license is licensed under Apache-2.0. Third-party dependencies and any separately identified third-party material remain subject to their own licences and notices. A separate third-party notices file should be added when incorporated/adapted material creates an actual notice-preservation requirement; it is not created speculatively.
 
 ## Pilot readiness
 
@@ -68,11 +69,11 @@ Production requires all pilot controls plus additional engineering and operation
 
 **Production status: NOT READY / NOT APPROVED.**
 
-## Evidence claims allowed at v0.5.1
+## Evidence claims allowed at v0.5.2
 
 Acceptable wording:
 
-> ANCOVA Ops v0.5.1 implements reproducible synthetic and hand-authored development workflows for explainable routing, outcome analysis, offline policy evaluation and longitudinal model comparison, with a one-command portfolio showcase.
+> ANCOVA Ops v0.5.2 implements reproducible synthetic and hand-authored development workflows for explainable routing, outcome analysis, offline policy evaluation and longitudinal model comparison, with a one-command portfolio showcase. The repository is licensed under Apache-2.0.
 
 Not acceptable without new evidence:
 
@@ -86,6 +87,8 @@ Not acceptable without new evidence:
 
 > The portfolio showcase is proof of production readiness.
 
+> Apache-2.0 licensing makes the software production-ready or legally compliant for a private-data deployment.
+
 ## Go/no-go rule
 
-The existence of working code, green CI, a polished showcase or promising synthetic metrics is **not** sufficient to move from repository checkpoint to private-data pilot or production deployment. Those transitions require separate governance and evidence decisions.
+The existence of working code, green CI, a polished showcase, an open-source license or promising synthetic metrics is **not** sufficient to move from repository checkpoint to private-data pilot or production deployment. Those transitions require separate governance and evidence decisions.

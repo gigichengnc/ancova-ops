@@ -1,3 +1,4 @@
+import ancova_ops
 from ancova_ops.showcase import build_showcase_payload, render_showcase_markdown
 
 
@@ -10,6 +11,7 @@ def test_showcase_preserves_evidence_and_deployment_boundaries() -> None:
         longitudinal_days=540,
     )
 
+    assert payload["showcase_version"] == ancova_ops.__version__
     assert payload["evidence_status"]["real_world_performance_claims_allowed"] is False
     assert payload["governance"]["mode"] == "synthetic_only"
     assert payload["governance"]["deployment_status"] == "not_approved_for_real_private_data"
