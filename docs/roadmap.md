@@ -70,12 +70,18 @@ Goal: evaluate service outcomes credibly.
 
 Goal: test whether historical outcome data can improve routing recommendations.
 
-- policy candidates;
-- train/validation split based on time;
-- offline counterfactual limitations documented;
-- human approval for policy changes;
-- model / rule versioning;
-- rollback path.
+- [x] versioned baseline and transparent outcome-aware policy candidate;
+- [x] deterministic synthetic logged-routing history with known action propensities;
+- [x] train/validation split based strictly on time;
+- [x] support-aware inverse-propensity offline evaluation;
+- [x] effective-sample-size and unsupported-action checks;
+- [x] offline counterfactual limitations documented;
+- [x] explicit human approval required before candidate activation;
+- [x] model / rule version registry;
+- [x] append-only activation history and rollback path;
+- [x] adaptive-routing CLI and CI smoke coverage.
+
+The Phase 3 framework remains offline and synthetic-only. Registry activation does not automatically replace the router used by `/v1/route`. Real pilot evaluation and operational deployment remain blocked by the open cross-cutting governance items.
 
 ## Phase 4 — Longitudinal models
 

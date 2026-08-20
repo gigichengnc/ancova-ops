@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ancova-ops"
-version = "0.3.0"
+version = "0.4.0"
 description = "Human-centred service intelligence with interpretable routing and outcome analytics"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -22,6 +22,7 @@ ancova-analyze = "ancova_ops.analysis_report:main"
 ancova-evaluate = "ancova_ops.evaluation:main"
 ancova-governance-check = "ancova_ops.governance:main"
 ancova-management-report = "ancova_ops.management_report:main"
+ancova-policy = "ancova_ops.adaptive:main"
 
 [project.optional-dependencies]
 dev = [
