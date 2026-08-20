@@ -85,8 +85,22 @@ The Phase 3 framework remains offline and synthetic-only. Registry activation do
 
 ## Phase 4 — Longitudinal models
 
-Goal: investigate recurrence, seasonality and escalation trajectories.
+Goal: investigate recurrence, seasonality and escalation trajectories without assuming that a sequence model is necessary.
 
-Do not assume an LSTM is necessary. Compare simple baselines, survival/time-to-event approaches, tree models and sequence models using the same evaluation protocol.
+- [x] deterministic synthetic entity-level event histories;
+- [x] recurrence feedback and seasonal structure in development data;
+- [x] pre-cutoff recency/frequency/context feature snapshots;
+- [x] 30-day recurrence target;
+- [x] censored time-to-next-case target;
+- [x] purged chronological train/validation split;
+- [x] explicit feature-time and follow-up leakage checks;
+- [x] recency/frequency logistic baseline;
+- [x] discrete-time survival/hazard benchmark;
+- [x] tree-based recurrence benchmark;
+- [x] same-window ROC-AUC, Brier and calibration comparison;
+- [x] survival concordance reporting;
+- [x] model-complexity incremental-value rule;
+- [x] sequence/LSTM work deferred unless a later same-benchmark comparison justifies it;
+- [x] longitudinal benchmark CLI, documentation, tests and CI smoke coverage.
 
-Longitudinal model work remains blocked for real private data until the cross-cutting pilot governance items above are completed. Synthetic experiments may continue under the development policy.
+The Phase 4 benchmark remains synthetic-only. Real longitudinal personalisation and private service-history modelling remain blocked until the cross-cutting pilot governance items are completed.

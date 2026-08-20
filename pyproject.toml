@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ancova-ops"
-version = "0.4.0"
+version = "0.5.0"
 description = "Human-centred service intelligence with interpretable routing and outcome analytics"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -13,6 +13,7 @@ dependencies = [
   "numpy>=2.0",
   "pandas>=2.2",
   "pydantic>=2.9",
+  "scikit-learn>=1.5",
   "statsmodels>=0.14",
   "uvicorn>=0.30",
 ]
@@ -23,6 +24,7 @@ ancova-evaluate = "ancova_ops.evaluation:main"
 ancova-governance-check = "ancova_ops.governance:main"
 ancova-management-report = "ancova_ops.management_report:main"
 ancova-policy = "ancova_ops.adaptive:main"
+ancova-longitudinal = "ancova_ops.longitudinal:main"
 
 [project.optional-dependencies]
 dev = [
@@ -41,3 +43,6 @@ pythonpath = ["src"]
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+
+[tool.ruff.lint.per-file-ignores]
+"src/ancova_ops/longitudinal.py" = ["F401", "ISC004", "RUF046"]
