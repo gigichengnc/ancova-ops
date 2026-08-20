@@ -39,7 +39,7 @@ def test_showcase_preserves_evidence_and_deployment_boundaries() -> None:
     report = render_showcase_markdown(payload)
     assert "ANCOVA Ops v1.0 Portfolio Showcase" in report
     assert "Operate → Audit → Evaluate" in report
-    assert "Evaluation applicability" in report
+    assert "Applicability gate" in report
     assert "COMPLETED / FROZEN AT v1.0" in report
     assert "Private-data pilot | NOT READY / NOT APPROVED" in report
     assert "does **not** demonstrate real service improvement" in report
