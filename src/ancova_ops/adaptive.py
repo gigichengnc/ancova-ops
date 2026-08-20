@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -64,14 +64,15 @@ class OutcomeAwarePolicy:
                 department=choice.department,
                 policy_version=self.version,
                 reasons=(
-                    "training-window observed mean resolution time was lowest among supported "
-                    "departments for this issue category",
+                    (
+                        "training-window observed mean resolution time was lowest among "
+                        "supported departments for this issue category"
+                    ),
                     f"training support for selected category-action pair: {choice.sample_count}",
                 ),
             )
-        baseline = baseline_department(issue_category)
         return PolicyDecision(
-            department=baseline,
+            department=baseline_department(issue_category),
             policy_version=self.version,
             reasons=("insufficient supported training evidence; baseline fallback used",),
         )
@@ -148,9 +149,7 @@ def validate_logged_history(data: pd.DataFrame) -> pd.DataFrame:
     ]
     missing_propensity = [column for column in propensity_columns if column not in frame.columns]
     if missing_propensity:
-        raise ValueError(
-            "missing action-propensity columns: " + ", ".join(missing_propensity)
-        )
+        raise ValueError("missing action-propensity columns: " + ", ".join(missing_propensity))
 
     propensity_matrix = frame[propensity_columns].astype(float)
     if ((propensity_matrix < 0) | (propensity_matrix > 1)).any().any():
@@ -159,7 +158,7 @@ def validate_logged_history(data: pd.DataFrame) -> pd.DataFrame:
         raise ValueError("action propensities must sum to 1 for every row")
 
     logged_propensity = []
-    allowed_departments = set(str(item) for item in LOGGED_ROUTING_DEPARTMENTS)
+    allowed_departments = {str(item) for item in LOGGED_ROUTING_DEPARTMENTS}
     for row in frame.itertuples(index=False):
         department = str(row.logged_department)
         if department not in allowed_departments:
@@ -226,10 +225,9 @@ def train_outcome_aware_policy(
             )
         )
 
-    trained_until = frame["event_time"].max().isoformat()
     return OutcomeAwarePolicy(
         version=version,
-        trained_until=trained_until,
+        trained_until=frame["event_time"].max().isoformat(),
         min_samples=min_samples,
         choices=tuple(sorted(choices, key=lambda choice: choice.issue_category)),
     )
@@ -274,7 +272,6 @@ def evaluate_policy(
             matched_outcomes.append(float(row.resolution_hours))
 
     match_count = len(matched_outcomes)
-    match_rate = match_count / len(frame)
     weight_array = np.asarray(weights, dtype=float)
     weighted_array = np.asarray(weighted_outcomes, dtype=float)
     positive_weights = weight_array[weight_array > 0]
@@ -300,19 +297,18 @@ def evaluate_policy(
         and match_count > 0
         and effective_sample_size >= minimum_effective_sample_size
     )
-    observed_matched_mean = (
-        float(np.mean(matched_outcomes)) if matched_outcomes else None
-    )
     return OfflinePolicyReport(
         policy_version=policy_version,
         validation_count=len(frame),
         action_match_count=match_count,
-        action_match_rate=match_rate,
+        action_match_rate=match_count / len(frame),
         unsupported_count=unsupported_count,
         ips_mean_resolution_hours=ips_mean,
         self_normalized_ips_mean_resolution_hours=snips_mean,
         effective_sample_size=effective_sample_size,
-        observed_matched_mean_resolution_hours=observed_matched_mean,
+        observed_matched_mean_resolution_hours=(
+            float(np.mean(matched_outcomes)) if matched_outcomes else None
+        ),
         support_adequate=support_adequate,
         interpretation_note=(
             "IPS is an offline estimate that depends on correct logging propensities, overlap, "
@@ -378,13 +374,19 @@ def build_offline_comparison(
         offline_gate_passed=offline_gate_passed,
         deployment_eligible=False,
         limitations=(
-            "The current workflow uses synthetic logged data only; results are not production "
-            "performance evidence.",
+            (
+                "The current workflow uses synthetic logged data only; results are not "
+                "production performance evidence."
+            ),
             "Historical logged actions do not reveal outcomes for actions that were not taken.",
-            "IPS relies on known logging propensities and adequate overlap; unsupported actions "
-            "must block an offline improvement signal.",
-            "Passing the offline gate does not authorise deployment. Human approval and a separate "
-            "pilot/governance decision are still required.",
+            (
+                "IPS relies on known logging propensities and adequate overlap; unsupported "
+                "actions must block an offline improvement signal."
+            ),
+            (
+                "Passing the offline gate does not authorise deployment. Human approval and a "
+                "separate pilot/governance decision are still required."
+            ),
         ),
     )
     return comparison, candidate
@@ -544,7 +546,7 @@ class PolicyRegistry:
 
 
 def _utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 def _evaluate_command(args: argparse.Namespace) -> int:
