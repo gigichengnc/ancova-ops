@@ -1,4 +1,5 @@
 from ancova_ops.analytics import build_ancova_report
+from ancova_ops.management_report import build_management_report, render_markdown
 from ancova_ops.validity import (
     generate_measured_confounding_scenario,
     main,
@@ -37,6 +38,21 @@ def test_no_overlap_withholds_department_comparison() -> None:
     assert report.adjusted_estimates == []
     assert payload["anova"] == []
     assert any("not separately identifiable" in warning for warning in report.warnings)
+
+
+def test_management_report_blocks_ranking_when_design_is_not_identifiable() -> None:
+    data = generate_measured_confounding_scenario(
+        n=500,
+        seed=67,
+        deterministic_routing=True,
+    )
+    report = build_management_report(data)
+    markdown = render_markdown(report)
+
+    assert report.overall_screening_status == "blocked"
+    assert all(row["adjusted_mean_resolution_hours"] is None for row in report.department_comparison)
+    assert "withheld" in markdown.lower()
+    assert "cannot support an adjusted department ranking" in report.executive_summary.lower()
 
 
 def test_validity_cli_returns_success(capsys) -> None:
