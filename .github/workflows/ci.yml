@@ -38,6 +38,11 @@ jobs:
       - name: Adaptive routing policy smoke test
         run: ancova-policy evaluate --synthetic-n 1200 --seed 23 > /tmp/ancova-policy.json
 
+      - name: Longitudinal benchmark smoke test
+        run: >-
+          ancova-longitudinal --entities 100 --days 600 --seed 31 --json
+          > /tmp/ancova-longitudinal.json
+
       - name: Outcome analysis smoke test
         run: ancova-analyze --synthetic-n 120 --seed 41 --json > /tmp/ancova-analysis.json
 
