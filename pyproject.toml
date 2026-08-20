@@ -21,6 +21,7 @@ dependencies = [
 ancova-analyze = "ancova_ops.analysis_report:main"
 ancova-evaluate = "ancova_ops.evaluation:main"
 ancova-governance-check = "ancova_ops.governance:main"
+ancova-management-report = "ancova_ops.management_report:main"
 
 [project.optional-dependencies]
 dev = [
