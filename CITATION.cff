@@ -5,7 +5,7 @@ type: software
 authors:
   - family-names: "Cheng"
     given-names: "Gigi"
-version: "0.5.4"
+version: "0.6.0"
 date-released: 2026-08-20
 license: Apache-2.0
 repository-code: "https://github.com/gigichengnc/ancova-ops"
@@ -14,10 +14,11 @@ abstract: >-
   ANCOVA Ops is a reproducible research/software prototype for human-centred
   service operations. It converts unstructured service requests into explainable
   routing recommendations, preserves human review and audit history, records
-  outcomes, and evaluates operations with downstream ANCOVA/regression,
-  offline policy research, and leakage-aware longitudinal benchmarks. Current
-  quantitative evidence is synthetic or hand-authored development evidence and
-  does not establish real-world service improvement or production readiness.
+  outcomes, and provides an evidence-aware evaluation layer with applicability
+  checks, downstream regression/ANCOVA, offline policy research, and leakage-aware
+  longitudinal benchmarks. Current quantitative evidence is synthetic or
+  hand-authored development evidence and does not establish real-world service
+  improvement or production readiness.
 keywords:
   - "service operations"
   - "human-in-the-loop"

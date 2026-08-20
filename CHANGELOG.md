@@ -2,6 +2,32 @@
 
 All notable project checkpoints are documented here.
 
+## [0.6.0] - 2026-08-20
+
+### Added
+
+- `ancova-validity`, a deterministic synthetic validity benchmark covering known-effect recovery, measured case-mix confounding, no-overlap refusal and slope-interaction detection.
+- Department/issue-category overlap diagnostics that check graph connectivity, practical support and design-matrix rank before adjusted department comparisons are reported.
+- Explicit model applicability output in technical and management-facing outcome reports.
+
+### Changed
+
+- Repositioned ANCOVA/regression as one method inside a broader evidence-aware evaluation layer rather than the product core.
+- Added `issue_category` as a pre-routing case-mix factor in the default outcome model.
+- Replaced the previous one-issue-per-department synthetic outcome setup with overlapping issue categories and known artificial department/issue effects.
+- Standardised adjusted department estimates over the observed complete-case case-mix distribution instead of holding only continuous covariates at their means.
+- Withhold adjusted department estimates and department ANOVA output when department and issue category are not separately identifiable.
+- Updated management reporting so unsupported comparisons are shown as `withheld` rather than converted into a league table.
+- Bumped package, citation metadata and CLI surface to `0.6.0`.
+
+### Validation boundary
+
+The new benchmark demonstrates that the software behaves sensibly on synthetic scenarios where the truth is known: it should recover known additive effects within tolerance, reduce deliberately induced measured case-mix bias, refuse comparisons under structural no-overlap, and flag a deliberately violated common-slope assumption. This validates software/statistical behaviour, not real service outcomes.
+
+### Evidence and deployment status
+
+ANCOVA Ops remains a synthetic/hand-authored research prototype. The evaluation layer does not prove causal department effects, real routing improvement, private-data pilot readiness or production readiness. Real operational use still requires representative data, a defensible study design, governance approval and method selection matched to the actual outcome/question.
+
 ## [0.5.4] - 2026-08-20
 
 ### Added

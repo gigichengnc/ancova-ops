@@ -20,8 +20,8 @@ from ancova_ops.synthetic import generate_outcomes
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            "Run the ANCOVA Ops Phase 2 outcome-analysis workflow with sample checks, "
-            "diagnostics, adjusted department estimates, uncertainty and warnings."
+            "Run the ANCOVA Ops outcome-evaluation workflow with case-mix/overlap checks, "
+            "diagnostics, adjusted department estimates where identifiable, uncertainty and warnings."
         )
     )
     source = parser.add_mutually_exclusive_group()
@@ -39,8 +39,6 @@ def _build_parser() -> argparse.ArgumentParser:
 
 
 def load_input(args: argparse.Namespace) -> pd.DataFrame:
-    """Load synthetic or approved development data for outcome analysis commands."""
-
     if args.csv is None:
         return generate_outcomes(n=args.synthetic_n, seed=args.seed)
 
@@ -77,13 +75,15 @@ def _print_text(payload: dict[str, object]) -> None:
     diagnostics = payload["diagnostics"]
     adjusted = payload["adjusted_estimates"]
     warnings = payload["warnings"]
+    identifiability = payload["identifiability"]
 
     assert isinstance(sample, dict)
     assert isinstance(diagnostics, dict)
     assert isinstance(adjusted, list)
     assert isinstance(warnings, list)
+    assert isinstance(identifiability, dict)
 
-    print("ANCOVA Ops outcome analysis")
+    print("ANCOVA Ops outcome evaluation")
     print(f"Formula: {payload['formula']}")
     print(f"Provenance: {', '.join(payload['provenance'])}")
     print(
@@ -95,12 +95,21 @@ def _print_text(payload: dict[str, object]) -> None:
     for department, count in sample["group_sizes"].items():
         print(f"  - {department}: {count}")
 
-    print("Adjusted department estimates (covariates held at complete-case sample means):")
-    for row in adjusted:
+    print(f"Department/issue-category identifiability: {identifiability['status']}")
+    print(f"  - {identifiability['note']}")
+
+    if adjusted:
+        print("Adjusted department estimates (standardised over observed complete-case case mix):")
+        for row in adjusted:
+            print(
+                "  - "
+                f"{row['department']}: {row['adjusted_mean_resolution_hours']:.2f} h "
+                f"[{row['mean_ci_lower']:.2f}, {row['mean_ci_upper']:.2f}]"
+            )
+    else:
         print(
-            "  - "
-            f"{row['department']}: {row['adjusted_mean_resolution_hours']:.2f} h "
-            f"[{row['mean_ci_lower']:.2f}, {row['mean_ci_upper']:.2f}]"
+            "Adjusted department estimates: withheld because the observed routing design does "
+            "not separately identify department from issue-category case mix."
         )
 
     heteroskedasticity = diagnostics["heteroskedasticity"]
@@ -109,9 +118,17 @@ def _print_text(payload: dict[str, object]) -> None:
         f"{heteroskedasticity['breusch_pagan_f_pvalue']:.4g}"
     )
     interactions = diagnostics["department_by_covariate_interactions"]
-    print("Department-by-covariate interaction p-values:")
-    for covariate, pvalue in interactions.items():
-        print(f"  - {covariate}: {pvalue:.4g}")
+    finite_interactions = {
+        covariate: pvalue
+        for covariate, pvalue in interactions.items()
+        if isinstance(pvalue, (int, float)) and math.isfinite(float(pvalue))
+    }
+    if finite_interactions:
+        print("Department-by-covariate interaction p-values:")
+        for covariate, pvalue in finite_interactions.items():
+            print(f"  - {covariate}: {float(pvalue):.4g}")
+    else:
+        print("Department-by-covariate interaction screening: withheld / not applicable")
 
     if warnings:
         print("Warnings:")

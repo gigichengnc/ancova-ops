@@ -4,11 +4,28 @@ import numpy as np
 import pandas as pd
 
 DEPARTMENTS = np.array(["maintenance", "security", "leasing", "accounts"])
-ISSUE_BY_DEPARTMENT = {
-    "maintenance": "maintenance_issue",
-    "security": "security_issue",
-    "leasing": "lease_question",
-    "accounts": "payment_question",
+OUTCOME_ISSUE_CATEGORIES = np.array(
+    ["water_leak", "noise_complaint", "lease_question", "payment_question", "general_service"]
+)
+OUTCOME_ROUTING_PROBABILITIES = {
+    "water_leak": np.array([0.62, 0.12, 0.14, 0.12]),
+    "noise_complaint": np.array([0.15, 0.55, 0.18, 0.12]),
+    "lease_question": np.array([0.12, 0.10, 0.66, 0.12]),
+    "payment_question": np.array([0.10, 0.10, 0.15, 0.65]),
+    "general_service": np.array([0.28, 0.24, 0.25, 0.23]),
+}
+OUTCOME_DEPARTMENT_EFFECT = {
+    "maintenance": 3.0,
+    "security": -1.0,
+    "leasing": 5.0,
+    "accounts": 1.5,
+}
+OUTCOME_ISSUE_EFFECT = {
+    "water_leak": 5.0,
+    "noise_complaint": 1.0,
+    "lease_question": 4.0,
+    "payment_question": -1.0,
+    "general_service": 0.0,
 }
 
 LOGGED_ROUTING_DEPARTMENTS = np.array(
@@ -34,34 +51,67 @@ SYNTHETIC_OPTIMAL_DEPARTMENT_BY_CATEGORY = {
 
 
 def generate_outcomes(n: int = 500, seed: int = 2026) -> pd.DataFrame:
-    """Generate synthetic completed service cases for development and tests.
+    """Generate overlapping synthetic completed service cases for development and tests.
 
-    The generated effects are deliberately artificial. Results from this dataset must
-    never be presented as observed service performance.
+    Department assignment is correlated with issue category but deliberately not deterministic.
+    The outcome contains known department, issue-category and continuous-covariate effects. This
+    lets the evaluation layer test case-mix adjustment and identifiability. All effects remain
+    artificial and must never be presented as observed service performance.
     """
 
     if n < 20:
         raise ValueError("n must be at least 20 for a useful demonstration dataset")
 
     rng = np.random.default_rng(seed)
-    department = rng.choice(DEPARTMENTS, size=n, replace=True)
-    urgency = np.clip(rng.normal(5.5, 2.0, size=n), 0, 10)
-    frustration = np.clip(rng.normal(5.0, 2.2, size=n), 0, 10)
-    complexity = np.clip(rng.normal(5.0, 1.8, size=n), 0, 10)
+    issue_category = rng.choice(
+        OUTCOME_ISSUE_CATEGORIES,
+        size=n,
+        replace=True,
+        p=np.array([0.24, 0.20, 0.18, 0.18, 0.20]),
+    )
+    department = np.array(
+        [
+            rng.choice(DEPARTMENTS, p=OUTCOME_ROUTING_PROBABILITIES[str(category)])
+            for category in issue_category
+        ]
+    )
+
+    issue_urgency = {
+        "water_leak": 1.3,
+        "noise_complaint": 0.6,
+        "lease_question": -0.5,
+        "payment_question": -0.6,
+        "general_service": 0.0,
+    }
+    issue_complexity = {
+        "water_leak": 0.8,
+        "noise_complaint": 0.2,
+        "lease_question": 0.7,
+        "payment_question": -0.3,
+        "general_service": 0.0,
+    }
+    urgency = np.clip(
+        rng.normal(5.0, 1.7, size=n)
+        + np.array([issue_urgency[str(category)] for category in issue_category]),
+        0,
+        10,
+    )
+    frustration = np.clip(rng.normal(5.0, 2.0, size=n), 0, 10)
+    complexity = np.clip(
+        rng.normal(4.8, 1.6, size=n)
+        + np.array([issue_complexity[str(category)] for category in issue_category]),
+        0,
+        10,
+    )
     previous_related_cases = rng.poisson(0.7, size=n)
 
-    department_effect = {
-        "maintenance": 3.0,
-        "security": -1.0,
-        "leasing": 5.0,
-        "accounts": 1.5,
-    }
-    dept_hours = np.array([department_effect[d] for d in department])
-
+    dept_hours = np.array([OUTCOME_DEPARTMENT_EFFECT[str(value)] for value in department])
+    issue_hours = np.array([OUTCOME_ISSUE_EFFECT[str(value)] for value in issue_category])
     noise = rng.normal(0, 4.0, size=n)
     resolution_hours = (
         8
         + dept_hours
+        + issue_hours
         + 1.1 * urgency
         + 0.7 * frustration
         + 1.8 * complexity
@@ -83,7 +133,7 @@ def generate_outcomes(n: int = 500, seed: int = 2026) -> pd.DataFrame:
     return pd.DataFrame(
         {
             "department": department,
-            "issue_category": [ISSUE_BY_DEPARTMENT[d] for d in department],
+            "issue_category": issue_category,
             "urgency": urgency,
             "frustration": frustration,
             "complexity": complexity,
@@ -200,9 +250,7 @@ def generate_logged_routing_history(
     )
 
     for department in LOGGED_ROUTING_DEPARTMENTS:
-        frame[f"propensity_{department}"] = [
-            row[str(department)] for row in probability_rows
-        ]
+        frame[f"propensity_{department}"] = [row[str(department)] for row in probability_rows]
     frame["logged_propensity"] = [
         probability_rows[index][logged_departments[index]] for index in range(n)
     ]
