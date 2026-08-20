@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+import pytest
+
 from ancova_ops.evaluation import (
     EvaluationCase,
     EvaluationPrediction,
@@ -40,10 +42,10 @@ def test_baseline_metrics_are_deterministic() -> None:
 
     assert report.metrics.sample_count == 11
     assert report.metrics.department_correct == 10
-    assert report.metrics.department_accuracy == 10 / 11
+    assert report.metrics.department_accuracy == pytest.approx(10 / 11)
     assert report.metrics.high_risk_count == 5
     assert report.metrics.high_risk_reviewed == 2
-    assert report.metrics.human_review_recall == 2 / 5
+    assert report.metrics.human_review_recall == pytest.approx(2 / 5)
     assert report.metrics.explained_count == 11
     assert report.metrics.explanation_coverage == 1.0
     assert report.department_errors == ("leasing-ambiguous-001",)
@@ -73,8 +75,8 @@ def test_candidate_is_only_called_improved_after_same_dataset_comparison() -> No
     assert comparison.no_regressions is True
     assert comparison.strict_improvement is True
     assert comparison.eligible_for_improvement_claim is True
-    assert comparison.department_accuracy_delta == 1 / 11
-    assert comparison.human_review_recall_delta == 3 / 5
+    assert comparison.department_accuracy_delta == pytest.approx(1 / 11)
+    assert comparison.human_review_recall_delta == pytest.approx(3 / 5)
     assert comparison.explanation_coverage_delta == 0.0
 
 
