@@ -1,7 +1,7 @@
 # ANCOVA Ops
 
 [![CI](https://github.com/gigichengnc/ancova-ops/actions/workflows/ci.yml/badge.svg)](https://github.com/gigichengnc/ancova-ops/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/gigichengnc/ancova-ops?display_name=tag)](https://github.com/gigichengnc/ancova-ops/releases/tag/v0.5.2)
+[![Release](https://img.shields.io/github/v/release/gigichengnc/ancova-ops?display_name=tag)](https://github.com/gigichengnc/ancova-ops/releases/latest)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue.svg)](pyproject.toml)
 
@@ -15,7 +15,7 @@ It originated from an HKMU Hackathon 2026 concept and now serves as a broader se
 | --- | --- |
 | What is implemented? | Phases 0–4: routing, audit/history, outcome analytics, adaptive-policy research and longitudinal benchmarking |
 | Fastest demo | `ancova-showcase` |
-| Current release | `v0.5.2` |
+| Current release | `v0.5.3` |
 | Evidence class | Synthetic data + a small hand-authored routing fixture |
 | Real private-data pilot / production | **Not approved** |
 | License | Apache-2.0 |
@@ -85,7 +85,7 @@ resolution_time ~ department + urgency + frustration + complexity
 
 Adjusted estimates are model-based associations, not automatic causal effects or staff-performance rankings.
 
-## v0.5.2 capability map
+## v0.5.3 capability map
 
 | Capability | Status | Entry point | Evidence class |
 | --- | --- | --- | --- |
@@ -261,7 +261,7 @@ docs/
 
 ## Evidence and deployment status
 
-Phases 0–4 and the v0.5.2 showcase have runnable development workflows. Current quantitative evidence comes from synthetic data or the small hand-authored routing fixture unless explicitly stated otherwise.
+Phases 0–4 and the v0.5.3 showcase have runnable development workflows. Current quantitative evidence comes from synthetic data or the small hand-authored routing fixture unless explicitly stated otherwise.
 
 Do **not** report current benchmark outputs as real service improvements, causal effects, production routing accuracy or real resident/customer predictions.
 
