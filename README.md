@@ -36,6 +36,9 @@ Historical dataset
 Statistical analysis + model validation
         |
         v
+Management evidence report
+        |
+        v
 Improved routing policy
 ```
 
@@ -57,7 +60,7 @@ Later phases may also test interactions such as:
 resolution_time ~ department * frustration + urgency + complexity
 ```
 
-The repository will document assumptions and validation requirements instead of treating statistical significance as automatic evidence of causal impact.
+The repository documents assumptions and validation requirements instead of treating statistical significance as automatic evidence of causal impact.
 
 ## Quick start
 
@@ -184,6 +187,50 @@ The current guardrails prohibit direct identifiers, training on raw private requ
 
 Every sensitive or longitudinal feature must have a registered operational purpose, retention expectation and pilot requirement before it is introduced. See `docs/data-governance.md`.
 
+## Outcome analytics
+
+Run the Phase 2 ANCOVA/regression workflow on the built-in synthetic development data:
+
+```bash
+ancova-analyze
+```
+
+Machine-readable output:
+
+```bash
+ancova-analyze --json
+```
+
+The workflow exposes sample counts, required-field missingness, department group sizes, residual diagnostics, Breusch-Pagan heteroskedasticity screening, VIF multicollinearity checks, Cook's-distance/leverage screening, department-by-covariate interactions, adjusted department estimates with confidence intervals, warnings and the data provenance.
+
+Adjusted estimates are model-based associations with covariates held at their complete-case sample means. They are not causal effects unless a separate study design and identification argument supports causal interpretation.
+
+## Management outcome report
+
+Generate a self-contained management-facing Markdown report:
+
+```bash
+ancova-management-report
+```
+
+The default output is:
+
+```text
+.ancova_ops/reports/management-report.md
+```
+
+Generate both Markdown and structured JSON:
+
+```bash
+ancova-management-report \
+  --synthetic-n 500 \
+  --seed 2026 \
+  --output .ancova_ops/reports/management-report.md \
+  --json-output .ancova_ops/reports/management-report.json
+```
+
+The report keeps raw observed complete-case summaries separate from adjusted estimates, shows a management screening dashboard, carries forward all statistical warnings, and explicitly states that the adjusted comparison is not an automatic staff-performance league table. See `docs/management-report.md`.
+
 ## Project principles
 
 - **Human-in-the-loop:** the system supports staff rather than pretending every service case should be fully automated.
@@ -193,22 +240,26 @@ Every sensitive or longitudinal feature must have a registered operational purpo
 - **Data minimisation:** operational usefulness does not automatically justify analytics, training or long-term retention.
 - **Auditability:** original cases, routing explanations, implementation versions and human reviews are preserved instead of silently overwritten.
 - **Same-dataset comparison:** routing improvements must be demonstrated against the baseline on the same labelled benchmark.
+- **Raw versus adjusted separation:** observed department summaries are not silently substituted for case-mix-adjusted model estimates.
+- **Non-causal reporting:** adjusted associations are not presented as causal staff or department rankings.
 - **Modular:** property management is the first use case, not the only possible domain.
 
 ## Repository layout
 
 ```text
 src/ancova_ops/
-├── api.py          # FastAPI routing, review and case-history interface
-├── intelligence.py # Transparent raw-text feature baseline
-├── models.py       # Core service-case models
-├── persistence.py  # SQLite case, machine-decision, review and outcome storage
-├── routing.py      # Explainable baseline routing
-├── evaluation.py   # Deterministic routing benchmark and candidate comparison
-├── governance.py   # Machine-readable policy validation and analytics field gate
-├── synthetic.py    # Synthetic outcome data for development
-├── analytics.py    # ANCOVA fitting and diagnostics
-└── demo.py         # Small runnable demonstration
+├── api.py               # FastAPI routing, review and case-history interface
+├── intelligence.py      # Transparent raw-text feature baseline
+├── models.py            # Core service-case models
+├── persistence.py       # SQLite case, machine-decision, review and outcome storage
+├── routing.py           # Explainable baseline routing
+├── evaluation.py        # Deterministic routing benchmark and candidate comparison
+├── governance.py        # Machine-readable policy validation and analytics field gate
+├── synthetic.py         # Synthetic outcome data for development
+├── analytics.py         # ANCOVA fitting, adjusted estimates and diagnostics
+├── analysis_report.py   # Technical Phase 2 analysis CLI
+├── management_report.py # Management-facing Markdown/JSON evidence report
+└── demo.py              # Small runnable demonstration
 
 config/
 └── data-governance.json
@@ -224,6 +275,7 @@ docs/
 ├── human-routing-feedback.md
 ├── routing-evaluation.md
 ├── data-governance.md
+├── management-report.md
 └── roadmap.md
 ```
 
@@ -262,15 +314,19 @@ docs/
 ### Phase 2 — Outcome analytics
 
 - reproducible ANCOVA workflow
-- model assumption checks
+- model assumption and influence checks
 - department and case-mix analysis
-- evaluation dashboard / report outputs
+- adjusted estimates with uncertainty
+- technical analysis output
+- management-facing Markdown and structured report output
 
 ### Phase 3 — Adaptive routing
 
 - learn routing policy candidates from historical outcomes
-- offline evaluation before deployment
-- audit trail for routing decisions
+- time-aware train/validation design
+- document offline counterfactual limitations
+- human approval for policy changes
+- versioning and rollback
 
 ### Phase 4 — Longitudinal prediction
 
@@ -280,7 +336,9 @@ docs/
 
 ## Status
 
-Phase 0 and the Phase 1 MVP foundation are complete. The repository now also has an explicit synthetic-only data-governance boundary with machine-readable field and longitudinal-feature controls. Real private pilot data remains prohibited until a separate pilot policy defines jurisdiction-specific notice/consent requirements, access controls, concrete retention periods and deletion procedures. Deeper outcome analytics follow in Phase 2.
+Phase 0, the Phase 1 service-intelligence MVP foundation and the Phase 2 synthetic outcome-analysis/reporting workflow are implemented. The repository also has an explicit synthetic-only data-governance boundary with machine-readable field and longitudinal-feature controls. Real private pilot data remains prohibited until a separate pilot policy defines jurisdiction-specific notice/consent requirements, access controls, concrete retention periods and deletion procedures.
+
+The next technical phase is adaptive routing research. Any policy-learning work must preserve human approval, versioning, rollback and the limits of offline evaluation. Real-data learning remains blocked until the pilot governance requirements are completed.
 
 ## Important note on metrics
 
