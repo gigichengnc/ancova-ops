@@ -1,4 +1,4 @@
-# Release Readiness — v0.5.0
+# Release Readiness — v0.5.1
 
 This checklist distinguishes three different meanings of "ready":
 
@@ -6,14 +6,15 @@ This checklist distinguishes three different meanings of "ready":
 2. **pilot ready** — approved to process real private service data in a controlled study;
 3. **production ready** — approved to operate as a real service-routing system.
 
-ANCOVA Ops v0.5.0 is intended to satisfy the first category only.
+ANCOVA Ops v0.5.1 is intended to satisfy the first category only. The v0.5.1 portfolio showcase improves reviewability; it does not change the pilot or production boundary.
 
 ## Repository checkpoint readiness
 
-- [x] package version is `0.5.0` in both project metadata and `ancova_ops.__version__`;
+- [x] package version is `0.5.1` in both project metadata and `ancova_ops.__version__`;
 - [x] Python 3.11 and 3.12 CI coverage;
 - [x] lint and unit tests;
 - [x] smoke tests for every major CLI workflow;
+- [x] one-command `ancova-showcase` reviewer workflow;
 - [x] reproducible synthetic and hand-authored development data;
 - [x] API quick start and command examples;
 - [x] architecture documentation reflects Phases 0–4;
@@ -67,11 +68,11 @@ Production requires all pilot controls plus additional engineering and operation
 
 **Production status: NOT READY / NOT APPROVED.**
 
-## Evidence claims allowed at v0.5.0
+## Evidence claims allowed at v0.5.1
 
 Acceptable wording:
 
-> ANCOVA Ops v0.5.0 implements reproducible synthetic and hand-authored development workflows for explainable routing, outcome analysis, offline policy evaluation and longitudinal model comparison.
+> ANCOVA Ops v0.5.1 implements reproducible synthetic and hand-authored development workflows for explainable routing, outcome analysis, offline policy evaluation and longitudinal model comparison, with a one-command portfolio showcase.
 
 Not acceptable without new evidence:
 
@@ -83,6 +84,8 @@ Not acceptable without new evidence:
 
 > ANCOVA proves a department or staff group causally performs better.
 
+> The portfolio showcase is proof of production readiness.
+
 ## Go/no-go rule
 
-The existence of working code, green CI or promising synthetic metrics is **not** sufficient to move from repository checkpoint to private-data pilot or production deployment. Those transitions require separate governance and evidence decisions.
+The existence of working code, green CI, a polished showcase or promising synthetic metrics is **not** sufficient to move from repository checkpoint to private-data pilot or production deployment. Those transitions require separate governance and evidence decisions.
