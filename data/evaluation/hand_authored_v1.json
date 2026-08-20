@@ -1,0 +1,98 @@
+{
+  "metadata": {
+    "name": "ancova-ops-hand-authored-routing",
+    "version": "1",
+    "provenance": "hand_authored_fixture",
+    "label_status": "design_expectation_not_ground_truth",
+    "description": "Small deterministic routing benchmark covering the first property-management use case, department routing and human-review edge cases.",
+    "limitations": [
+      "The cases are hand-authored and are not representative samples of real resident requests.",
+      "Expected labels reflect project design expectations rather than independently adjudicated operational ground truth.",
+      "The dataset is intentionally small and should not be used to estimate production performance.",
+      "English wording is overrepresented and multilingual robustness is not evaluated.",
+      "Human-review labels are operational safety/escalation expectations, not psychological risk labels."
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "maint-leak-001",
+      "message": "Water is leaking from the ceiling in the lobby.",
+      "expected_department": "maintenance",
+      "expected_human_review": false,
+      "annotation_note": "Straightforward maintenance request."
+    },
+    {
+      "case_id": "maint-ac-high-001",
+      "message": "The air conditioner is leaking again and an elderly resident may slip.",
+      "previous_related_cases": 2,
+      "vulnerability_flag": true,
+      "expected_department": "maintenance",
+      "expected_human_review": true,
+      "annotation_note": "Recurring maintenance issue with vulnerability and safety context."
+    },
+    {
+      "case_id": "maint-electrical-safety-001",
+      "message": "There are sparks from the electric socket. Please come right now.",
+      "expected_department": "maintenance",
+      "expected_human_review": true,
+      "annotation_note": "Electrical safety wording should be surfaced for human review."
+    },
+    {
+      "case_id": "security-noise-001",
+      "message": "There is loud music from the next unit after midnight.",
+      "expected_department": "security",
+      "expected_human_review": false,
+      "annotation_note": "Routine noise complaint for the first-use-case taxonomy."
+    },
+    {
+      "case_id": "security-intruder-001",
+      "message": "A suspicious intruder is trying doors right now.",
+      "expected_department": "security",
+      "expected_human_review": true,
+      "annotation_note": "Security incident where human review should not depend only on emotional language."
+    },
+    {
+      "case_id": "security-smoke-001",
+      "message": "There is smoke in the corridor.",
+      "expected_department": "security",
+      "expected_human_review": true,
+      "annotation_note": "Emergency wording with a department route supplied by fallback routing rules."
+    },
+    {
+      "case_id": "leasing-renewal-001",
+      "message": "I need to renew my tenancy next month.",
+      "expected_department": "leasing",
+      "expected_human_review": false,
+      "annotation_note": "Straightforward leasing request."
+    },
+    {
+      "case_id": "accounts-payment-001",
+      "message": "The rent payment on my invoice looks wrong.",
+      "expected_department": "accounts",
+      "expected_human_review": false,
+      "annotation_note": "Straightforward accounts request."
+    },
+    {
+      "case_id": "accounts-repeat-001",
+      "message": "This payment charge is still not fixed. This is unacceptable.",
+      "previous_related_cases": 2,
+      "expected_department": "accounts",
+      "expected_human_review": true,
+      "annotation_note": "Repeated unresolved account case with strong complaint language."
+    },
+    {
+      "case_id": "community-room-001",
+      "message": "Can someone help me book the residents' function room?",
+      "expected_department": "community_management",
+      "expected_human_review": false,
+      "annotation_note": "General community-management request outside specialist categories."
+    },
+    {
+      "case_id": "leasing-ambiguous-001",
+      "message": "I want to ask about my resident agreement terms.",
+      "expected_department": "leasing",
+      "expected_human_review": false,
+      "annotation_note": "Intentionally ambiguous leasing wording that the keyword baseline is expected to miss."
+    }
+  ]
+}
