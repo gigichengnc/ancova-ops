@@ -2,6 +2,20 @@
 
 All notable project checkpoints are documented here.
 
+## [0.5.3] - 2026-08-20
+
+### Changed
+
+- Polished the GitHub README first screen with CI/release/license/Python badges, a reviewer-facing status summary and a faster path to the one-command showcase.
+- Added `docs/github-storefront.md` with recommended repository About text, focused topic tags and social-preview copy.
+- Changed the release workflow so automatic publication follows successful `main` CI rather than being triggered merely by editing the release workflow itself.
+- Made the showcase version derive from the package version to remove another source of release-version drift.
+- Updated the Release badge link to the repository's latest release rather than a fixed historical tag.
+
+### Evidence and deployment status
+
+This is a presentation and release-synchronisation checkpoint. No routing, statistical, adaptive-policy or longitudinal model logic is promoted as new real-world evidence. Current quantitative evidence remains synthetic or hand-authored; private-data pilot use and production deployment remain not approved.
+
 ## [0.5.2] - 2026-08-20
 
 ### Added

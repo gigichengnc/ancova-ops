@@ -6,6 +6,7 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
+from . import __version__
 from .adaptive import build_offline_comparison
 from .analytics import build_ancova_report
 from .evaluation import baseline_predict, evaluate_predictor, load_dataset
@@ -74,7 +75,7 @@ def build_showcase_payload(
     )
 
     return {
-        "showcase_version": "0.5.2",
+        "showcase_version": __version__,
         "evidence_status": {
             "routing_fixture": fixture.provenance,
             "routing_label_status": fixture.label_status,
