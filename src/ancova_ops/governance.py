@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import argparse
 import json
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
 
 DEFAULT_POLICY_PATH = Path("config/data-governance.json")
 
@@ -207,7 +207,9 @@ def assert_analytics_columns(columns: Iterable[str], policy: GovernancePolicy) -
     if unknown:
         problems.append("unregistered columns: " + ", ".join(sorted(set(unknown))))
     if blocked:
-        problems.append("columns excluded from analytics by default: " + ", ".join(sorted(set(blocked))))
+        problems.append(
+            "columns excluded from analytics by default: " + ", ".join(sorted(set(blocked)))
+        )
     if problems:
         raise GovernancePolicyError("; ".join(problems))
 
