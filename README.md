@@ -170,12 +170,27 @@ ancova-evaluate \
 
 A candidate is only marked `improved` when it uses the same fixture, does not regress on the comparable headline metrics, and improves at least one of them. See `docs/routing-evaluation.md` for metric definitions and limitations.
 
+## Data-governance boundary
+
+ANCOVA Ops currently operates under a **synthetic-only development policy**. Real private resident/customer records are not approved for this repository or the current development workflow.
+
+The machine-readable policy is `config/data-governance.json`. Validate it with:
+
+```bash
+ancova-governance-check
+```
+
+The current guardrails prohibit direct identifiers, training on raw private request text, automatic use of staff overrides as ground truth, and longitudinal personalisation before a separate pilot review. Raw request text and vulnerability context are excluded from general analytics by default.
+
+Every sensitive or longitudinal feature must have a registered operational purpose, retention expectation and pilot requirement before it is introduced. See `docs/data-governance.md`.
+
 ## Project principles
 
 - **Human-in-the-loop:** the system supports staff rather than pretending every service case should be fully automated.
 - **Evidence before claims:** benchmark or simulated results are labelled clearly; project-specific performance claims require project-specific evidence.
 - **Interpretable first:** begin with transparent baseline logic before complex ML.
-- **Synthetic-data friendly:** early development uses synthetic or hand-authored cases so the software can be tested without exposing resident or customer data.
+- **Synthetic-only by default:** development uses synthetic or hand-authored cases; real private records require a separately approved pilot policy.
+- **Data minimisation:** operational usefulness does not automatically justify analytics, training or long-term retention.
 - **Auditability:** original cases, routing explanations, implementation versions and human reviews are preserved instead of silently overwritten.
 - **Same-dataset comparison:** routing improvements must be demonstrated against the baseline on the same labelled benchmark.
 - **Modular:** property management is the first use case, not the only possible domain.
@@ -190,9 +205,13 @@ src/ancova_ops/
 ├── persistence.py  # SQLite case, machine-decision, review and outcome storage
 ├── routing.py      # Explainable baseline routing
 ├── evaluation.py   # Deterministic routing benchmark and candidate comparison
+├── governance.py   # Machine-readable policy validation and analytics field gate
 ├── synthetic.py    # Synthetic outcome data for development
 ├── analytics.py    # ANCOVA fitting and diagnostics
 └── demo.py         # Small runnable demonstration
+
+config/
+└── data-governance.json
 
 data/evaluation/
 └── hand_authored_v1.json
@@ -204,6 +223,7 @@ docs/
 ├── data-model.md
 ├── human-routing-feedback.md
 ├── routing-evaluation.md
+├── data-governance.md
 └── roadmap.md
 ```
 
@@ -230,6 +250,15 @@ docs/
 - human confirmation / override capture
 - deterministic routing evaluation harness
 
+### Cross-cutting governance
+
+- synthetic-only development boundary
+- field sensitivity and purpose registry
+- retention/deletion expectations
+- analytics export restrictions
+- longitudinal-feature approval register
+- machine-readable governance check in CI
+
 ### Phase 2 — Outcome analytics
 
 - reproducible ANCOVA workflow
@@ -251,7 +280,7 @@ docs/
 
 ## Status
 
-Phase 0 is complete. The Phase 1 MVP foundation now includes the request API, transparent request-intelligence baseline, SQLite case persistence, append-only routing audit history, outcome capture, separate human confirmation/override records, and a deterministic same-dataset routing evaluation harness. Before any real pilot data is introduced, the project still needs explicit privacy and data-governance boundaries; deeper outcome analytics follow in Phase 2.
+Phase 0 and the Phase 1 MVP foundation are complete. The repository now also has an explicit synthetic-only data-governance boundary with machine-readable field and longitudinal-feature controls. Real private pilot data remains prohibited until a separate pilot policy defines jurisdiction-specific notice/consent requirements, access controls, concrete retention periods and deletion procedures. Deeper outcome analytics follow in Phase 2.
 
 ## Important note on metrics
 
