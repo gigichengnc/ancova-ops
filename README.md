@@ -39,7 +39,10 @@ Statistical analysis + model validation
 Management evidence report
         |
         v
-Improved routing policy
+Offline routing-policy evaluation
+        |
+        v
+Human approval / versioning / rollback
 ```
 
 ## Why ANCOVA?
@@ -231,6 +234,48 @@ ancova-management-report \
 
 The report keeps raw observed complete-case summaries separate from adjusted estimates, shows a management screening dashboard, carries forward all statistical warnings, and explicitly states that the adjusted comparison is not an automatic staff-performance league table. See `docs/management-report.md`.
 
+## Adaptive routing research
+
+Run the Phase 3 synthetic logged-policy study:
+
+```bash
+ancova-policy evaluate
+```
+
+The workflow creates deterministic synthetic logged routing history with timestamps and known action propensities, trains a transparent outcome-aware policy only on the earlier training window, and evaluates the baseline and candidate on the later validation window.
+
+The offline comparison reports inverse-propensity estimates, self-normalised IPS, action agreement, unsupported actions and effective sample size. Matched historical outcomes are retained only as descriptive context; they are not presented as counterfactual performance.
+
+Register the evaluated candidate locally:
+
+```bash
+ancova-policy evaluate --register
+```
+
+A registered candidate still cannot become active without explicit human approval:
+
+```bash
+ancova-policy approve \
+  --version outcome-aware-category-mean-v1 \
+  --reviewer reviewer-001 \
+  --rationale "Reviewed synthetic offline evidence for controlled staging."
+
+ancova-policy activate \
+  --version outcome-aware-category-mean-v1 \
+  --actor ops-lead
+```
+
+Rollback is explicit and append-only:
+
+```bash
+ancova-policy rollback \
+  --version baseline-route-v1 \
+  --actor ops-lead \
+  --rationale "Rollback drill."
+```
+
+The registry is stored under `.ancova_ops/` and is ignored by Git. Registry activation does **not** automatically replace the router behind `/v1/route`; operational deployment remains a separate future integration and governance decision. See `docs/adaptive-routing.md`.
+
 ## Project principles
 
 - **Human-in-the-loop:** the system supports staff rather than pretending every service case should be fully automated.
@@ -242,6 +287,8 @@ The report keeps raw observed complete-case summaries separate from adjusted est
 - **Same-dataset comparison:** routing improvements must be demonstrated against the baseline on the same labelled benchmark.
 - **Raw versus adjusted separation:** observed department summaries are not silently substituted for case-mix-adjusted model estimates.
 - **Non-causal reporting:** adjusted associations are not presented as causal staff or department rankings.
+- **Offline before deployment:** a policy candidate must survive time-aware, support-aware evaluation and explicit human approval before any deployment integration is considered.
+- **Rollback by design:** policy lifecycle history is preserved and a previously approved baseline can be restored without deleting evidence.
 - **Modular:** property management is the first use case, not the only possible domain.
 
 ## Repository layout
@@ -254,8 +301,9 @@ src/ancova_ops/
 ├── persistence.py       # SQLite case, machine-decision, review and outcome storage
 ├── routing.py           # Explainable baseline routing
 ├── evaluation.py        # Deterministic routing benchmark and candidate comparison
+├── adaptive.py          # Time-aware offline policy evaluation and lifecycle controls
 ├── governance.py        # Machine-readable policy validation and analytics field gate
-├── synthetic.py         # Synthetic outcome data for development
+├── synthetic.py         # Synthetic outcome and logged-policy data for development
 ├── analytics.py         # ANCOVA fitting, adjusted estimates and diagnostics
 ├── analysis_report.py   # Technical Phase 2 analysis CLI
 ├── management_report.py # Management-facing Markdown/JSON evidence report
@@ -276,6 +324,7 @@ docs/
 ├── routing-evaluation.md
 ├── data-governance.md
 ├── management-report.md
+├── adaptive-routing.md
 └── roadmap.md
 ```
 
@@ -322,11 +371,13 @@ docs/
 
 ### Phase 3 — Adaptive routing
 
-- learn routing policy candidates from historical outcomes
+- transparent outcome-aware routing candidate
+- synthetic logged policy with known action propensities
 - time-aware train/validation design
-- document offline counterfactual limitations
+- support-aware IPS offline evaluation
+- explicit counterfactual limitations
 - human approval for policy changes
-- versioning and rollback
+- versioning, lifecycle history and rollback
 
 ### Phase 4 — Longitudinal prediction
 
@@ -336,13 +387,13 @@ docs/
 
 ## Status
 
-Phase 0, the Phase 1 service-intelligence MVP foundation and the Phase 2 synthetic outcome-analysis/reporting workflow are implemented. The repository also has an explicit synthetic-only data-governance boundary with machine-readable field and longitudinal-feature controls. Real private pilot data remains prohibited until a separate pilot policy defines jurisdiction-specific notice/consent requirements, access controls, concrete retention periods and deletion procedures.
+Phase 0, the Phase 1 service-intelligence MVP foundation, the Phase 2 synthetic outcome-analysis/reporting workflow and the Phase 3 synthetic adaptive-routing evaluation framework are implemented. The repository also has an explicit synthetic-only data-governance boundary with machine-readable field and longitudinal-feature controls.
 
-The next technical phase is adaptive routing research. Any policy-learning work must preserve human approval, versioning, rollback and the limits of offline evaluation. Real-data learning remains blocked until the pilot governance requirements are completed.
+Real private pilot data remains prohibited until a separate pilot policy defines jurisdiction-specific notice/consent requirements, access controls, concrete retention periods and deletion procedures. The Phase 3 policy registry is intentionally not wired to the production request path; real-data policy learning and operational deployment remain blocked until those governance and integration decisions are completed.
 
 ## Important note on metrics
 
-Figures shown in the original hackathon presentation are not treated here as measured ANCOVA Ops outcomes unless they can be traced to a project-specific experiment. The routing benchmark figures above describe a small hand-authored fixture only and are not production estimates. External benchmarks, simulated examples and target metrics will be labelled as such.
+Figures shown in the original hackathon presentation are not treated here as measured ANCOVA Ops outcomes unless they can be traced to a project-specific experiment. The routing benchmark figures above describe a small hand-authored fixture only and are not production estimates. Phase 3 IPS results are generated from synthetic logged-policy data and must not be reported as real service improvements. External benchmarks, simulated examples and target metrics will be labelled as such.
 
 ## License
 
