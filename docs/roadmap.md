@@ -107,7 +107,7 @@ The Phase 4 benchmark remains synthetic-only. Real longitudinal personalisation 
 
 ## v0.5.x — Project checkpoint and presentation
 
-Goal: make Phases 0–4 understandable, reproducible and clearly licensed as one coherent research/software checkpoint before adding more modelling complexity.
+Goal: make Phases 0–4 understandable, reproducible, clearly licensed and citable as one coherent research/software checkpoint before adding more modelling complexity.
 
 - [x] package and project version alignment with regression coverage;
 - [x] changelog;
@@ -116,7 +116,22 @@ Goal: make Phases 0–4 understandable, reproducible and clearly licensed as one
 - [x] release-readiness checklist separating repository, pilot and production readiness;
 - [x] README converted into an external-facing project entry point;
 - [x] one-command reviewer showcase (`v0.5.1`);
-- [x] Apache License 2.0 selected and declared in root `LICENSE` plus package metadata (`v0.5.2`).
+- [x] Apache License 2.0 selected and declared in root `LICENSE` plus package metadata (`v0.5.2`);
+- [x] GitHub storefront polish and CI-gated release flow (`v0.5.3`);
+- [x] root `CITATION.cff`, citation guide and citation/version regression checks (`v0.5.4`).
+
+## Publication / distribution gates
+
+These are separate from model-building and do not change the evidence class:
+
+- [ ] connect the repository owner GitHub account to Zenodo;
+- [ ] enable `gigichengnc/ancova-ops` in the Zenodo GitHub integration;
+- [ ] archive a GitHub software release and verify the minted DOI;
+- [ ] add the verified DOI back to `CITATION.cff` in a reviewed checkpoint;
+- [ ] optionally add PyPI trusted publishing after package-build and distribution checks are introduced;
+- [ ] consider a software paper only after the research-use case, field context and user/reuse evidence justify it.
+
+A DOI is a persistent identifier for a software record, not evidence that the software or its empirical claims have been peer reviewed.
 
 ## Next gates — before a real-data pilot
 
