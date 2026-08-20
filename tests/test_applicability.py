@@ -1,10 +1,10 @@
+from ancova_ops.analytics import build_ancova_report
 from ancova_ops.applicability import (
     EvaluationQuestion,
     assess_evaluation_question,
     assess_from_ancova_report,
     main,
 )
-from ancova_ops.analytics import build_ancova_report
 from ancova_ops.synthetic import generate_outcomes
 from ancova_ops.validity import generate_measured_confounding_scenario
 
