@@ -50,12 +50,19 @@ Goal: define privacy and data-use boundaries before any real pilot data is intro
 
 Goal: evaluate service outcomes credibly.
 
-- pre-specified analytical questions;
-- ANCOVA / regression workflow;
-- assumption diagnostics;
-- missing-data policy;
-- adjusted group comparisons;
-- technical and management-friendly reports.
+- [x] pre-specified analytical question;
+- [x] ANCOVA / regression workflow;
+- [x] required-field missingness and complete-case accounting;
+- [x] department group-size checks;
+- [x] residual and influential-point diagnostics;
+- [x] heteroskedasticity diagnostics;
+- [x] multicollinearity diagnostics;
+- [x] department-by-covariate interaction checks;
+- [x] adjusted department estimates with uncertainty;
+- [x] explicit model warnings and alternative-model guidance;
+- [x] machine-readable and human-readable analysis command;
+- [x] synthetic failure-condition tests and CI smoke test;
+- [ ] management-facing dashboard or richer report visualisation.
 
 ## Phase 3 — Adaptive routing
 
