@@ -2,129 +2,156 @@
 
 ## Design goal
 
-Turn an unstructured service request into a structured, explainable operational decision, record the eventual outcome, and provide a clean dataset for evaluation.
+ANCOVA Ops separates operational decision support from downstream evaluation. The system turns an unstructured service request into a structured, explainable routing recommendation, preserves human intervention and observed outcomes, and then uses those records in separate statistical and offline research workflows.
 
-## Layers
+ANCOVA is an **outcome-analysis layer**, not a per-message scoring algorithm.
 
-### 1. Intake
-
-The FastAPI interface accepts a raw service message plus limited operational context such as known related-case count and an explicit vulnerability flag.
-
-### 2. Request intelligence
-
-Extracts structured signals such as:
-
-- issue category;
-- urgency;
-- frustration / communication intensity;
-- vulnerability or safety context;
-- recurrence / prior unresolved cases.
-
-Phase 1 uses a transparent deterministic baseline. Future NLP components should implement the same interface so they can be evaluated against the baseline.
-
-### 3. Routing
-
-Produces:
-
-- recommended department;
-- priority level;
-- optional escalation / secondary notification;
-- human-readable reasons.
-
-The routing result is a recommendation, not an irreversible autonomous action. Both the request-intelligence implementation and routing policy carry explicit version identifiers.
-
-### 4. Persistence and audit trail
-
-A file-backed SQLite store records:
-
-- the immutable original service case;
-- structured operational features used at routing time;
-- every routing decision as a separate audit row;
-- request-intelligence and routing-policy versions;
-- exact routing reasons;
-- later observed outcomes.
-
-Re-running the same unchanged case can append another routing decision. Reusing a `case_id` with different original case data is rejected to prevent silent historical rewrites.
-
-The default local database is `.ancova_ops/ancova_ops.sqlite3`. It is ignored by Git and can be replaced with the `ANCOVA_OPS_DB_PATH` environment variable.
-
-### 5. Outcome collection
-
-The API can store observed response time, resolution time, reassignment, escalation and satisfaction when available. Outcome data is kept separate from routing recommendations so predictions and observations are not conflated.
-
-### 6. Analytics
-
-Historical cases can later be exported into an analytical dataset. ANCOVA / regression models can compare groups while adjusting for pre-specified covariates.
-
-### 7. Adaptive policy — later phase
-
-Only after the baseline pipeline and evaluation protocol are stable should historical outcomes influence routing policy automatically. Candidate policies should be evaluated offline and retain the same decision audit trail.
-
-## Current Phase 1 flow
+## v0.5.0 system map
 
 ```text
-POST /v1/route
+Service request
       |
       v
-BaselineRequestIntelligence
+Request intelligence
+(issue, urgency, communication intensity, context)
       |
       v
-ServiceCase
+Explainable routing recommendation
+      |
+      +------> Human confirmation / override
+      |                |
+      |                v
+      |        Effective operational routing
       |
       v
-baseline_route()
+Observed service outcome
       |
       v
-RoutingDecision
+Auditable historical records
       |
-      +----> SQLite routing audit history
+      +------> Routing benchmark
       |
-      v
-human/service operation
+      +------> ANCOVA / regression + diagnostics
+      |                |
+      |                v
+      |        Management evidence report
       |
-      v
-PUT /v1/cases/{case_id}/outcome
+      +------> Offline adaptive-policy research
+      |        (time-aware validation, IPS, approval, rollback)
       |
-      v
-observed outcome
-      |
-      v
-future analytics export -> ANCOVA / regression
+      +------> Synthetic longitudinal benchmark
+               (recency/frequency, survival-style, tree models)
 ```
+
+## Layer 1 — Intake and request intelligence
+
+The FastAPI interface accepts raw service text plus limited operational context. `BaselineRequestIntelligence` converts that input into structured features such as issue category, urgency, communication/frustration intensity, complexity and recurrence context.
+
+The current implementation is deliberately transparent and deterministic. These values are operational development heuristics, not validated psychological measurements.
+
+## Layer 2 — Explainable routing
+
+`baseline_route()` produces a versioned recommendation containing:
+
+- department;
+- priority;
+- human-review requirement;
+- optional secondary notification;
+- human-readable reasons.
+
+The recommendation is not an irreversible autonomous dispatch action.
+
+## Layer 3 — Persistence and human review
+
+The local SQLite layer preserves:
+
+- immutable original service cases;
+- structured features used at routing time;
+- append-only machine/rule routing decisions;
+- implementation versions and routing reasons;
+- append-only human confirmations or overrides;
+- observed outcomes stored separately from predictions.
+
+Human review changes the effective operational state without overwriting the original recommendation. Staff confirmation is feedback, not automatically trusted model-training ground truth.
+
+## Layer 4 — Routing evaluation
+
+`ancova-evaluate` runs a deterministic hand-authored fixture through the routing pipeline. It reports department accuracy, expected-human-review recall and explanation coverage.
+
+The fixture is a software-development benchmark, not representative production data.
+
+## Layer 5 — Data-governance gate
+
+`config/data-governance.json` defines the current development boundary. `ancova-governance-check` validates it in CI.
+
+The repository is synthetic-only for model/analytics development. Real private resident/customer records, direct identifiers, unsupported psychological profiling and unapproved longitudinal personalisation are prohibited.
+
+## Layer 6 — Outcome analytics
+
+`ancova-analyze` fits the pre-specified ANCOVA/regression workflow and exposes:
+
+- required-field missingness and complete-case counts;
+- department group sizes;
+- residual diagnostics;
+- heteroskedasticity screening;
+- VIF multicollinearity diagnostics;
+- influence screening;
+- department-by-covariate interaction checks;
+- adjusted department estimates with uncertainty;
+- explicit warnings and alternative-model guidance.
+
+Adjusted estimates are model-based associations. They are not causal effects without a separate identification argument and study design.
+
+## Layer 7 — Management reporting
+
+`ancova-management-report` converts the technical analysis into a self-contained Markdown/JSON evidence report. It keeps raw observed summaries separate from adjusted estimates and carries statistical warnings into the management view.
+
+The report is not a staff-performance league table.
+
+## Layer 8 — Offline adaptive-routing research
+
+`ancova-policy evaluate` uses deterministic synthetic logged-routing history with timestamps and known action propensities. Candidate policies are trained on an earlier window and compared on a later window with support-aware inverse-propensity methods.
+
+The lifecycle registry supports candidate registration, named human approval, activation history and rollback. Registry activation does **not** replace the router behind `/v1/route`; deployment integration is intentionally separate.
+
+## Layer 9 — Longitudinal benchmark
+
+`ancova-longitudinal` generates synthetic entity-level service histories with recurrence and seasonality, creates pre-cutoff feature snapshots, and applies a purged chronological split so training follow-up cannot overlap the validation period.
+
+The current benchmark compares:
+
+1. recency/frequency logistic baseline;
+2. discrete-time logistic hazard model;
+3. random-forest recurrence classifier.
+
+LSTM/sequence modelling remains deferred until a same-benchmark experiment can demonstrate reproducible incremental value over the strongest simpler approach.
 
 ## Current API boundary
 
-A routing response is structured JSON rather than prose-only AI output. It includes the decision and the implementation versions needed to reconstruct it:
+A routing response is structured JSON with the decision and implementation versions required for reconstruction. Core endpoints are:
 
-```json
-{
-  "case_id": "case-123",
-  "decision_id": 17,
-  "issue_category": "water_leak",
-  "urgency": 8.0,
-  "frustration": 7.5,
-  "complexity": 6.5,
-  "department": "maintenance",
-  "priority": "high",
-  "requires_human_review": true,
-  "secondary_notify": "community_management",
-  "reasons": ["matched baseline issue taxonomy: water_leak"],
-  "intelligence_version": "baseline-request-intelligence-v1",
-  "router_version": "baseline-route-v1"
-}
+- `POST /v1/route` — create and persist a routing recommendation;
+- `GET /v1/cases/{case_id}` — retrieve case, current effective routing and outcome;
+- `GET /v1/cases/{case_id}/routing-decisions` — retrieve machine/rule decision history;
+- `POST /v1/cases/{case_id}/routing-reviews` — append a human confirmation or override;
+- `GET /v1/cases/{case_id}/routing-reviews` — retrieve human-review history;
+- `PUT /v1/cases/{case_id}/outcome` — store observed outcome fields.
+
+## Separation of responsibilities
+
+```text
+Request intelligence answers:  "What does this request appear to need?"
+Routing answers:               "Where should it go now?"
+Human review answers:          "Do staff accept or override that recommendation?"
+Outcome capture answers:       "What actually happened?"
+ANCOVA/regression answers:     "How do outcomes compare after case-mix adjustment?"
+Adaptive-policy research asks: "Could historical outcomes inform a better policy offline?"
+Longitudinal research asks:    "Can recurrence/timing be predicted without avoidable leakage?"
+Governance answers:            "Which data/use/deployment steps are currently permitted?"
 ```
 
-Audit and outcome endpoints:
+## v0.5.0 deployment boundary
 
-- `GET /v1/cases/{case_id}` — retrieve the persisted case, latest decision and outcome;
-- `GET /v1/cases/{case_id}/routing-decisions` — retrieve full routing audit history;
-- `PUT /v1/cases/{case_id}/outcome` — add or update observed outcome fields.
+The architecture is runnable as a development prototype but is not approved for private-data pilot or production deployment. Production authentication/RBAC, secrets management, real-data validation, monitoring, incident response and policy-to-route integration remain future work.
 
-## Non-goals for Phase 1
-
-- no LSTM;
-- no resident profiling from private production data;
-- no fully autonomous dispatch;
-- no claim that operational scores are objective psychological measurements;
-- no causal claims from a convenience dataset;
-- no real private service records committed to Git.
+See `docs/project-status.md` and `docs/release-readiness.md` for the checkpoint boundary.

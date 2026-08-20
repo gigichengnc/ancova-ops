@@ -15,7 +15,7 @@ Goal: create a runnable, testable project skeleton.
 
 ## Phase 1 — Service-intelligence MVP
 
-Goal: accept a real request and produce a structured, reviewable routing recommendation.
+Goal: accept a service request and produce a structured, reviewable routing recommendation.
 
 - [x] request/response API contract;
 - [x] issue taxonomy;
@@ -104,3 +104,31 @@ Goal: investigate recurrence, seasonality and escalation trajectories without as
 - [x] longitudinal benchmark CLI, documentation, tests and CI smoke coverage.
 
 The Phase 4 benchmark remains synthetic-only. Real longitudinal personalisation and private service-history modelling remain blocked until the cross-cutting pilot governance items are completed.
+
+## v0.5.0 — Project checkpoint
+
+Goal: make Phases 0–4 understandable and reproducible as one coherent research/software checkpoint before adding more modelling complexity.
+
+- [x] package and project version aligned at `0.5.0`;
+- [x] version-drift regression test;
+- [x] changelog;
+- [x] current Phase 0–4 architecture map;
+- [x] concise project-status document;
+- [x] release-readiness checklist separating repository, pilot and production readiness;
+- [x] README converted into an external-facing project entry point;
+- [ ] select a project licence if reuse/modification/redistribution should be permitted.
+
+## Next gates — before a real-data pilot
+
+These are governance/evidence gates rather than another model-building phase:
+
+- [ ] jurisdiction-specific privacy/legal review;
+- [ ] notice/consent design where applicable;
+- [ ] authenticated staff identities and role-based access control;
+- [ ] concrete retention/deletion schedule;
+- [ ] pseudonymisation and identity-linkage design;
+- [ ] secure pilot storage, secrets management and incident process;
+- [ ] real-data annotation and outcome-quality protocol;
+- [ ] representative real-data routing benchmark and pilot stop criteria.
+
+Only after those gates should the project consider real-data adaptive-policy learning, production integration or a new sequence-model experiment.
