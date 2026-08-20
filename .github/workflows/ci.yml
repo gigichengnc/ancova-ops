@@ -52,5 +52,12 @@ jobs:
           --output /tmp/ancova-management-report.md
           --json-output /tmp/ancova-management-report.json
 
+      - name: Portfolio showcase smoke test
+        run: >-
+          ancova-showcase --outcome-rows 120 --logged-rows 400
+          --longitudinal-entities 80 --longitudinal-days 540
+          --output /tmp/ancova-showcase.md
+          --json-output /tmp/ancova-showcase.json
+
       - name: Data governance policy check
         run: ancova-governance-check --json > /tmp/ancova-data-governance.json
