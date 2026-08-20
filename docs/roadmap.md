@@ -11,7 +11,7 @@ Goal: create a runnable, testable project skeleton.
 - [x] synthetic outcome generator
 - [x] ANCOVA fitting helper
 - [x] starter tests
-- [ ] continuous integration
+- [x] continuous integration
 
 ## Phase 1 — Service-intelligence MVP
 
