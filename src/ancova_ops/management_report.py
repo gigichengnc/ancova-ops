@@ -23,7 +23,7 @@ class ManagementReport:
     overall_screening_status: str
     executive_summary: str
     sample: dict[str, object]
-    department_comparison: list[dict[str, float | int | str]]
+    department_comparison: list[dict[str, object]]
     screening_status: list[dict[str, str]]
     warnings: list[str]
     interpretation_note: str
@@ -46,36 +46,49 @@ class ManagementReport:
 
 
 def build_management_report(data: pd.DataFrame, *, alpha: float = 0.05) -> ManagementReport:
-    """Build a management-facing view over the reproducible ANCOVA workflow."""
+    """Build a management-facing view over the reproducible outcome-evaluation workflow."""
 
     analysis = build_ancova_report(data, alpha=alpha)
     complete = prepare_complete_cases(data)
     raw = _raw_department_summary(complete)
     adjusted = {str(row["department"]): row for row in analysis.adjusted_estimates}
 
-    comparison: list[dict[str, float | int | str]] = []
+    comparison: list[dict[str, object]] = []
     for department in sorted(raw):
         raw_row = raw[department]
-        adjusted_row = adjusted[department]
-        comparison.append(
-            {
-                "department": department,
-                "complete_case_n": int(raw_row["n"]),
-                "raw_mean_resolution_hours": float(raw_row["mean"]),
-                "raw_median_resolution_hours": float(raw_row["median"]),
-                "adjusted_mean_resolution_hours": float(
-                    adjusted_row["adjusted_mean_resolution_hours"]
-                ),
-                "adjusted_ci_lower": float(adjusted_row["mean_ci_lower"]),
-                "adjusted_ci_upper": float(adjusted_row["mean_ci_upper"]),
-            }
-        )
+        row: dict[str, object] = {
+            "department": department,
+            "complete_case_n": int(raw_row["n"]),
+            "raw_mean_resolution_hours": float(raw_row["mean"]),
+            "raw_median_resolution_hours": float(raw_row["median"]),
+            "adjusted_mean_resolution_hours": None,
+            "adjusted_ci_lower": None,
+            "adjusted_ci_upper": None,
+        }
+        if department in adjusted:
+            adjusted_row = adjusted[department]
+            row.update(
+                {
+                    "adjusted_mean_resolution_hours": float(
+                        adjusted_row["adjusted_mean_resolution_hours"]
+                    ),
+                    "adjusted_ci_lower": float(adjusted_row["mean_ci_lower"]),
+                    "adjusted_ci_upper": float(adjusted_row["mean_ci_upper"]),
+                }
+            )
+        comparison.append(row)
 
     screening = _screening_status(analysis, alpha=alpha)
-    overall_status = "caution" if any(row["status"] == "caution" for row in screening) else "clear"
+    if analysis.identifiability["status"] == "not_identifiable":
+        overall_status = "blocked"
+    else:
+        overall_status = (
+            "caution" if any(row["status"] == "caution" for row in screening) else "clear"
+        )
     executive_summary = _executive_summary(analysis, comparison, overall_status)
 
     technical = {
+        "identifiability": analysis.identifiability,
         "residual_diagnostics": analysis.residual_diagnostics,
         "heteroskedasticity": analysis.heteroskedasticity,
         "multicollinearity_vif": analysis.multicollinearity,
@@ -110,13 +123,18 @@ def render_markdown(report: ManagementReport) -> str:
     provenance = ", ".join(report.provenance)
     sample = report.sample
     confidence_percent = report.confidence_level * 100
+    identifiability = report.technical["identifiability"]
+    assert isinstance(identifiability, dict)
+
     report_boundary = (
         "> This report separates raw observed summaries from model-adjusted estimates. "
-        "Adjusted values are associations, not causal effects."
+        "Adjusted values are associations, not causal effects, and are withheld when the "
+        "routing design cannot separate department from issue-category case mix."
     )
     comparison_note = (
-        "Raw means describe the complete-case observations. Adjusted means hold the model "
-        "covariates at their complete-case sample means."
+        "Raw means describe the complete-case observations. Where identifiable, adjusted means "
+        "are standardised over the observed complete-case case-mix distribution rather than "
+        "holding a categorical issue type at an arbitrary reference."
     )
 
     lines = [
@@ -124,6 +142,7 @@ def render_markdown(report: ManagementReport) -> str:
         "",
         f"**Data provenance:** {provenance}",
         f"**Screening status:** {report.overall_screening_status.upper()}",
+        f"**Department/issue-category identifiability:** {identifiability['status']}",
         "",
         report_boundary,
         "",
@@ -150,22 +169,32 @@ def render_markdown(report: ManagementReport) -> str:
     ]
 
     for row in report.department_comparison:
+        if row["adjusted_mean_resolution_hours"] is None:
+            adjusted_text = "withheld"
+            ci_text = "withheld"
+        else:
+            adjusted_text = f"{float(row['adjusted_mean_resolution_hours']):.2f}"
+            ci_text = (
+                f"{float(row['adjusted_ci_lower']):.2f}–"
+                f"{float(row['adjusted_ci_upper']):.2f}"
+            )
         lines.append(
-            "| {department} | {complete_case_n} | {raw_mean_resolution_hours:.2f} | "
-            "{raw_median_resolution_hours:.2f} | {adjusted_mean_resolution_hours:.2f} | "
-            "{adjusted_ci_lower:.2f}–{adjusted_ci_upper:.2f} |".format(**row)
+            f"| {row['department']} | {row['complete_case_n']} | "
+            f"{float(row['raw_mean_resolution_hours']):.2f} | "
+            f"{float(row['raw_median_resolution_hours']):.2f} | "
+            f"{adjusted_text} | {ci_text} |"
         )
 
-    screening_note = (
-        "A `clear` result means the current screening rule did not flag that issue; it does "
-        "not prove the assumption is true."
-    )
     lines.extend(
         [
             "",
             "## Statistical screening dashboard",
             "",
-            screening_note,
+            (
+                "A `clear` result means the current screening rule did not flag that issue; it "
+                "does not prove the assumption is true. A `blocked` result means the adjusted "
+                "comparison should not be reported from the current design."
+            ),
             "",
             "| Area | Status | Management interpretation |",
             "| --- | --- | --- |",
@@ -184,12 +213,6 @@ def render_markdown(report: ManagementReport) -> str:
             "that every modelling assumption is satisfied."
         )
 
-    management_boundary = (
-        "For management use, the adjusted department estimates should be treated as a "
-        "case-mix-adjusted comparison for investigation and operational learning. They should "
-        "not be used as a causal league table or as an automatic basis for staff performance "
-        "decisions."
-    )
     lines.extend(
         [
             "",
@@ -197,9 +220,25 @@ def render_markdown(report: ManagementReport) -> str:
             "",
             report.interpretation_note,
             "",
-            management_boundary,
+            (
+                "For management use, identifiable adjusted department estimates are case-mix-aware "
+                "signals for investigation and operational learning. They should not be used as a "
+                "causal league table or as an automatic basis for staff performance decisions. If "
+                "overlap is insufficient, the correct output is to withhold the comparison rather "
+                "than rank teams."
+            ),
             "",
             "## Technical appendix",
+            "",
+            "### Department/issue-category overlap",
+            "",
+            f"- Status: {identifiability['status']}",
+            f"- Design-matrix full rank: {identifiability['design_matrix_full_rank']}",
+            (
+                "- Practical overlap graph connected: "
+                f"{identifiability['practical_overlap_graph_connected']}"
+            ),
+            f"- Minimum supported cell size: {identifiability['minimum_cell_n']}",
             "",
             "### Department-by-covariate interaction p-values",
             "",
@@ -211,31 +250,29 @@ def render_markdown(report: ManagementReport) -> str:
     interactions = report.technical["department_by_covariate_interactions"]
     assert isinstance(interactions, dict)
     for covariate, pvalue in interactions.items():
-        lines.append(f"| {covariate} | {float(pvalue):.4g} |")
+        numeric = float(pvalue)
+        display = "withheld" if not math.isfinite(numeric) else f"{numeric:.4g}"
+        lines.append(f"| {covariate} | {display} |")
 
     lines.extend(["", "### Variance and influence screening", ""])
     heteroskedasticity = report.technical["heteroskedasticity"]
     influence = report.technical["influence"]
     assert isinstance(heteroskedasticity, dict)
     assert isinstance(influence, dict)
-
-    bp_line = (
-        "- Breusch-Pagan F-test p-value: "
-        f"{float(heteroskedasticity['breusch_pagan_f_pvalue']):.4g}"
-    )
-    cooks_line = (
-        "- Observations above Cook's-distance screening threshold: "
-        f"{int(influence['n_above_cooks_threshold'])}"
-    )
-    leverage_line = (
-        "- Observations above leverage screening threshold: "
-        f"{int(influence['n_above_leverage_threshold'])}"
-    )
     lines.extend(
         [
-            bp_line,
-            cooks_line,
-            leverage_line,
+            (
+                "- Breusch-Pagan F-test p-value: "
+                f"{float(heteroskedasticity['breusch_pagan_f_pvalue']):.4g}"
+            ),
+            (
+                "- Observations above Cook's-distance screening threshold: "
+                f"{int(influence['n_above_cooks_threshold'])}"
+            ),
+            (
+                "- Observations above leverage screening threshold: "
+                f"{int(influence['n_above_leverage_threshold'])}"
+            ),
             "",
             "### Multicollinearity VIF",
             "",
@@ -246,9 +283,12 @@ def render_markdown(report: ManagementReport) -> str:
 
     vif = report.technical["multicollinearity_vif"]
     assert isinstance(vif, dict)
-    for term, value in vif.items():
-        display = "∞" if not math.isfinite(float(value)) else f"{float(value):.2f}"
-        lines.append(f"| {term} | {display} |")
+    if vif:
+        for term, value in vif.items():
+            display = "∞" if not math.isfinite(float(value)) else f"{float(value):.2f}"
+            lines.append(f"| {term} | {display} |")
+    else:
+        lines.append("| not reported | comparison not identifiable |")
 
     lines.append("")
     return "\n".join(lines)
@@ -289,12 +329,32 @@ def _raw_department_summary(complete: pd.DataFrame) -> dict[str, dict[str, float
 
 
 def _screening_status(analysis: AncovaReport, *, alpha: float) -> list[dict[str, str]]:
-    max_vif = max(analysis.multicollinearity.values(), default=0.0)
+    finite_vif = [
+        float(value) for value in analysis.multicollinearity.values() if math.isfinite(float(value))
+    ]
+    max_vif = max(finite_vif, default=0.0)
+    has_infinite_vif = any(
+        not math.isfinite(float(value)) for value in analysis.multicollinearity.values()
+    )
     interaction_flags = [
-        covariate for covariate, pvalue in analysis.interaction_checks.items() if pvalue < alpha
+        covariate
+        for covariate, pvalue in analysis.interaction_checks.items()
+        if math.isfinite(float(pvalue)) and float(pvalue) < alpha
     ]
 
+    overlap_status = str(analysis.identifiability["status"])
+    overlap_row = {
+        "area": "Department/issue-category overlap",
+        "status": (
+            "blocked"
+            if overlap_status == "not_identifiable"
+            else ("caution" if overlap_status == "weak_overlap" else "clear")
+        ),
+        "interpretation": str(analysis.identifiability["note"]),
+    }
+
     return [
+        overlap_row,
         {
             "area": "Required-field missingness",
             "status": "caution" if analysis.n_dropped_for_missingness else "clear",
@@ -332,11 +392,19 @@ def _screening_status(analysis: AncovaReport, *, alpha: float) -> list[dict[str,
         },
         {
             "area": "Multicollinearity",
-            "status": "caution" if not math.isfinite(max_vif) or max_vif > 5 else "clear",
+            "status": (
+                "caution"
+                if analysis.multicollinearity and (has_infinite_vif or max_vif > 5)
+                else "clear"
+            ),
             "interpretation": (
                 "At least one fitted term has high VIF; coefficient interpretation may be unstable."
-                if not math.isfinite(max_vif) or max_vif > 5
-                else "No fitted term exceeded the current VIF screening threshold."
+                if analysis.multicollinearity and (has_infinite_vif or max_vif > 5)
+                else (
+                    "VIF is not used to rescue a non-identifiable comparison."
+                    if not analysis.multicollinearity
+                    else "No fitted term exceeded the current VIF screening threshold."
+                )
             ),
         },
         {
@@ -345,7 +413,11 @@ def _screening_status(analysis: AncovaReport, *, alpha: float) -> list[dict[str,
             "interpretation": (
                 "Department-specific slopes were flagged for: " + ", ".join(interaction_flags) + "."
                 if interaction_flags
-                else "No department-by-covariate interaction crossed the screening threshold."
+                else (
+                    "Interaction screening was withheld because the main comparison is not identifiable."
+                    if overlap_status == "not_identifiable"
+                    else "No department-by-covariate interaction crossed the screening threshold."
+                )
             ),
         },
         {
@@ -364,13 +436,29 @@ def _screening_status(analysis: AncovaReport, *, alpha: float) -> list[dict[str,
 
 def _executive_summary(
     analysis: AncovaReport,
-    comparison: list[dict[str, float | int | str]],
+    comparison: list[dict[str, object]],
     overall_status: str,
 ) -> str:
-    ranked = sorted(comparison, key=lambda row: float(row["adjusted_mean_resolution_hours"]))
+    provenance = ", ".join(analysis.provenance)
+    adjusted_rows = [
+        row for row in comparison if row["adjusted_mean_resolution_hours"] is not None
+    ]
+
+    if not adjusted_rows:
+        return (
+            f"Using {analysis.n_complete_cases} complete cases from {provenance} data, raw "
+            "department summaries are available but the adjusted department comparison is "
+            "withheld because department and issue-category case mix are not separately "
+            "identifiable in the observed routing design. Reporting a department ranking here "
+            "would be misleading. The available statistics are descriptive and not causal."
+        )
+
+    ranked = sorted(
+        adjusted_rows,
+        key=lambda row: float(row["adjusted_mean_resolution_hours"]),
+    )
     fastest = ranked[0]
     slowest = ranked[-1]
-    provenance = ", ".join(analysis.provenance)
     warning_text = (
         f"The statistical screening status is {overall_status}; {len(analysis.warnings)} warning(s) "
         "should be reviewed before operational interpretation."
@@ -379,7 +467,7 @@ def _executive_summary(
     )
     return (
         f"Using {analysis.n_complete_cases} complete cases from {provenance} data, the lowest "
-        f"model-adjusted mean resolution-time estimate is {fastest['department']} "
+        f"case-mix-standardised mean resolution-time estimate is {fastest['department']} "
         f"({float(fastest['adjusted_mean_resolution_hours']):.2f} h) and the highest is "
         f"{slowest['department']} ({float(slowest['adjusted_mean_resolution_hours']):.2f} h). "
         f"{warning_text} These adjusted estimates are intended for case-mix-aware investigation, "
