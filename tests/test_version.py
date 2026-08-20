@@ -1,8 +1,7 @@
-from pathlib import Path
 import tomllib
+from pathlib import Path
 
 import ancova_ops
-
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_SCRIPTS = {
