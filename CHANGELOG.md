@@ -2,6 +2,26 @@
 
 All notable project checkpoints are documented here.
 
+## [0.5.1] - 2026-08-20
+
+### Added
+
+- `ancova-showcase`, a deterministic reviewer-facing command that orchestrates the existing Phase 1–4 workflows without introducing a new model.
+- Self-contained Markdown showcase output plus optional structured JSON output.
+- One-page evidence/readiness view covering request intelligence, routing benchmark, ANCOVA outcome analysis, adaptive-routing research, longitudinal modelling and governance status.
+- `docs/portfolio-showcase.md` with reviewer/demo instructions and interpretation boundaries.
+- Deterministic showcase regression coverage and CI smoke testing on Python 3.11 and 3.12.
+
+### Changed
+
+- Bumped package/project metadata from `0.5.0` to `0.5.1`.
+- Expanded the public command surface from six to seven CLI entry points.
+- Made the portfolio path easier for an external reviewer by providing one command rather than requiring separate execution of every workflow.
+
+### Evidence and deployment status
+
+The showcase only reorganises existing hand-authored and synthetic development evidence. It does not convert any result into real-world evidence, and it does not change the private-data, pilot or production deployment locks.
+
 ## [0.5.0] - 2026-08-20
 
 ### Added
