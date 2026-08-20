@@ -187,7 +187,7 @@ def run_validity_benchmark(
         },
         "no_overlap": {
             "pass": bool(no_overlap_pass),
-            "n": int(len(no_overlap_data)),
+            "n": len(no_overlap_data),
             "identifiability_status": no_overlap_report.identifiability["status"],
             "adjusted_estimate_count": len(no_overlap_report.adjusted_estimates),
             "anova_term_count": len(no_overlap_report.to_dict()["anova"]),
@@ -199,7 +199,7 @@ def run_validity_benchmark(
         },
         "slope_interaction": {
             "pass": bool(interaction_pass),
-            "n": int(len(interaction_data)),
+            "n": len(interaction_data),
             "urgency_interaction_pvalue": float(interaction_pvalues["urgency"]),
             "interpretation": (
                 "A deliberately department-specific urgency slope should be detected before a "
