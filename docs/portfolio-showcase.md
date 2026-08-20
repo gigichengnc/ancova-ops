@@ -1,6 +1,6 @@
 # Portfolio Showcase
 
-ANCOVA Ops v0.5.1 adds a reviewer-facing showcase layer for demonstrating the existing Phase 1–4 development workflows in one place.
+ANCOVA Ops v0.5.2 includes a reviewer-facing showcase layer for demonstrating the existing Phase 1–4 development workflows in one place, with repository reuse terms now made explicit under Apache-2.0.
 
 The showcase does **not** introduce a new model. It orchestrates existing request-intelligence, routing-evaluation, ANCOVA/outcome-analysis, adaptive-routing and longitudinal-benchmark components and keeps their evidence boundaries visible.
 
@@ -72,3 +72,7 @@ A strong portfolio description is:
 > ANCOVA Ops is a reproducible human-centred service-intelligence research prototype connecting explainable routing, auditable human review, downstream ANCOVA/regression, offline adaptive-policy evaluation and leakage-aware longitudinal benchmarking.
 
 Do not replace that with production-impact claims unless future real-world evidence supports them.
+
+## License
+
+ANCOVA Ops repository material distributed under the project license is licensed under Apache-2.0. See the root [`LICENSE`](../LICENSE) file. Third-party dependencies and separately identified third-party material retain their own licences and notices.
