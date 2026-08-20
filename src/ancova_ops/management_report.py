@@ -19,6 +19,7 @@ DEFAULT_OUTPUT = Path(".ancova_ops/reports/management-report.md")
 class ManagementReport:
     provenance: tuple[str, ...]
     formula: str
+    confidence_level: float
     overall_screening_status: str
     executive_summary: str
     sample: dict[str, object]
@@ -32,6 +33,7 @@ class ManagementReport:
         return {
             "provenance": list(self.provenance),
             "formula": self.formula,
+            "confidence_level": self.confidence_level,
             "overall_screening_status": self.overall_screening_status,
             "executive_summary": self.executive_summary,
             "sample": self.sample,
@@ -49,10 +51,7 @@ def build_management_report(data: pd.DataFrame, *, alpha: float = 0.05) -> Manag
     analysis = build_ancova_report(data, alpha=alpha)
     complete = prepare_complete_cases(data)
     raw = _raw_department_summary(complete)
-    adjusted = {
-        str(row["department"]): row
-        for row in analysis.adjusted_estimates
-    }
+    adjusted = {str(row["department"]): row for row in analysis.adjusted_estimates}
 
     comparison: list[dict[str, float | int | str]] = []
     for department in sorted(raw):
@@ -87,6 +86,7 @@ def build_management_report(data: pd.DataFrame, *, alpha: float = 0.05) -> Manag
     return ManagementReport(
         provenance=analysis.provenance,
         formula=analysis.formula,
+        confidence_level=1.0 - alpha,
         overall_screening_status=overall_status,
         executive_summary=executive_summary,
         sample={
@@ -109,14 +109,23 @@ def render_markdown(report: ManagementReport) -> str:
 
     provenance = ", ".join(report.provenance)
     sample = report.sample
+    confidence_percent = report.confidence_level * 100
+    report_boundary = (
+        "> This report separates raw observed summaries from model-adjusted estimates. "
+        "Adjusted values are associations, not causal effects."
+    )
+    comparison_note = (
+        "Raw means describe the complete-case observations. Adjusted means hold the model "
+        "covariates at their complete-case sample means."
+    )
+
     lines = [
         "# ANCOVA Ops Management Outcome Report",
         "",
         f"**Data provenance:** {provenance}",
         f"**Screening status:** {report.overall_screening_status.upper()}",
         "",
-        "> This report separates raw observed summaries from model-adjusted estimates. "
-        "Adjusted values are associations, not causal effects.",
+        report_boundary,
         "",
         "## Executive summary",
         "",
@@ -131,10 +140,12 @@ def render_markdown(report: ManagementReport) -> str:
         "",
         "## Department comparison",
         "",
-        "Raw means describe the complete-case observations. Adjusted means hold the model "
-        "covariates at their complete-case sample means.",
+        comparison_note,
         "",
-        "| Department | N | Raw mean (h) | Raw median (h) | Adjusted mean (h) | 95% CI (h) |",
+        (
+            "| Department | N | Raw mean (h) | Raw median (h) | Adjusted mean (h) | "
+            f"{confidence_percent:.0f}% CI (h) |"
+        ),
         "| --- | ---: | ---: | ---: | ---: | ---: |",
     ]
 
@@ -145,13 +156,16 @@ def render_markdown(report: ManagementReport) -> str:
             "{adjusted_ci_lower:.2f}–{adjusted_ci_upper:.2f} |".format(**row)
         )
 
+    screening_note = (
+        "A `clear` result means the current screening rule did not flag that issue; it does "
+        "not prove the assumption is true."
+    )
     lines.extend(
         [
             "",
             "## Statistical screening dashboard",
             "",
-            "A `clear` result means the current screening rule did not flag that issue; it does "
-            "not prove the assumption is true.",
+            screening_note,
             "",
             "| Area | Status | Management interpretation |",
             "| --- | --- | --- |",
@@ -170,6 +184,12 @@ def render_markdown(report: ManagementReport) -> str:
             "that every modelling assumption is satisfied."
         )
 
+    management_boundary = (
+        "For management use, the adjusted department estimates should be treated as a "
+        "case-mix-adjusted comparison for investigation and operational learning. They should "
+        "not be used as a causal league table or as an automatic basis for staff performance "
+        "decisions."
+    )
     lines.extend(
         [
             "",
@@ -177,10 +197,7 @@ def render_markdown(report: ManagementReport) -> str:
             "",
             report.interpretation_note,
             "",
-            "For management use, the adjusted department estimates should be treated as a "
-            "case-mix-adjusted comparison for investigation and operational learning. They should "
-            "not be used as a causal league table or as an automatic basis for staff performance "
-            "decisions.",
+            management_boundary,
             "",
             "## Technical appendix",
             "",
@@ -201,14 +218,24 @@ def render_markdown(report: ManagementReport) -> str:
     influence = report.technical["influence"]
     assert isinstance(heteroskedasticity, dict)
     assert isinstance(influence, dict)
+
+    bp_line = (
+        "- Breusch-Pagan F-test p-value: "
+        f"{float(heteroskedasticity['breusch_pagan_f_pvalue']):.4g}"
+    )
+    cooks_line = (
+        "- Observations above Cook's-distance screening threshold: "
+        f"{int(influence['n_above_cooks_threshold'])}"
+    )
+    leverage_line = (
+        "- Observations above leverage screening threshold: "
+        f"{int(influence['n_above_leverage_threshold'])}"
+    )
     lines.extend(
         [
-            f"- Breusch-Pagan F-test p-value: "
-            f"{float(heteroskedasticity['breusch_pagan_f_pvalue']):.4g}",
-            f"- Observations above Cook's-distance screening threshold: "
-            f"{int(influence['n_above_cooks_threshold'])}",
-            f"- Observations above leverage screening threshold: "
-            f"{int(influence['n_above_leverage_threshold'])}",
+            bp_line,
+            cooks_line,
+            leverage_line,
             "",
             "### Multicollinearity VIF",
             "",
@@ -216,6 +243,7 @@ def render_markdown(report: ManagementReport) -> str:
             "| --- | ---: |",
         ]
     )
+
     vif = report.technical["multicollinearity_vif"]
     assert isinstance(vif, dict)
     for term, value in vif.items():
@@ -266,7 +294,7 @@ def _screening_status(analysis: AncovaReport, *, alpha: float) -> list[dict[str,
         covariate for covariate, pvalue in analysis.interaction_checks.items() if pvalue < alpha
     ]
 
-    rows = [
+    return [
         {
             "area": "Required-field missingness",
             "status": "caution" if analysis.n_dropped_for_missingness else "clear",
@@ -332,7 +360,6 @@ def _screening_status(analysis: AncovaReport, *, alpha: float) -> list[dict[str,
             ),
         },
     ]
-    return rows
 
 
 def _executive_summary(
