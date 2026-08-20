@@ -2,6 +2,28 @@
 
 All notable project checkpoints are documented here.
 
+## [0.5.2] - 2026-08-20
+
+### Added
+
+- Canonical Apache License 2.0 text as the repository root `LICENSE`.
+- SPDX `Apache-2.0` package/project license metadata.
+- Regression coverage that checks both the declared SPDX identifier and the root license file.
+
+### Changed
+
+- Bumped package/project metadata and showcase version from `0.5.1` to `0.5.2`.
+- Replaced the previous no-license repository caveat with an explicit Apache-2.0 licensing statement.
+- Clarified that ANCOVA Ops licensing does not relicense third-party dependencies or separately identified third-party material.
+
+### Licensing note
+
+A speculative `THIRD_PARTY_NOTICES.md` file is intentionally not added at this checkpoint. If ANCOVA Ops later incorporates or adapts third-party source material that carries notice obligations, those notices should be recorded separately and preserved as required.
+
+### Evidence and deployment status
+
+This licensing checkpoint does not change the project evidence class or deployment readiness. Current quantitative evidence remains synthetic or hand-authored, private-data pilot use remains not approved, and production deployment remains not approved.
+
 ## [0.5.1] - 2026-08-20
 
 ### Added
@@ -59,7 +81,7 @@ The v0.5.0 checkpoint is a reproducible development and research prototype. Curr
 
 ### Known release-readiness limitations
 
-- No project licence has been selected, so reuse and redistribution rights are not yet defined.
+- No project licence had been selected at the v0.5.0 checkpoint, so reuse and redistribution rights were not yet defined.
 - Pilot-specific jurisdiction/privacy review, notice/consent design, access controls, retention schedule and deletion procedure remain open.
 - Production authentication/RBAC, secrets management, monitoring, incident response and operational deployment controls are outside the current prototype scope.
 - Real-data validation is still required before any synthetic benchmark result can support an operational claim.
