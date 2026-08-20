@@ -1,6 +1,6 @@
-# Project Status — v0.5.0
+# Project Status — v0.5.1
 
-ANCOVA Ops v0.5.0 is a reproducible development and research checkpoint covering service-request structuring, explainable routing, outcome analysis, offline adaptive-policy research and synthetic longitudinal modelling.
+ANCOVA Ops v0.5.1 is a reproducible development and research checkpoint covering service-request structuring, explainable routing, outcome analysis, offline adaptive-policy research and synthetic longitudinal modelling, with a reviewer-facing one-command showcase layer.
 
 It is **not** a production deployment and is **not** approved for real private resident/customer data.
 
@@ -8,6 +8,7 @@ It is **not** a production deployment and is **not** approved for real private r
 
 | Area | Status | Primary command / interface | Evidence class |
 | --- | --- | --- | --- |
+| Portfolio showcase | Implemented | `ancova-showcase` | Aggregates existing development evidence |
 | Request intelligence and routing | Implemented | `uvicorn ancova_ops.api:app --reload` | Transparent development rules |
 | Routing audit and human override | Implemented | API case/review endpoints | Local development persistence |
 | Routing benchmark | Implemented | `ancova-evaluate` | Hand-authored fixture |
@@ -21,7 +22,7 @@ It is **not** a production deployment and is **not** approved for real private r
 | Real private-data pilot | Blocked | none | Requires separate governance approval |
 | Production adaptive routing | Blocked | none | Requires real-data validation and deployment controls |
 
-## What v0.5.0 demonstrates
+## What v0.5.1 demonstrates
 
 1. An unstructured service request can be converted into a structured, explainable routing recommendation with versioned implementation metadata.
 2. Human review can confirm or override routing without erasing the original machine/rule recommendation.
@@ -30,8 +31,9 @@ It is **not** a production deployment and is **not** approved for real private r
 5. Candidate routing policies can be evaluated offline with time-aware validation and support-aware inverse-propensity methods without silently treating logged outcomes as counterfactual truth.
 6. Longitudinal recurrence modelling can be benchmarked with leakage controls and simpler references before sequence-model complexity is considered.
 7. Data-governance boundaries are executable in CI rather than existing only as prose.
+8. An external reviewer can run one command and inspect the Phase 1–4 evidence chain without manually assembling outputs from separate commands.
 
-## What v0.5.0 does not demonstrate
+## What v0.5.1 does not demonstrate
 
 - real-world routing accuracy;
 - causal improvement in service outcomes;
@@ -39,11 +41,15 @@ It is **not** a production deployment and is **not** approved for real private r
 - validated psychological/emotional measurement;
 - safe use of real resident/customer histories;
 - evidence that adaptive routing outperforms the baseline in a real deployment;
-- evidence that an LSTM or other sequence model is needed.
+- evidence that an LSTM or other sequence model is needed;
+- any new real-world evidence merely because the portfolio showcase aggregates existing outputs.
 
 ## Command surface
 
 ```bash
+# One-command portfolio view
+ancova-showcase
+
 # Test and development
 pytest
 python -m ancova_ops.demo
@@ -82,7 +88,8 @@ The repository deliberately separates evidence classes:
 2. **Synthetic outcome results** — useful for validating statistical and reporting workflows, not real service claims.
 3. **Synthetic logged-policy results** — useful for validating offline policy-evaluation mechanics, not production counterfactual evidence.
 4. **Synthetic longitudinal results** — useful for model-comparison and leakage testing, not resident/customer forecasting claims.
-5. **Real pilot evidence** — not present in v0.5.0 and cannot be implied from the earlier classes.
+5. **Portfolio showcase output** — an aggregation of classes 1–4, not a higher evidence class.
+6. **Real pilot evidence** — not present in v0.5.1 and cannot be implied from the earlier classes.
 
 ## Current blockers before a real pilot
 
@@ -96,4 +103,4 @@ Production deployment additionally requires real-data validation, authenticated 
 
 ## Version
 
-Project metadata and the Python package both report `0.5.0`. CI contains a regression test that fails if those versions drift apart.
+Project metadata and the Python package both report `0.5.1`. CI contains a regression test that fails if those versions or the registered CLI surface drift apart.
