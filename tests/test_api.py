@@ -81,12 +81,115 @@ def test_routed_case_can_be_retrieved_with_audit_history(tmp_path, monkeypatch) 
     assert case_payload["message"] == request["message"]
     assert case_payload["latest_decision"]["decision_id"] == routed.json()["decision_id"]
     assert case_payload["latest_decision"]["router_version"] == "baseline-route-v1"
+    assert case_payload["latest_review"] is None
+    assert case_payload["effective_routing"]["source"] == "machine_recommendation"
 
     audit_response = client.get("/v1/cases/api-persist-1/routing-decisions")
     assert audit_response.status_code == 200
     audit_payload = audit_response.json()
     assert len(audit_payload) == 1
     assert audit_payload[0]["reasons"] == routed.json()["reasons"]
+
+
+def test_human_confirmation_keeps_effective_routing_while_recording_feedback(
+    tmp_path,
+    monkeypatch,
+) -> None:
+    monkeypatch.setenv("ANCOVA_OPS_DB_PATH", str(tmp_path / "confirm-api.sqlite3"))
+    routed = client.post(
+        "/v1/route",
+        json={"case_id": "api-confirm-1", "message": "There is a water leak."},
+    )
+    assert routed.status_code == 200
+    machine = routed.json()
+
+    review = client.post(
+        "/v1/cases/api-confirm-1/routing-reviews",
+        json={
+            "decision_id": machine["decision_id"],
+            "actor_id": "staff-001",
+            "reason": "Reviewed and confirmed the recommendation.",
+            "department": machine["department"],
+            "priority": machine["priority"],
+            "requires_human_review": machine["requires_human_review"],
+            "secondary_notify": machine["secondary_notify"],
+        },
+    )
+    assert review.status_code == 200
+    assert review.json()["action"] == "confirmed"
+
+    case_response = client.get("/v1/cases/api-confirm-1")
+    payload = case_response.json()
+    assert payload["latest_decision"]["department"] == machine["department"]
+    assert payload["latest_review"]["action"] == "confirmed"
+    assert payload["effective_routing"]["source"] == "human_review"
+    assert payload["effective_routing"]["department"] == machine["department"]
+
+
+def test_human_override_changes_effective_routing_without_overwriting_machine_decision(
+    tmp_path,
+    monkeypatch,
+) -> None:
+    monkeypatch.setenv("ANCOVA_OPS_DB_PATH", str(tmp_path / "override-api.sqlite3"))
+    routed = client.post(
+        "/v1/route",
+        json={"case_id": "api-override-1", "message": "There is a water leak."},
+    )
+    assert routed.status_code == 200
+    machine = routed.json()
+    assert machine["department"] == "maintenance"
+
+    review = client.post(
+        "/v1/cases/api-override-1/routing-reviews",
+        json={
+            "decision_id": machine["decision_id"],
+            "actor_id": "staff-002",
+            "reason": "On-site review shows an active security threat in the affected area.",
+            "department": "security",
+            "priority": "critical",
+            "requires_human_review": True,
+            "secondary_notify": None,
+        },
+    )
+    assert review.status_code == 200
+    review_payload = review.json()
+    assert review_payload["action"] == "overridden"
+    assert review_payload["final_decision"]["department"] == "security"
+
+    case_response = client.get("/v1/cases/api-override-1")
+    payload = case_response.json()
+    assert payload["latest_decision"]["department"] == "maintenance"
+    assert payload["latest_review"]["actor_id"] == "staff-002"
+    assert payload["effective_routing"]["source"] == "human_review"
+    assert payload["effective_routing"]["department"] == "security"
+
+    reviews = client.get("/v1/cases/api-override-1/routing-reviews")
+    assert reviews.status_code == 200
+    assert len(reviews.json()) == 1
+    assert reviews.json()[0]["action"] == "overridden"
+
+
+def test_routing_review_rejects_blank_reason(tmp_path, monkeypatch) -> None:
+    monkeypatch.setenv("ANCOVA_OPS_DB_PATH", str(tmp_path / "blank-review.sqlite3"))
+    routed = client.post(
+        "/v1/route",
+        json={"case_id": "api-review-blank", "message": "There is a water leak."},
+    )
+    machine = routed.json()
+
+    review = client.post(
+        "/v1/cases/api-review-blank/routing-reviews",
+        json={
+            "decision_id": machine["decision_id"],
+            "actor_id": "staff-003",
+            "reason": "   ",
+            "department": machine["department"],
+            "priority": machine["priority"],
+            "requires_human_review": machine["requires_human_review"],
+            "secondary_notify": machine["secondary_notify"],
+        },
+    )
+    assert review.status_code == 422
 
 
 def test_case_outcome_can_be_saved_and_retrieved(tmp_path, monkeypatch) -> None:

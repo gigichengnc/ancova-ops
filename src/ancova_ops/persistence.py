@@ -9,11 +9,15 @@ from pathlib import Path
 
 from .models import RoutingDecision, ServiceCase
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 
 class CaseConflictError(ValueError):
     """Raised when an existing case ID is reused with different original case data."""
+
+
+class ReviewConflictError(ValueError):
+    """Raised when a human review targets a stale routing recommendation."""
 
 
 @dataclass(slots=True, frozen=True)
@@ -43,10 +47,23 @@ class StoredRoutingDecision:
 
 
 @dataclass(slots=True, frozen=True)
+class StoredRoutingReview:
+    review_id: int
+    decision_id: int
+    created_at: str
+    actor_type: str
+    actor_id: str
+    action: str
+    reason: str
+    final_decision: RoutingDecision
+
+
+@dataclass(slots=True, frozen=True)
 class StoredCase:
     case: ServiceCase
     created_at: str
     latest_decision: StoredRoutingDecision | None
+    latest_review: StoredRoutingReview | None
     outcome: CaseOutcome | None
 
 
@@ -64,8 +81,17 @@ def _utc_now() -> str:
     return datetime.now(UTC).isoformat()
 
 
+def _decision_state(decision: RoutingDecision) -> tuple[object, ...]:
+    return (
+        decision.department,
+        decision.priority,
+        decision.requires_human_review,
+        decision.secondary_notify,
+    )
+
+
 class SQLiteCaseStore:
-    """Small SQLite persistence layer for Phase 1 service cases and audit history."""
+    """SQLite persistence for service cases, machine decisions and human reviews."""
 
     def __init__(self, database: str | Path) -> None:
         self.database = str(database)
@@ -80,12 +106,98 @@ class SQLiteCaseStore:
         connection.execute("PRAGMA foreign_keys = ON")
         return connection
 
-    def migrate(self) -> None:
-        """Create or validate the current database schema.
+    @staticmethod
+    def _ensure_base_schema(connection: sqlite3.Connection) -> None:
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS service_cases (
+                case_id TEXT PRIMARY KEY,
+                message TEXT NOT NULL,
+                issue_category TEXT,
+                urgency REAL NOT NULL,
+                frustration REAL NOT NULL,
+                complexity REAL NOT NULL,
+                previous_related_cases INTEGER NOT NULL,
+                vulnerability_flag INTEGER NOT NULL,
+                created_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS routing_decisions (
+                decision_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                case_id TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                intelligence_version TEXT NOT NULL,
+                router_version TEXT NOT NULL,
+                department TEXT NOT NULL,
+                priority TEXT NOT NULL,
+                requires_human_review INTEGER NOT NULL,
+                secondary_notify TEXT,
+                reasons_json TEXT NOT NULL,
+                FOREIGN KEY (case_id) REFERENCES service_cases(case_id)
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_routing_decisions_case_id
+            ON routing_decisions(case_id, decision_id)
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS case_outcomes (
+                case_id TEXT PRIMARY KEY,
+                response_time_minutes REAL,
+                resolution_time_minutes REAL,
+                reassigned INTEGER,
+                escalated INTEGER,
+                satisfaction REAL,
+                observed_at TEXT NOT NULL,
+                FOREIGN KEY (case_id) REFERENCES service_cases(case_id)
+            )
+            """
+        )
 
-        Phase 1 uses an explicit integer schema version. Future incompatible schema
-        changes should add a migration step before incrementing SCHEMA_VERSION.
-        """
+    @staticmethod
+    def _ensure_review_schema(connection: sqlite3.Connection) -> None:
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS routing_reviews (
+                review_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                case_id TEXT NOT NULL,
+                decision_id INTEGER NOT NULL,
+                created_at TEXT NOT NULL,
+                actor_type TEXT NOT NULL,
+                actor_id TEXT NOT NULL,
+                action TEXT NOT NULL CHECK(action IN ('confirmed', 'overridden')),
+                reason TEXT NOT NULL,
+                final_department TEXT NOT NULL,
+                final_priority TEXT NOT NULL,
+                final_requires_human_review INTEGER NOT NULL,
+                final_secondary_notify TEXT,
+                FOREIGN KEY (case_id) REFERENCES service_cases(case_id),
+                FOREIGN KEY (decision_id) REFERENCES routing_decisions(decision_id)
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_routing_reviews_case_id
+            ON routing_reviews(case_id, review_id)
+            """
+        )
+        connection.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_routing_reviews_decision_id
+            ON routing_reviews(decision_id, review_id)
+            """
+        )
+
+    def migrate(self) -> None:
+        """Create the latest schema and migrate supported older databases."""
 
         with self._connect() as connection:
             connection.execute(
@@ -99,69 +211,27 @@ class SQLiteCaseStore:
             row = connection.execute(
                 "SELECT value FROM schema_metadata WHERE key = 'schema_version'"
             ).fetchone()
-            if row is None:
-                connection.execute(
-                    "INSERT INTO schema_metadata (key, value) VALUES ('schema_version', ?)",
-                    (str(SCHEMA_VERSION),),
-                )
-            elif int(row["value"]) != SCHEMA_VERSION:
+            version = 1 if row is None else int(row["value"])
+            if version > SCHEMA_VERSION:
                 raise RuntimeError(
-                    "Unsupported database schema version "
-                    f"{row['value']}; expected {SCHEMA_VERSION}"
+                    f"Unsupported database schema version {version}; expected <= {SCHEMA_VERSION}"
                 )
 
-            connection.execute(
-                """
-                CREATE TABLE IF NOT EXISTS service_cases (
-                    case_id TEXT PRIMARY KEY,
-                    message TEXT NOT NULL,
-                    issue_category TEXT,
-                    urgency REAL NOT NULL,
-                    frustration REAL NOT NULL,
-                    complexity REAL NOT NULL,
-                    previous_related_cases INTEGER NOT NULL,
-                    vulnerability_flag INTEGER NOT NULL,
-                    created_at TEXT NOT NULL
+            self._ensure_base_schema(connection)
+            if row is None:
+                connection.execute(
+                    "INSERT INTO schema_metadata (key, value) VALUES ('schema_version', '1')"
                 )
-                """
-            )
-            connection.execute(
-                """
-                CREATE TABLE IF NOT EXISTS routing_decisions (
-                    decision_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    case_id TEXT NOT NULL,
-                    created_at TEXT NOT NULL,
-                    intelligence_version TEXT NOT NULL,
-                    router_version TEXT NOT NULL,
-                    department TEXT NOT NULL,
-                    priority TEXT NOT NULL,
-                    requires_human_review INTEGER NOT NULL,
-                    secondary_notify TEXT,
-                    reasons_json TEXT NOT NULL,
-                    FOREIGN KEY (case_id) REFERENCES service_cases(case_id)
+
+            if version < 2:
+                self._ensure_review_schema(connection)
+                connection.execute(
+                    "UPDATE schema_metadata SET value = '2' WHERE key = 'schema_version'"
                 )
-                """
-            )
-            connection.execute(
-                """
-                CREATE INDEX IF NOT EXISTS idx_routing_decisions_case_id
-                ON routing_decisions(case_id, decision_id)
-                """
-            )
-            connection.execute(
-                """
-                CREATE TABLE IF NOT EXISTS case_outcomes (
-                    case_id TEXT PRIMARY KEY,
-                    response_time_minutes REAL,
-                    resolution_time_minutes REAL,
-                    reassigned INTEGER,
-                    escalated INTEGER,
-                    satisfaction REAL,
-                    observed_at TEXT NOT NULL,
-                    FOREIGN KEY (case_id) REFERENCES service_cases(case_id)
-                )
-                """
-            )
+                version = 2
+
+            if version == 2:
+                self._ensure_review_schema(connection)
 
     @staticmethod
     def _case_values(case: ServiceCase) -> tuple[object, ...]:
@@ -189,6 +259,41 @@ class SQLiteCaseStore:
             and bool(row["vulnerability_flag"]) is case.vulnerability_flag
         )
 
+    @staticmethod
+    def _stored_decision(row: sqlite3.Row) -> StoredRoutingDecision:
+        return StoredRoutingDecision(
+            decision_id=row["decision_id"],
+            created_at=row["created_at"],
+            intelligence_version=row["intelligence_version"],
+            router_version=row["router_version"],
+            decision=RoutingDecision(
+                department=row["department"],
+                priority=row["priority"],
+                requires_human_review=bool(row["requires_human_review"]),
+                secondary_notify=row["secondary_notify"],
+                reasons=tuple(json.loads(row["reasons_json"])),
+            ),
+        )
+
+    @staticmethod
+    def _stored_review(row: sqlite3.Row) -> StoredRoutingReview:
+        return StoredRoutingReview(
+            review_id=row["review_id"],
+            decision_id=row["decision_id"],
+            created_at=row["created_at"],
+            actor_type=row["actor_type"],
+            actor_id=row["actor_id"],
+            action=row["action"],
+            reason=row["reason"],
+            final_decision=RoutingDecision(
+                department=row["final_department"],
+                priority=row["final_priority"],
+                requires_human_review=bool(row["final_requires_human_review"]),
+                secondary_notify=row["final_secondary_notify"],
+                reasons=(),
+            ),
+        )
+
     def save_routed_case(
         self,
         case: ServiceCase,
@@ -199,7 +304,7 @@ class SQLiteCaseStore:
         reasons: tuple[str, ...] | list[str] | None = None,
         created_at: str | None = None,
     ) -> int:
-        """Persist a case and append an immutable routing-decision audit record."""
+        """Persist a case and append an immutable machine/rule routing decision."""
 
         timestamp = created_at or _utc_now()
         stored_reasons = tuple(reasons) if reasons is not None else decision.reasons
@@ -246,6 +351,101 @@ class SQLiteCaseStore:
             if decision_id is None:
                 raise RuntimeError("SQLite did not return a routing decision ID")
             return int(decision_id)
+
+    def save_routing_review(
+        self,
+        case_id: str,
+        decision_id: int,
+        final_decision: RoutingDecision,
+        *,
+        actor_id: str,
+        reason: str,
+        actor_type: str = "human_staff",
+        created_at: str | None = None,
+    ) -> StoredRoutingReview:
+        """Append a human review while preserving the source machine recommendation."""
+
+        actor_id = actor_id.strip()
+        actor_type = actor_type.strip()
+        reason = reason.strip()
+        if not actor_id:
+            raise ValueError("actor_id must not be blank")
+        if not actor_type:
+            raise ValueError("actor_type must not be blank")
+        if not reason:
+            raise ValueError("reason must not be blank")
+
+        timestamp = created_at or _utc_now()
+        with self._connect() as connection:
+            case_exists = connection.execute(
+                "SELECT 1 FROM service_cases WHERE case_id = ?", (case_id,)
+            ).fetchone()
+            if case_exists is None:
+                raise KeyError(case_id)
+
+            source_row = connection.execute(
+                "SELECT * FROM routing_decisions WHERE decision_id = ? AND case_id = ?",
+                (decision_id, case_id),
+            ).fetchone()
+            if source_row is None:
+                raise KeyError(decision_id)
+
+            latest_row = connection.execute(
+                """
+                SELECT * FROM routing_decisions
+                WHERE case_id = ?
+                ORDER BY decision_id DESC
+                LIMIT 1
+                """,
+                (case_id,),
+            ).fetchone()
+            if latest_row is None or latest_row["decision_id"] != decision_id:
+                raise ReviewConflictError(
+                    "routing review must reference the latest machine/rule recommendation"
+                )
+
+            source = self._stored_decision(source_row).decision
+            action = (
+                "confirmed"
+                if _decision_state(source) == _decision_state(final_decision)
+                else "overridden"
+            )
+            cursor = connection.execute(
+                """
+                INSERT INTO routing_reviews (
+                    case_id, decision_id, created_at, actor_type, actor_id, action, reason,
+                    final_department, final_priority, final_requires_human_review,
+                    final_secondary_notify
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    case_id,
+                    decision_id,
+                    timestamp,
+                    actor_type,
+                    actor_id,
+                    action,
+                    reason,
+                    final_decision.department,
+                    final_decision.priority,
+                    int(final_decision.requires_human_review),
+                    final_decision.secondary_notify,
+                ),
+            )
+            review_id = cursor.lastrowid
+            if review_id is None:
+                raise RuntimeError("SQLite did not return a routing review ID")
+
+        return StoredRoutingReview(
+            review_id=int(review_id),
+            decision_id=decision_id,
+            created_at=timestamp,
+            actor_type=actor_type,
+            actor_id=actor_id,
+            action=action,
+            reason=reason,
+            final_decision=final_decision,
+        )
 
     def save_outcome(
         self,
@@ -303,6 +503,17 @@ class SQLiteCaseStore:
                 """,
                 (case_id,),
             ).fetchone()
+            review_row = None
+            if decision_row is not None:
+                review_row = connection.execute(
+                    """
+                    SELECT * FROM routing_reviews
+                    WHERE decision_id = ?
+                    ORDER BY review_id DESC
+                    LIMIT 1
+                    """,
+                    (decision_row["decision_id"],),
+                ).fetchone()
             outcome_row = connection.execute(
                 "SELECT * FROM case_outcomes WHERE case_id = ?", (case_id,)
             ).fetchone()
@@ -318,22 +529,8 @@ class SQLiteCaseStore:
             vulnerability_flag=bool(case_row["vulnerability_flag"]),
         )
 
-        latest_decision = None
-        if decision_row is not None:
-            reasons = tuple(json.loads(decision_row["reasons_json"]))
-            latest_decision = StoredRoutingDecision(
-                decision_id=decision_row["decision_id"],
-                created_at=decision_row["created_at"],
-                intelligence_version=decision_row["intelligence_version"],
-                router_version=decision_row["router_version"],
-                decision=RoutingDecision(
-                    department=decision_row["department"],
-                    priority=decision_row["priority"],
-                    requires_human_review=bool(decision_row["requires_human_review"]),
-                    secondary_notify=decision_row["secondary_notify"],
-                    reasons=reasons,
-                ),
-            )
+        latest_decision = None if decision_row is None else self._stored_decision(decision_row)
+        latest_review = None if review_row is None else self._stored_review(review_row)
 
         outcome = None
         if outcome_row is not None:
@@ -353,11 +550,12 @@ class SQLiteCaseStore:
             case=case,
             created_at=case_row["created_at"],
             latest_decision=latest_decision,
+            latest_review=latest_review,
             outcome=outcome,
         )
 
     def list_routing_decisions(self, case_id: str) -> list[StoredRoutingDecision]:
-        """Return the full immutable routing audit history for a case."""
+        """Return the full immutable machine/rule routing audit history for a case."""
 
         with self._connect() as connection:
             rows = connection.execute(
@@ -368,20 +566,18 @@ class SQLiteCaseStore:
                 """,
                 (case_id,),
             ).fetchall()
+        return [self._stored_decision(row) for row in rows]
 
-        return [
-            StoredRoutingDecision(
-                decision_id=row["decision_id"],
-                created_at=row["created_at"],
-                intelligence_version=row["intelligence_version"],
-                router_version=row["router_version"],
-                decision=RoutingDecision(
-                    department=row["department"],
-                    priority=row["priority"],
-                    requires_human_review=bool(row["requires_human_review"]),
-                    secondary_notify=row["secondary_notify"],
-                    reasons=tuple(json.loads(row["reasons_json"])),
-                ),
-            )
-            for row in rows
-        ]
+    def list_routing_reviews(self, case_id: str) -> list[StoredRoutingReview]:
+        """Return human confirmations and overrides in append-only order."""
+
+        with self._connect() as connection:
+            rows = connection.execute(
+                """
+                SELECT * FROM routing_reviews
+                WHERE case_id = ?
+                ORDER BY review_id ASC
+                """,
+                (case_id,),
+            ).fetchall()
+        return [self._stored_review(row) for row in rows]

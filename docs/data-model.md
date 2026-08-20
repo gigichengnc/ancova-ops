@@ -28,7 +28,8 @@ original data is rejected rather than silently overwriting the historical record
 | `secondary_notify` | string / null | Additional team to notify |
 | `reasons` | list[string] | Audit-friendly explanation |
 
-Each routing decision is appended as a separate audit record. The persistent record also stores:
+Each machine/rule routing decision is appended as a separate audit record. The persistent record
+also stores:
 
 - `decision_id`;
 - decision timestamp;
@@ -37,6 +38,33 @@ Each routing decision is appended as a separate audit record. The persistent rec
 - the exact explanation list returned for that decision.
 
 A case can therefore be re-routed later without deleting the earlier recommendation.
+
+## RoutingReview
+
+A routing review records a human operational decision separately from the source recommendation.
+
+| Field | Type | Purpose |
+| --- | --- | --- |
+| `review_id` | int | Stable review event identifier |
+| `decision_id` | int | Machine/rule recommendation being reviewed |
+| `actor_type` | string | Reviewer type; Phase 1 uses `human_staff` |
+| `actor_id` | string | Reviewer identifier supplied by the caller |
+| `action` | string | `confirmed` or `overridden` |
+| `reason` | string | Short explanation for the human decision |
+| final department | string | Final operational owner |
+| final priority | string | Final operational priority |
+| final human-review flag | bool | Final review/escalation requirement |
+| final secondary notification | string / null | Final secondary team notification |
+
+The source `RoutingDecision` is never overwritten. A `confirmed` review means the final operational
+fields match the source decision. An `overridden` review means at least one operational field differs.
+
+For a case display, `effective_routing` uses the latest human review of the latest machine/rule
+decision when one exists; otherwise it uses the latest machine/rule decision. This is a view of the
+current operational state, not a replacement for either audit history.
+
+Human confirmations and overrides are feedback signals, not automatically ground-truth labels.
+See `docs/human-routing-feedback.md` for the evaluation and identity limitations.
 
 ## CaseOutcome
 
@@ -56,18 +84,19 @@ analysis. Missing values remain missing; the application does not invent replace
 
 ## SQLite Phase 1 schema
 
-Phase 1 uses a local SQLite database with four schema objects:
+Phase 1 uses a local SQLite database with five main schema objects:
 
 1. `schema_metadata` — explicit schema version;
 2. `service_cases` — immutable original request plus structured operational features;
-3. `routing_decisions` — append-only routing audit history;
-4. `case_outcomes` — latest observed outcome record for a case.
+3. `routing_decisions` — append-only machine/rule routing audit history;
+4. `routing_reviews` — append-only human confirmations and overrides;
+5. `case_outcomes` — latest observed outcome record for a case.
 
 The default development path is `.ancova_ops/ancova_ops.sqlite3`. It can be changed with the
 `ANCOVA_OPS_DB_PATH` environment variable. Local SQLite files are ignored by Git.
 
-Schema version `1` is created automatically. Future incompatible changes should include an
-explicit migration before incrementing the supported schema version.
+Schema version `2` adds `routing_reviews`. Databases created under schema version `1` are migrated
+automatically to version `2` without rewriting existing case or routing records.
 
 ## Analytical dataset
 
@@ -86,7 +115,8 @@ with columns such as:
 - `data_provenance`.
 
 A later phase will add an explicit export from persistent real/pilot case records into an
-analysis-ready table. Operational storage and analytical datasets should remain distinct.
+analysis-ready table. Operational storage and analytical datasets should remain distinct. The export
+should preserve system recommendation, human final decision and observed outcome as separate fields.
 
 ## Measurement warning
 

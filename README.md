@@ -21,7 +21,9 @@ Request understanding
 (intent, issue, urgency, emotion, context)
         |
         v
-Routing and human hand-off
+Machine/rule routing recommendation
+        |
+        +--> Human confirmation / override (preserved separately)
         |
         v
 Operational outcome
@@ -100,6 +102,24 @@ Retrieve the stored case:
 curl http://127.0.0.1:8000/v1/cases/demo-api-001
 ```
 
+A staff reviewer can confirm or override the latest routing recommendation by posting the complete final routing state. The `decision_id` must reference the latest machine/rule recommendation:
+
+```bash
+curl -X POST http://127.0.0.1:8000/v1/cases/demo-api-001/routing-reviews \
+  -H "Content-Type: application/json" \
+  -d '{
+    "decision_id": 1,
+    "actor_id": "staff-001",
+    "reason": "On-site review requires Security ownership.",
+    "department": "security",
+    "priority": "critical",
+    "requires_human_review": true,
+    "secondary_notify": null
+  }'
+```
+
+The original machine/rule recommendation is not overwritten. The case endpoint exposes both the latest recommendation and latest human review, plus an `effective_routing` view for the current operational state.
+
 Record an observed outcome:
 
 ```bash
@@ -114,7 +134,7 @@ curl -X PUT http://127.0.0.1:8000/v1/cases/demo-api-001/outcome \
   }'
 ```
 
-Phase 1 scores are transparent heuristics for development; they are not validated psychological or production risk measures.
+Phase 1 scores are transparent heuristics for development; they are not validated psychological or production risk measures. Human confirmations and overrides are also feedback signals rather than automatically trusted training labels.
 
 ## Project principles
 
@@ -122,17 +142,17 @@ Phase 1 scores are transparent heuristics for development; they are not validate
 - **Evidence before claims:** benchmark or simulated results are labelled clearly; project-specific performance claims require project-specific evidence.
 - **Interpretable first:** begin with transparent baseline logic before complex ML.
 - **Synthetic-data friendly:** early development uses synthetic cases so the software can be tested without exposing resident or customer data.
-- **Auditability:** original cases, routing explanations and implementation versions are preserved instead of silently overwritten.
+- **Auditability:** original cases, routing explanations, implementation versions and human reviews are preserved instead of silently overwritten.
 - **Modular:** property management is the first use case, not the only possible domain.
 
 ## Repository layout
 
 ```text
 src/ancova_ops/
-├── api.py          # FastAPI request / routing / case-history interface
+├── api.py          # FastAPI routing, review and case-history interface
 ├── intelligence.py # Transparent raw-text feature baseline
 ├── models.py       # Core service-case models
-├── persistence.py  # SQLite case, routing-audit and outcome storage
+├── persistence.py  # SQLite case, machine-decision, review and outcome storage
 ├── routing.py      # Explainable baseline routing
 ├── synthetic.py    # Synthetic outcome data for development
 ├── analytics.py    # ANCOVA fitting and diagnostics
@@ -143,6 +163,7 @@ docs/
 ├── architecture.md
 ├── statistical-methodology.md
 ├── data-model.md
+├── human-routing-feedback.md
 └── roadmap.md
 ```
 
@@ -166,7 +187,7 @@ docs/
 - human-readable routing explanation
 - case persistence and routing audit log
 - outcome capture
-- human override / correction capture
+- human confirmation / override capture
 - routing evaluation harness
 
 ### Phase 2 — Outcome analytics
@@ -190,7 +211,7 @@ docs/
 
 ## Status
 
-Phase 0 is complete. Phase 1 now includes the request API, transparent request-intelligence baseline, SQLite case persistence, append-only routing audit history, and outcome capture. Manual override capture and the routing evaluation harness are next.
+Phase 0 is complete. Phase 1 now includes the request API, transparent request-intelligence baseline, SQLite case persistence, append-only routing audit history, outcome capture, and separate human confirmation/override records. The routing evaluation harness is next.
 
 ## Important note on metrics
 

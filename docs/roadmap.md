@@ -24,7 +24,8 @@ Goal: accept a real request and produce a structured, reviewable routing recomme
 - [x] persistence layer;
 - [x] routing decision audit log;
 - [x] outcome capture fields;
-- [ ] manual override / correction capture;
+- [x] human confirmation / override capture;
+- [x] effective routing view without overwriting machine history;
 - [ ] evaluation dataset for classifier and router.
 
 ## Phase 2 — Outcome analytics
