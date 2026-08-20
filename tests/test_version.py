@@ -11,6 +11,7 @@ EXPECTED_SCRIPTS = {
     "ancova-longitudinal",
     "ancova-management-report",
     "ancova-policy",
+    "ancova-showcase",
 }
 
 
@@ -22,10 +23,10 @@ def test_package_version_matches_project_metadata() -> None:
     project = _project_metadata()
 
     assert ancova_ops.__version__ == project["version"]
-    assert ancova_ops.__version__ == "0.5.0"
+    assert ancova_ops.__version__ == "0.5.1"
 
 
-def test_v050_cli_surface_is_registered() -> None:
+def test_v051_cli_surface_is_registered() -> None:
     project = _project_metadata()
 
     assert set(project["scripts"]) == EXPECTED_SCRIPTS
