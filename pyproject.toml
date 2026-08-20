@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ancova-ops"
-version = "0.5.4"
+version = "0.6.0"
 description = "Human-centred service intelligence with interpretable routing and outcome analytics"
 readme = "README.md"
 license = "Apache-2.0"
@@ -46,6 +46,7 @@ ancova-management-report = "ancova_ops.management_report:main"
 ancova-policy = "ancova_ops.adaptive:main"
 ancova-longitudinal = "ancova_ops.longitudinal:main"
 ancova-showcase = "ancova_ops.showcase:main"
+ancova-validity = "ancova_ops.validity:main"
 
 [project.optional-dependencies]
 dev = [
