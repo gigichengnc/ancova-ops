@@ -5,53 +5,23 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue.svg)](pyproject.toml)
 
-**Human-centred service intelligence for turning unstructured requests into measurable, adaptive operations.**
+**Evidence-aware service operations: Operate → Audit → Evaluate.**
 
-ANCOVA Ops is a reproducible research/software prototype that turns unstructured service requests into explainable routing recommendations, preserves human review and audit history, records outcomes, and evaluates operations with downstream ANCOVA/regression, offline policy research and leakage-aware longitudinal benchmarks.
+ANCOVA Ops is a reproducible research/software prototype for turning unstructured service requests into explainable operational decisions, preserving human and machine decision history, recording outcomes, and testing whether management conclusions are actually supported by the available data.
 
-It originated from an HKMU Hackathon 2026 concept and now serves as a broader service-operations research platform; property management is the first use case, not the product boundary.
+> **It is not designed to make management decisions. It is designed to make unsupported management conclusions harder to reach.**
 
-| Reviewer question | Current answer |
-| --- | --- |
-| What is implemented? | Phases 0–4: routing, audit/history, outcome analytics, adaptive-policy research and longitudinal benchmarking |
-| Fastest demo | `ancova-showcase` |
-| Current release | `v0.5.4` |
-| Evidence class | Synthetic data + a small hand-authored routing fixture |
-| Citation | Root `CITATION.cff`; Zenodo-ready metadata, no DOI claimed yet |
-| Real private-data pilot / production | **Not approved** |
-| License | Apache-2.0 |
+The project originated from an HKMU Hackathon 2026 concept. Property management is the first use case, not the product boundary, and ANCOVA is one evaluation method rather than the product itself.
 
-> Current benchmark outputs are development evidence. They are not real-world service-improvement claims, causal department rankings or production-readiness evidence.
+## Operate → Audit → Evaluate
 
-## One-command showcase
+| Layer | What ANCOVA Ops does | Current status |
+| --- | --- | --- |
+| **Operate** | Structure service requests, extract transparent operational signals and recommend an explainable route | Implemented |
+| **Audit** | Preserve the original request, machine/rule decision, human confirmation or override, implementation version and observed outcome | Implemented |
+| **Evaluate** | Separate raw summaries from adjusted evidence, test whether a comparison is identifiable, surface assumptions/warnings and withhold unsupported rankings | Implemented as a synthetic research workflow |
 
-After installation, the fastest way to understand the project is:
-
-```bash
-ancova-showcase
-```
-
-This generates:
-
-```text
-.ancova_ops/showcase/showcase.md
-```
-
-For Markdown plus structured JSON:
-
-```bash
-ancova-showcase \
-  --output .ancova_ops/showcase/showcase.md \
-  --json-output .ancova_ops/showcase/showcase.json
-```
-
-The showcase runs the existing service-intelligence example, routing benchmark, ANCOVA outcome-analysis workflow, adaptive-routing offline study, longitudinal benchmark and governance/readiness summary in one deterministic report. It does **not** introduce a new model or turn synthetic results into real-world evidence.
-
-See [`docs/portfolio-showcase.md`](docs/portfolio-showcase.md).
-
-## What the project does
-
-ANCOVA Ops deliberately separates operational decision support from downstream statistical evaluation:
+The evaluation layer deliberately asks **whether a comparison is supportable before reporting an adjusted result**.
 
 ```text
 Service request
@@ -65,48 +35,113 @@ Explainable routing recommendation
       +--> Human confirmation / override
       |
       v
-Observed service outcome
+Observed outcome
       |
       v
-Auditable historical records
+Auditable history
       |
-      +--> Routing benchmark
-      +--> ANCOVA / regression + diagnostics + management report
-      +--> Offline adaptive-policy evaluation + approval / rollback
-      +--> Synthetic longitudinal recurrence benchmark
+      v
+Descriptive summaries
+      |
+      v
+Comparison support / identifiability gate
+      |
+      +--> insufficient overlap --> WITHHOLD adjusted ranking
+      |
+      +--> sufficient overlap
+              |
+              v
+        appropriate evaluation method
+              |
+              +--> regression / ANCOVA
+              +--> interaction-aware analysis
+              +--> offline policy evaluation
+              +--> longitudinal / survival-style research
 ```
 
-ANCOVA means **Analysis of Covariance**. It is used downstream to compare service outcomes while adjusting for pre-specified case-mix covariates; it is **not** used to score individual messages.
+## v0.6.0 checkpoint
 
-A simplified analysis might be:
+| Reviewer question | Current answer |
+| --- | --- |
+| Fastest end-to-end demo | `ancova-showcase` |
+| Evaluation validity benchmark | `ancova-validity` |
+| Current checkpoint | `v0.6.0` |
+| Evidence class | Synthetic data + a small hand-authored routing fixture |
+| Real private-data pilot / production | **Not approved** |
+| License | Apache-2.0 |
+| Citation | Root `CITATION.cff`; no DOI claimed until independently verified |
+
+Current quantitative outputs are development evidence. They are not real-world service-improvement claims, causal department rankings or production-readiness evidence.
+
+## One-command showcase
+
+After installation:
+
+```bash
+ancova-showcase
+```
+
+This writes a deterministic reviewer-facing report to:
 
 ```text
-resolution_time ~ department + urgency + frustration + complexity
+.ancova_ops/showcase/showcase.md
 ```
 
-Adjusted estimates are model-based associations, not automatic causal effects or staff-performance rankings.
+For Markdown plus JSON:
 
-## v0.5.4 capability map
+```bash
+ancova-showcase \
+  --output .ancova_ops/showcase/showcase.md \
+  --json-output .ancova_ops/showcase/showcase.json
+```
 
-| Capability | Status | Entry point | Evidence class |
-| --- | --- | --- | --- |
-| Portfolio showcase | Implemented | `ancova-showcase` | Aggregates existing development evidence |
-| Request intelligence + explainable routing | Implemented | FastAPI `/v1/route` | Transparent development rules |
-| Immutable case / routing audit history | Implemented | SQLite persistence | Local development records |
-| Human confirmation / override | Implemented | routing-review API | Human feedback, not automatic ground truth |
-| Routing evaluation | Implemented | `ancova-evaluate` | Hand-authored fixture |
-| Data-governance validation | Implemented | `ancova-governance-check` | Machine-readable development policy |
-| ANCOVA / regression workflow | Implemented | `ancova-analyze` | Synthetic outcomes |
-| Management evidence report | Implemented | `ancova-management-report` | Synthetic outcomes |
-| Adaptive-routing offline study | Implemented | `ancova-policy evaluate` | Synthetic logged-policy data |
-| Policy approval / rollback registry | Implemented locally | `ancova-policy` | Development lifecycle control |
-| Longitudinal recurrence benchmark | Implemented | `ancova-longitudinal` | Synthetic longitudinal histories |
-| Citation metadata | Implemented | `CITATION.cff` | CFF 1.2.0; DOI not yet minted |
-| LSTM / sequence modelling | Deferred | — | Requires incremental-value evidence |
-| Real private-data pilot | Blocked | — | Separate governance approval required |
-| Production deployment | Blocked | — | Real-data + security/operations evidence required |
+The showcase aggregates the existing routing, audit/governance, outcome-analysis, adaptive-policy and longitudinal research workflows. It does not create a new evidence class.
 
-For detailed boundaries, see [`docs/project-status.md`](docs/project-status.md), [`docs/release-readiness.md`](docs/release-readiness.md) and [`CHANGELOG.md`](CHANGELOG.md).
+## Evaluation validity benchmark
+
+The v0.6.0 validity benchmark tests the evaluation layer against synthetic scenarios where the truth is known:
+
+```bash
+ancova-validity
+ancova-validity --json
+```
+
+It checks four behaviours:
+
+1. **Known-effect recovery** — with overlapping case mix, adjusted department contrasts should approximately recover the synthetic effects used to generate the data.
+2. **Measured confounding** — when routing is deliberately associated with issue type, adding the measured issue-category adjustment should materially reduce bias relative to a naive model that omits it.
+3. **No-overlap refusal** — when issue category determines department, the comparison is marked `not_identifiable`; adjusted estimates and department ANOVA results are withheld.
+4. **Slope-interaction detection** — when a covariate has a deliberately different department-specific slope, the workflow should flag the common-slope interpretation rather than hide the interaction.
+
+Passing this benchmark means the software behaves as intended on known synthetic scenarios. It does **not** validate real service outcomes or establish causal effects.
+
+## Outcome evaluation
+
+For the current continuous resolution-time example, the default development model is:
+
+```text
+resolution_hours
+~ C(department)
++ C(issue_category)
++ urgency
++ frustration
++ complexity
++ previous_related_cases
+```
+
+Before publishing adjusted department estimates, ANCOVA Ops checks whether department effects can be separated from issue-category case mix. It reports:
+
+- department × issue-category counts;
+- structural connectivity / estimability;
+- practical overlap at a minimum cell-size threshold;
+- design-matrix rank;
+- `supported`, `weak_overlap`, or `not_identifiable` status.
+
+If the comparison is not identifiable, adjusted department estimates and department ANOVA results are withheld. If it is estimable, adjusted department means are **standardised over the observed complete-case case-mix distribution** rather than forcing every case into one arbitrary issue-category reference.
+
+Even a supported comparison remains model-based and associational. It is not automatically causal and must not be used as a staff-performance league table.
+
+See [`docs/statistical-methodology.md`](docs/statistical-methodology.md).
 
 ## Quick start
 
@@ -116,6 +151,7 @@ source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
 pytest
 ancova-showcase
+ancova-validity
 ```
 
 The package supports Python 3.11+ and CI tests Python 3.11 and 3.12.
@@ -128,21 +164,6 @@ Run the API:
 uvicorn ancova_ops.api:app --reload
 ```
 
-Example request:
-
-```bash
-curl -X POST http://127.0.0.1:8000/v1/route \
-  -H "Content-Type: application/json" \
-  -d '{
-    "case_id": "demo-api-001",
-    "message": "The air conditioner is leaking again and an elderly resident may slip.",
-    "previous_related_cases": 2,
-    "vulnerability_flag": true
-  }'
-```
-
-Machine/rule recommendations are preserved even when a later human review changes the effective operational routing. Local development case history is stored in `.ancova_ops/ancova_ops.sqlite3` by default and is ignored by Git.
-
 Core endpoints:
 
 ```text
@@ -154,141 +175,102 @@ GET  /v1/cases/{case_id}/routing-reviews
 PUT  /v1/cases/{case_id}/outcome
 ```
 
-## Development workflows
+Machine/rule recommendations are preserved even when a later human review changes the effective operational route. Human review is not automatically treated as ground truth.
 
-Routing evaluation:
+## Development commands
 
 ```bash
+# Routing benchmark
 ancova-evaluate
 ancova-evaluate --json
-```
 
-The transparent baseline currently scores `10 / 11` department accuracy, `2 / 5` expected-human-review recall and `11 / 11` explanation coverage on a small hand-authored development fixture. These are fixture results, not production estimates.
-
-Governance validation:
-
-```bash
+# Governance
 ancova-governance-check
 ancova-governance-check --json
-```
 
-Outcome analysis and management reporting:
-
-```bash
+# Outcome evaluation
 ancova-analyze
 ancova-analyze --json
 ancova-management-report
-```
 
-The ANCOVA/regression workflow exposes missingness, group sizes, residual diagnostics, heteroskedasticity, multicollinearity, influence, interaction checks, adjusted estimates, confidence intervals and warnings. The management report keeps raw observed summaries separate from adjusted estimates.
+# Evaluation validity
+ancova-validity
+ancova-validity --json
 
-Adaptive-routing research:
-
-```bash
+# Offline adaptive-routing research
 ancova-policy evaluate
-ancova-policy evaluate --register
 ancova-policy status
-```
 
-The candidate is evaluated only on synthetic logged-policy data with chronological validation and support-aware inverse-propensity methods. Passing an offline gate does not authorise deployment, and registry activation is intentionally not wired into `/v1/route`.
-
-Longitudinal benchmark:
-
-```bash
+# Longitudinal benchmark
 ancova-longitudinal
 ancova-longitudinal --json
 ```
 
-The benchmark compares a recency/frequency logistic baseline, a discrete-time hazard model and a random forest on the same later validation window with a purged chronological split. Sequence modelling remains `deferred_not_justified_by_current_benchmark` until a same-benchmark experiment demonstrates reproducible incremental value.
+## Capability map
+
+| Capability | Status | Evidence class |
+| --- | --- | --- |
+| Request intelligence + explainable routing | Implemented | Transparent development rules |
+| Immutable case / routing history | Implemented | Local development persistence |
+| Human confirmation / override | Implemented | Human feedback, not automatic ground truth |
+| Outcome capture | Implemented | Local development records |
+| Routing benchmark | Implemented | Hand-authored fixture |
+| Governance validation | Implemented | Machine-readable development policy |
+| Raw-versus-adjusted management report | Implemented | Synthetic outcomes |
+| Department/issue-category overlap and identifiability gate | Implemented | Synthetic development evidence |
+| Known-effect/confounding/no-overlap validity benchmark | Implemented | Synthetic known-truth scenarios |
+| Regression / ANCOVA diagnostics | Implemented | Synthetic outcomes |
+| Offline adaptive-policy study | Implemented | Synthetic logged-policy data |
+| Longitudinal recurrence benchmark | Implemented | Synthetic histories |
+| Sequence/LSTM modelling | Deferred | Requires incremental-value evidence |
+| Real private-data pilot | Blocked | Separate governance approval required |
+| Production deployment | Blocked | Real-data, security and operational evidence required |
+
+## Method follows the question
+
+ANCOVA/regression is not forced onto every outcome. Examples of cases that need a different method or a refusal include:
+
+- binary outcomes such as resolved/unresolved → logistic-type modelling may be more appropriate;
+- censored time-to-resolution → survival/time-to-event methods may be more appropriate;
+- repeated observations within building/team/customer → clustered or hierarchical models may be required;
+- material department-specific slopes → interaction-aware models should replace a common-slope interpretation;
+- no department/case-type overlap → **do not rank departments**;
+- routing-policy counterfactual questions → offline policy evaluation rather than ordinary ANCOVA.
+
+A final v1.0 applicability layer will make this method-selection boundary explicit as `use`, `caution`, `reject`, or `recommend alternative` rather than trying to implement every statistical model.
+
+## Evidence and governance boundary
+
+The repository is deliberately synthetic-first. Current quantitative results come from synthetic data or a small hand-authored fixture unless explicitly stated otherwise.
+
+Do **not** report current benchmark outputs as:
+
+- real service improvements;
+- causal department or staff effects;
+- production routing accuracy;
+- validated psychological measurement;
+- evidence that a policy should be deployed;
+- evidence that private resident/customer histories are safe to process.
+
+A real-data pilot remains blocked until privacy/legal review, notice/consent requirements where applicable, access control, retention/deletion, identity linkage, incident handling and real-data quality protocols are approved.
 
 ## Project principles
 
+- **Operate, Audit, Evaluate:** operational support and evidence review are separate responsibilities.
 - **Human-in-the-loop:** recommendations support staff rather than silently replacing them.
 - **Evidence before claims:** synthetic and hand-authored results are labelled as such.
-- **Interpretable first:** simple transparent references precede complex ML.
-- **Complexity must earn its place:** richer models must beat simpler baselines on the same future benchmark.
+- **Refuse unsupported comparisons:** a missing identification basis is a result, not an inconvenience to hide.
+- **Method follows the question:** ANCOVA is one tool, not a mandatory product feature.
+- **Interpretable first:** transparent references precede complex ML.
+- **Complexity must earn its place:** richer models must beat simpler baselines on the same benchmark.
 - **Data minimisation:** operational usefulness does not automatically justify analytics or long-term retention.
 - **Auditability:** original decisions, human reviews, implementation versions and outcomes remain separable.
-- **Non-causal reporting:** adjusted associations are not presented as causal department/staff rankings.
-- **Offline before deployment:** adaptive-policy candidates remain research objects until separate approval and integration work exists.
-- **Leakage-aware validation:** future events cannot enter historical model features or overlapping training labels.
-- **Modular:** property management is the first use case, not the product definition.
+- **Non-causal reporting:** adjusted associations are not presented as causal rankings.
 
-## Repository layout
-
-```text
-LICENSE
-CITATION.cff
-README.md
-CHANGELOG.md
-
-src/ancova_ops/
-├── api.py
-├── intelligence.py
-├── models.py
-├── persistence.py
-├── routing.py
-├── evaluation.py
-├── governance.py
-├── analytics.py
-├── analysis_report.py
-├── management_report.py
-├── adaptive.py
-├── longitudinal.py
-├── showcase.py
-├── synthetic.py
-└── demo.py
-
-config/
-└── data-governance.json
-
-data/evaluation/
-└── hand_authored_v1.json
-
-docs/
-├── architecture.md
-├── project-status.md
-├── release-readiness.md
-├── portfolio-showcase.md
-├── citation.md
-├── roadmap.md
-├── hackathon-origin.md
-├── data-model.md
-├── data-governance.md
-├── routing-evaluation.md
-├── human-routing-feedback.md
-├── statistical-methodology.md
-├── management-report.md
-├── adaptive-routing.md
-└── longitudinal-benchmark.md
-```
-
-## Evidence and deployment status
-
-Phases 0–4 and the v0.5.4 showcase have runnable development workflows. Current quantitative evidence comes from synthetic data or the small hand-authored routing fixture unless explicitly stated otherwise.
-
-Do **not** report current benchmark outputs as real service improvements, causal effects, production routing accuracy or real resident/customer predictions.
-
-A real-data pilot remains blocked until privacy/legal review, notice/consent requirements where applicable, access control, retention/deletion, identity linkage, incident handling and real-data quality protocols are approved. Production additionally requires authenticated access, RBAC, secrets management, monitoring, recovery targets, security testing and real-world validation.
-
-## Hackathon-origin metrics
-
-Figures in the original hackathon presentation are not treated as measured ANCOVA Ops outcomes unless they can be traced to project-specific experiments. See [`docs/hackathon-origin.md`](docs/hackathon-origin.md).
-
-## Citation
-
-ANCOVA Ops includes a root [`CITATION.cff`](CITATION.cff) file using Citation File Format 1.2.0. Use GitHub's **Cite this repository** control or the CFF metadata when citing the software.
-
-No DOI is claimed at this checkpoint. The repository is prepared for Zenodo archiving, but the Zenodo/GitHub account integration must be enabled separately before relying on automatic archival of future releases. After a verified DOI is minted, it should be added back to `CITATION.cff` in a reviewed release.
-
-See [`docs/citation.md`](docs/citation.md) for the citation and Zenodo workflow.
-
-## GitHub storefront settings
-
-Recommended repository About text, topic tags and social-preview copy are documented in [`docs/github-storefront.md`](docs/github-storefront.md). These settings are intentionally kept separate from model/evidence claims.
-
-## License
+## License and citation
 
 ANCOVA Ops is licensed under the **Apache License 2.0**. See [`LICENSE`](LICENSE).
 
-The Apache-2.0 license applies to ANCOVA Ops material distributed under this repository license. Third-party dependencies and any separately identified third-party material remain subject to their own licences and notices.
+Software citation metadata is stored in [`CITATION.cff`](CITATION.cff). See [`docs/citation.md`](docs/citation.md) for the archival/DOI workflow. A DOI is not claimed until a real archival record is verified.
+
+For detailed project boundaries, see [`docs/project-status.md`](docs/project-status.md), [`docs/release-readiness.md`](docs/release-readiness.md), [`docs/roadmap.md`](docs/roadmap.md) and [`CHANGELOG.md`](CHANGELOG.md).
