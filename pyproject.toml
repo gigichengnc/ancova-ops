@@ -17,6 +17,9 @@ dependencies = [
   "uvicorn>=0.30",
 ]
 
+[project.scripts]
+ancova-evaluate = "ancova_ops.evaluation:main"
+
 [project.optional-dependencies]
 dev = [
   "httpx>=0.27",
