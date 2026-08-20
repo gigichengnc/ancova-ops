@@ -1,4 +1,4 @@
-# Release Readiness — v0.5.2
+# Release Readiness — v0.5.3
 
 This checklist distinguishes three different meanings of "ready":
 
@@ -6,11 +6,11 @@ This checklist distinguishes three different meanings of "ready":
 2. **pilot ready** — approved to process real private service data in a controlled study;
 3. **production ready** — approved to operate as a real service-routing system.
 
-ANCOVA Ops v0.5.2 is intended to satisfy the first category only. The portfolio showcase and Apache-2.0 licensing improve repository reviewability and reuse clarity; they do not change the pilot or production boundary.
+ANCOVA Ops v0.5.3 is intended to satisfy the first category only. The portfolio showcase, polished GitHub storefront, release automation and Apache-2.0 licensing improve repository reviewability and reuse clarity; they do not change the pilot or production boundary.
 
 ## Repository checkpoint readiness
 
-- [x] package version is `0.5.2` in both project metadata and `ancova_ops.__version__`;
+- [x] package version is `0.5.3` in both project metadata and `ancova_ops.__version__`;
 - [x] Python 3.11 and 3.12 CI coverage;
 - [x] lint and unit tests;
 - [x] smoke tests for every major CLI workflow;
@@ -23,7 +23,9 @@ ANCOVA Ops v0.5.2 is intended to satisfy the first category only. The portfolio 
 - [x] root Apache License 2.0 text and SPDX `Apache-2.0` package metadata;
 - [x] synthetic/private-data governance boundary validated in CI;
 - [x] adaptive-policy research remains separated from the operational route path;
-- [x] sequence-model work remains explicitly deferred rather than implied to be complete.
+- [x] sequence-model work remains explicitly deferred rather than implied to be complete;
+- [x] README storefront communicates purpose, evidence class and demo path quickly;
+- [x] automatic release publication is gated on successful `main` CI.
 
 ### Licensing boundary
 
@@ -69,11 +71,11 @@ Production requires all pilot controls plus additional engineering and operation
 
 **Production status: NOT READY / NOT APPROVED.**
 
-## Evidence claims allowed at v0.5.2
+## Evidence claims allowed at v0.5.3
 
 Acceptable wording:
 
-> ANCOVA Ops v0.5.2 implements reproducible synthetic and hand-authored development workflows for explainable routing, outcome analysis, offline policy evaluation and longitudinal model comparison, with a one-command portfolio showcase. The repository is licensed under Apache-2.0.
+> ANCOVA Ops v0.5.3 implements reproducible synthetic and hand-authored development workflows for explainable routing, outcome analysis, offline policy evaluation and longitudinal model comparison, with a one-command portfolio showcase. The repository is licensed under Apache-2.0 and published as a versioned GitHub checkpoint.
 
 Not acceptable without new evidence:
 
