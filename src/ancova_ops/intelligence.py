@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+INTELLIGENCE_VERSION = "baseline-request-intelligence-v1"
+
 
 @dataclass(slots=True, frozen=True)
 class RequestFeatures:

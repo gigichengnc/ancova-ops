@@ -73,6 +73,12 @@ Run the Phase 1 API:
 uvicorn ancova_ops.api:app --reload
 ```
 
+By default, API case history is stored in `.ancova_ops/ancova_ops.sqlite3`. To use another local database:
+
+```bash
+export ANCOVA_OPS_DB_PATH=/path/to/ancova-ops.sqlite3
+```
+
 Example request:
 
 ```bash
@@ -86,7 +92,29 @@ curl -X POST http://127.0.0.1:8000/v1/route \
   }'
 ```
 
-The endpoint returns structured issue features, routing, priority, human-review requirements and an explanation trail. Phase 1 scores are transparent heuristics for development; they are not validated psychological or production risk measures.
+The route endpoint returns structured issue features, routing, priority, human-review requirements, an explanation trail, and version identifiers for the request-intelligence and routing implementations. The routed case and decision are persisted automatically.
+
+Retrieve the stored case:
+
+```bash
+curl http://127.0.0.1:8000/v1/cases/demo-api-001
+```
+
+Record an observed outcome:
+
+```bash
+curl -X PUT http://127.0.0.1:8000/v1/cases/demo-api-001/outcome \
+  -H "Content-Type: application/json" \
+  -d '{
+    "response_time_minutes": 10,
+    "resolution_time_minutes": 90,
+    "reassigned": false,
+    "escalated": false,
+    "satisfaction": 8.0
+  }'
+```
+
+Phase 1 scores are transparent heuristics for development; they are not validated psychological or production risk measures.
 
 ## Project principles
 
@@ -94,15 +122,17 @@ The endpoint returns structured issue features, routing, priority, human-review 
 - **Evidence before claims:** benchmark or simulated results are labelled clearly; project-specific performance claims require project-specific evidence.
 - **Interpretable first:** begin with transparent baseline logic before complex ML.
 - **Synthetic-data friendly:** early development uses synthetic cases so the software can be tested without exposing resident or customer data.
+- **Auditability:** original cases, routing explanations and implementation versions are preserved instead of silently overwritten.
 - **Modular:** property management is the first use case, not the only possible domain.
 
 ## Repository layout
 
 ```text
 src/ancova_ops/
-├── api.py          # FastAPI request / routing interface
+├── api.py          # FastAPI request / routing / case-history interface
 ├── intelligence.py # Transparent raw-text feature baseline
 ├── models.py       # Core service-case models
+├── persistence.py  # SQLite case, routing-audit and outcome storage
 ├── routing.py      # Explainable baseline routing
 ├── synthetic.py    # Synthetic outcome data for development
 ├── analytics.py    # ANCOVA fitting and diagnostics
@@ -134,7 +164,10 @@ docs/
 - urgency and contextual scoring
 - department classification
 - human-readable routing explanation
-- case persistence
+- case persistence and routing audit log
+- outcome capture
+- human override / correction capture
+- routing evaluation harness
 
 ### Phase 2 — Outcome analytics
 
@@ -157,7 +190,7 @@ docs/
 
 ## Status
 
-Phase 0 is complete. Phase 1 is in progress: the first API and transparent request-intelligence baseline are being added before persistence or ML integration.
+Phase 0 is complete. Phase 1 now includes the request API, transparent request-intelligence baseline, SQLite case persistence, append-only routing audit history, and outcome capture. Manual override capture and the routing evaluation harness are next.
 
 ## Important note on metrics
 
