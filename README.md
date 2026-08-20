@@ -57,6 +57,16 @@ resolution_time ~ department * frustration + urgency + complexity
 
 The repository will document assumptions and validation requirements instead of treating statistical significance as automatic evidence of causal impact.
 
+## Quick start
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
+pip install -e ".[dev]"
+pytest
+python -m ancova_ops.demo
+```
+
 ## Project principles
 
 - **Human-in-the-loop:** the system supports staff rather than pretending every service case should be fully automated.
@@ -65,16 +75,22 @@ The repository will document assumptions and validation requirements instead of 
 - **Synthetic-data friendly:** early development uses synthetic cases so the software can be tested without exposing resident or customer data.
 - **Modular:** property management is the first use case, not the only possible domain.
 
-## Planned architecture
+## Repository layout
 
 ```text
 src/ancova_ops/
-├── intake/        # Request ingestion and normalization
-├── nlp/           # Issue, urgency and emotion/context extraction
-├── routing/       # Routing rules and decision policies
-├── analytics/     # ANCOVA and outcome analysis
-├── prediction/    # Escalation / longitudinal models (later phases)
-└── data/          # Schemas and data utilities
+├── models.py       # Core service-case models
+├── routing.py      # Transparent baseline routing
+├── synthetic.py    # Synthetic outcome data for development
+├── analytics.py    # ANCOVA fitting and diagnostics
+└── demo.py         # Small runnable demonstration
+
+docs/
+├── hackathon-origin.md
+├── architecture.md
+├── statistical-methodology.md
+├── data-model.md
+└── roadmap.md
 ```
 
 ## Roadmap
