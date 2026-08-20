@@ -74,7 +74,7 @@ def build_showcase_payload(
     )
 
     return {
-        "showcase_version": "0.5.1",
+        "showcase_version": "0.5.2",
         "evidence_status": {
             "routing_fixture": fixture.provenance,
             "routing_label_status": fixture.label_status,
