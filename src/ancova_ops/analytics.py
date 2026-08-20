@@ -7,15 +7,17 @@ import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
+from patsy import build_design_matrices
 from statsmodels.stats.anova import anova_lm
 from statsmodels.stats.diagnostic import het_breuschpagan
 from statsmodels.stats.outliers_influence import OLSInfluence, variance_inflation_factor
 
 COVARIATES = ("urgency", "frustration", "complexity", "previous_related_cases")
-REQUIRED_COLUMNS = ("department", *COVARIATES, "resolution_hours")
+CASE_MIX_FACTORS = ("issue_category",)
+REQUIRED_COLUMNS = ("department", *CASE_MIX_FACTORS, *COVARIATES, "resolution_hours")
 DEFAULT_FORMULA = (
-    "resolution_hours ~ C(department) + urgency + frustration + complexity "
-    "+ previous_related_cases"
+    "resolution_hours ~ C(department) + C(issue_category) + urgency + frustration "
+    "+ complexity + previous_related_cases"
 )
 
 
@@ -35,6 +37,7 @@ class AncovaReport:
     n_dropped_for_missingness: int
     missingness: dict[str, dict[str, float | int]]
     group_sizes: dict[str, int]
+    identifiability: dict[str, object]
     residual_diagnostics: dict[str, float]
     heteroskedasticity: dict[str, float]
     multicollinearity: dict[str, float]
@@ -57,6 +60,7 @@ class AncovaReport:
                 "group_sizes": self.group_sizes,
             },
             "missingness": self.missingness,
+            "identifiability": self.identifiability,
             "diagnostics": {
                 "residuals": self.residual_diagnostics,
                 "heteroskedasticity": self.heteroskedasticity,
@@ -85,6 +89,10 @@ def validate_outcome_frame(data: pd.DataFrame, *, minimum_rows: int = 20) -> Non
     departments = data["department"].dropna().astype(str).unique()
     if len(departments) < 2:
         raise ValueError("at least two departments are required for adjusted comparisons")
+
+    issue_categories = data["issue_category"].dropna().astype(str).unique()
+    if len(issue_categories) < 1:
+        raise ValueError("at least one issue category is required for case-mix adjustment")
 
 
 def prepare_complete_cases(data: pd.DataFrame) -> pd.DataFrame:
@@ -120,9 +128,104 @@ def missingness_summary(data: pd.DataFrame) -> dict[str, dict[str, float | int]]
     }
 
 
-def residual_diagnostics(result: AncovaResult) -> dict[str, float]:
-    """Return machine-readable residual diagnostics for development use."""
+def routing_overlap_diagnostics(
+    data: pd.DataFrame,
+    *,
+    formula: str = DEFAULT_FORMULA,
+    minimum_cell_n: int = 5,
+) -> dict[str, object]:
+    """Assess whether department effects are separable from issue-category case mix."""
 
+    complete = prepare_complete_cases(data)
+    counts = pd.crosstab(
+        complete["issue_category"].astype(str),
+        complete["department"].astype(str),
+    ).sort_index().sort_index(axis=1)
+    departments = [str(value) for value in counts.columns]
+    categories = [str(value) for value in counts.index]
+
+    structural_connected = _department_graph_connected(counts, minimum_cell_n=1)
+    practical_connected = _department_graph_connected(counts, minimum_cell_n=minimum_cell_n)
+
+    model_spec = smf.ols(formula=formula, data=complete)
+    exog = np.asarray(model_spec.exog, dtype=float)
+    design_rank = int(np.linalg.matrix_rank(exog))
+    design_columns = int(exog.shape[1])
+    design_full_rank = design_rank == design_columns
+
+    shared_categories = [
+        category for category in categories if int((counts.loc[category] > 0).sum()) >= 2
+    ]
+    supported_shared_categories = [
+        category
+        for category in categories
+        if int((counts.loc[category] >= minimum_cell_n).sum()) >= 2
+    ]
+
+    department_support: dict[str, dict[str, int]] = {}
+    for department in departments:
+        observed_categories = int((counts[department] > 0).sum())
+        supported_categories = int((counts[department] >= minimum_cell_n).sum())
+        shared_supported = int(
+            sum(
+                counts.loc[category, department] >= minimum_cell_n
+                and (counts.loc[category] >= minimum_cell_n).sum() >= 2
+                for category in categories
+            )
+        )
+        department_support[department] = {
+            "observed_issue_categories": observed_categories,
+            "supported_issue_categories": supported_categories,
+            "shared_supported_issue_categories": shared_supported,
+        }
+
+    structurally_estimable = structural_connected and design_full_rank
+    if not structurally_estimable:
+        status = "not_identifiable"
+        note = (
+            "Department and issue-category effects are not separately identifiable from the "
+            "observed design. Adjusted department comparisons are withheld."
+        )
+    elif not practical_connected:
+        status = "weak_overlap"
+        note = (
+            "The model is structurally identifiable, but practical department/issue-category "
+            "overlap is weak at the configured cell-size threshold. Interpret adjusted "
+            "comparisons cautiously and consider restricting the estimand to supported cases."
+        )
+    else:
+        status = "supported"
+        note = (
+            "The observed design separates department from issue category and has connected "
+            "practical overlap at the configured cell-size threshold. This supports model-based "
+            "comparison but does not establish causal exchangeability."
+        )
+
+    return {
+        "status": status,
+        "adjusted_comparison_estimable": structurally_estimable,
+        "design_matrix_full_rank": design_full_rank,
+        "design_matrix_rank": design_rank,
+        "design_matrix_columns": design_columns,
+        "department_issue_graph_connected": structural_connected,
+        "practical_overlap_graph_connected": practical_connected,
+        "minimum_cell_n": minimum_cell_n,
+        "n_departments": len(departments),
+        "n_issue_categories": len(categories),
+        "shared_issue_categories": shared_categories,
+        "supported_shared_issue_categories": supported_shared_categories,
+        "department_support": department_support,
+        "department_issue_counts": {
+            category: {
+                department: int(counts.loc[category, department]) for department in departments
+            }
+            for category in categories
+        },
+        "note": note,
+    }
+
+
+def residual_diagnostics(result: AncovaResult) -> dict[str, float]:
     residuals = result.model.resid
     fitted = result.model.fittedvalues
     jb_stat, jb_pvalue, skew, kurtosis = sm.stats.jarque_bera(residuals)
@@ -137,8 +240,6 @@ def residual_diagnostics(result: AncovaResult) -> dict[str, float]:
 
 
 def heteroskedasticity_diagnostics(result: AncovaResult) -> dict[str, float]:
-    """Run a Breusch-Pagan check using the fitted model design matrix."""
-
     lm_stat, lm_pvalue, f_stat, f_pvalue = het_breuschpagan(
         result.model.resid,
         result.model.model.exog,
@@ -152,8 +253,6 @@ def heteroskedasticity_diagnostics(result: AncovaResult) -> dict[str, float]:
 
 
 def multicollinearity_diagnostics(result: AncovaResult) -> dict[str, float]:
-    """Return VIF values for fitted design-matrix columns except the intercept."""
-
     exog = np.asarray(result.model.model.exog, dtype=float)
     names = list(result.model.model.exog_names)
     values: dict[str, float] = {}
@@ -169,8 +268,6 @@ def multicollinearity_diagnostics(result: AncovaResult) -> dict[str, float]:
 
 
 def influence_diagnostics(result: AncovaResult) -> dict[str, float | int]:
-    """Summarise Cook's distance and leverage using conventional screening thresholds."""
-
     influence = OLSInfluence(result.model)
     cooks = np.asarray(influence.cooks_distance[0], dtype=float)
     leverage = np.asarray(influence.hat_matrix_diag, dtype=float)
@@ -178,7 +275,6 @@ def influence_diagnostics(result: AncovaResult) -> dict[str, float | int]:
     p = int(result.model.df_model) + 1
     cooks_threshold = 4.0 / n
     leverage_threshold = 2.0 * p / n
-
     return {
         "cooks_distance_threshold": float(cooks_threshold),
         "n_above_cooks_threshold": int(np.sum(cooks > cooks_threshold)),
@@ -193,14 +289,11 @@ def department_covariate_interactions(
     data: pd.DataFrame,
     covariates: tuple[str, ...] = COVARIATES,
 ) -> dict[str, float]:
-    """Check department-by-covariate interactions for homogeneity-of-slopes concerns."""
-
     complete = prepare_complete_cases(data)
     pvalues: dict[str, float] = {}
-
     for covariate in covariates:
         other_covariates = [name for name in covariates if name != covariate]
-        rhs = f"C(department) * {covariate}"
+        rhs = f"C(department) * {covariate} + C(issue_category)"
         if other_covariates:
             rhs += " + " + " + ".join(other_covariates)
         formula = f"resolution_hours ~ {rhs}"
@@ -208,7 +301,6 @@ def department_covariate_interactions(
         table = anova_lm(model, typ=2)
         term = f"C(department):{covariate}"
         pvalues[covariate] = float(table.loc[term, "PR(>F)"])
-
     return pvalues
 
 
@@ -218,26 +310,38 @@ def adjusted_department_estimates(
     *,
     alpha: float = 0.05,
 ) -> list[dict[str, float | str]]:
-    """Estimate department means with covariates held at complete-case sample means."""
+    """Standardise department means over the observed complete-case case-mix distribution."""
 
     complete = prepare_complete_cases(data)
-    covariate_reference = {name: float(complete[name].mean()) for name in COVARIATES}
-    departments = sorted(complete["department"].astype(str).unique())
-    prediction_frame = pd.DataFrame(
-        [{"department": department, **covariate_reference} for department in departments]
-    )
-    prediction = result.model.get_prediction(prediction_frame).summary_frame(alpha=alpha)
+    overlap = routing_overlap_diagnostics(complete, formula=result.formula)
+    if not bool(overlap["adjusted_comparison_estimable"]):
+        raise ValueError(
+            "adjusted department comparisons are not identifiable from department/issue-category "
+            "overlap in this dataset"
+        )
 
+    departments = sorted(complete["department"].astype(str).unique())
     estimates: list[dict[str, float | str]] = []
-    for index, department in enumerate(departments):
-        row = prediction.iloc[index]
+    for department in departments:
+        counterfactual = complete.copy()
+        counterfactual["department"] = department
+        design = build_design_matrices(
+            [result.model.model.data.design_info],
+            counterfactual,
+            return_type="dataframe",
+        )[0]
+        contrast = np.asarray(design, dtype=float).mean(axis=0)
+        test = result.model.t_test(contrast)
+        estimate = float(np.asarray(test.effect).reshape(-1)[0])
+        interval = np.asarray(test.conf_int(alpha=alpha), dtype=float).reshape(-1, 2)[0]
         estimates.append(
             {
                 "department": department,
-                "adjusted_mean_resolution_hours": float(row["mean"]),
+                "adjusted_mean_resolution_hours": estimate,
                 "confidence_level": float(1.0 - alpha),
-                "mean_ci_lower": float(row["mean_ci_lower"]),
-                "mean_ci_upper": float(row["mean_ci_upper"]),
+                "mean_ci_lower": float(interval[0]),
+                "mean_ci_upper": float(interval[1]),
+                "standardization": "observed_complete_case_case_mix",
             }
         )
     return estimates
@@ -249,18 +353,27 @@ def build_ancova_report(
     formula: str = DEFAULT_FORMULA,
     alpha: float = 0.05,
 ) -> AncovaReport:
-    """Build the Phase 2 outcome-analysis report with diagnostics and explicit warnings."""
-
     validate_outcome_frame(data)
     missingness = missingness_summary(data)
     complete = prepare_complete_cases(data)
+    identifiability = routing_overlap_diagnostics(complete, formula=formula)
     result = fit_ancova(complete, formula=formula)
     residuals = residual_diagnostics(result)
     heteroskedasticity = heteroskedasticity_diagnostics(result)
-    vif = multicollinearity_diagnostics(result)
     influence = influence_diagnostics(result)
-    interactions = department_covariate_interactions(complete)
-    adjusted = adjusted_department_estimates(complete, result, alpha=alpha)
+
+    estimable = bool(identifiability["adjusted_comparison_estimable"])
+    if estimable:
+        vif = multicollinearity_diagnostics(result)
+        interactions = department_covariate_interactions(complete)
+        adjusted = adjusted_department_estimates(complete, result, alpha=alpha)
+        anova_table = result.anova_table
+    else:
+        vif = {}
+        interactions = {covariate: float("nan") for covariate in COVARIATES}
+        adjusted = []
+        anova_table = pd.DataFrame(columns=["sum_sq", "df", "F", "PR(>F)"])
+
     group_sizes = {
         str(name): int(count)
         for name, count in complete["department"].astype(str).value_counts().sort_index().items()
@@ -269,6 +382,7 @@ def build_ancova_report(
     warnings = _analysis_warnings(
         missingness=missingness,
         group_sizes=group_sizes,
+        identifiability=identifiability,
         residuals=residuals,
         heteroskedasticity=heteroskedasticity,
         vif=vif,
@@ -285,6 +399,7 @@ def build_ancova_report(
         n_dropped_for_missingness=len(data) - len(complete),
         missingness=missingness,
         group_sizes=group_sizes,
+        identifiability=identifiability,
         residual_diagnostics=residuals,
         heteroskedasticity=heteroskedasticity,
         multicollinearity=vif,
@@ -293,12 +408,14 @@ def build_ancova_report(
         adjusted_estimates=adjusted,
         warnings=warnings,
         interpretation_note=(
-            "Adjusted estimates describe model-based associations with covariates held at their "
-            "complete-case sample means. They are not causal effects unless the study design and "
-            "identification assumptions separately justify a causal interpretation."
+            "Adjusted department estimates are standardised over the observed complete-case case "
+            "mix and describe model-based associations. They are withheld when department and "
+            "issue category are not separately identifiable. Even when estimable, they are not "
+            "causal effects unless study design and identification assumptions separately justify "
+            "a causal interpretation."
         ),
         model=result.model,
-        anova_table=result.anova_table,
+        anova_table=anova_table,
     )
 
 
@@ -306,6 +423,7 @@ def _analysis_warnings(
     *,
     missingness: dict[str, dict[str, float | int]],
     group_sizes: dict[str, int],
+    identifiability: dict[str, object],
     residuals: dict[str, float],
     heteroskedasticity: dict[str, float],
     vif: dict[str, float],
@@ -314,6 +432,19 @@ def _analysis_warnings(
     alpha: float,
 ) -> list[str]:
     warnings: list[str] = []
+
+    if identifiability["status"] == "not_identifiable":
+        warnings.append(
+            "Department and issue category are not separately identifiable from the observed "
+            "routing design. Adjusted department estimates and department ANOVA results are "
+            "withheld; collect overlapping comparable cases or change the analytical question."
+        )
+    elif identifiability["status"] == "weak_overlap":
+        warnings.append(
+            "Department/issue-category overlap is structurally sufficient but practically weak "
+            "at the configured cell-size threshold. Restrict conclusions to supported case mix "
+            "or collect more overlapping cases."
+        )
 
     missing_fields = [
         field for field, summary in missingness.items() if int(summary["missing_count"]) > 0
@@ -356,7 +487,9 @@ def _analysis_warnings(
         )
 
     significant_interactions = [
-        covariate for covariate, pvalue in interactions.items() if pvalue < alpha
+        covariate
+        for covariate, pvalue in interactions.items()
+        if isfinite(pvalue) and pvalue < alpha
     ]
     if significant_interactions:
         warnings.append(
@@ -370,8 +503,27 @@ def _analysis_warnings(
             "Potentially influential observations exceed the Cook's-distance screening threshold. "
             "Inspect them and run sensitivity analyses rather than deleting them automatically."
         )
-
     return warnings
+
+
+def _department_graph_connected(counts: pd.DataFrame, *, minimum_cell_n: int) -> bool:
+    departments = [str(value) for value in counts.columns]
+    if len(departments) <= 1:
+        return True
+    adjacency = {department: set() for department in departments}
+    for _, row in counts.iterrows():
+        present = [department for department in departments if int(row[department]) >= minimum_cell_n]
+        for department in present:
+            adjacency[department].update(other for other in present if other != department)
+    seen = {departments[0]}
+    stack = [departments[0]]
+    while stack:
+        current = stack.pop()
+        for neighbour in adjacency[current]:
+            if neighbour not in seen:
+                seen.add(neighbour)
+                stack.append(neighbour)
+    return len(seen) == len(departments)
 
 
 def _extract_provenance(data: pd.DataFrame) -> tuple[str, ...]:
