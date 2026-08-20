@@ -1,0 +1,194 @@
+{
+  "policy_version": "development-v1",
+  "mode": "synthetic_only",
+  "deployment_status": "not_approved_for_real_private_data",
+  "defaults": {
+    "real_private_records_allowed": false,
+    "direct_identifiers_allowed": false,
+    "raw_request_text_for_training_allowed": false,
+    "human_review_as_ground_truth_allowed": false,
+    "longitudinal_personalisation_allowed": false,
+    "analytics_export_requires_pseudonymisation": true
+  },
+  "approved_development_provenance": [
+    "synthetic",
+    "hand_authored_fixture"
+  ],
+  "fields": [
+    {
+      "name": "case_id",
+      "sensitivity": "pseudonymous_identifier",
+      "operational_purpose": "Link request, routing, review and outcome records without requiring a direct personal identifier.",
+      "analytics_use": "allowed_if_pseudonymous",
+      "retention_expectation": "Synthetic development records may be regenerated or deleted at any time. A concrete pilot retention period must be approved before private data is imported.",
+      "requires_explicit_review": false
+    },
+    {
+      "name": "message",
+      "sensitivity": "restricted_free_text",
+      "operational_purpose": "Understand the service request and support an auditable operational response.",
+      "analytics_use": "excluded_by_default",
+      "retention_expectation": "For any future pilot, keep raw request text only for the approved operational need and a documented short review window, then delete or de-identify it. No pilot value is set until a pilot policy is approved.",
+      "requires_explicit_review": true
+    },
+    {
+      "name": "issue_category",
+      "sensitivity": "operational",
+      "operational_purpose": "Represent the service issue in a structured form for routing and aggregate analysis.",
+      "analytics_use": "allowed_if_pseudonymous",
+      "retention_expectation": "Retain only for the approved evaluation window; do not use it to reconstruct identity.",
+      "requires_explicit_review": false
+    },
+    {
+      "name": "urgency",
+      "sensitivity": "derived_operational_signal",
+      "operational_purpose": "Prioritise service handling using a documented operational heuristic.",
+      "analytics_use": "allowed_if_pseudonymous",
+      "retention_expectation": "Retain with the decision record for reproducibility during the approved evaluation window.",
+      "requires_explicit_review": false
+    },
+    {
+      "name": "frustration",
+      "sensitivity": "restricted_derived_signal",
+      "operational_purpose": "Represent communication intensity or emotional need for service handling; it is not a psychological diagnosis.",
+      "analytics_use": "allowed_only_for_preapproved_operational_analysis",
+      "retention_expectation": "Retain only with documented scale definitions and for the approved evaluation window. Do not convert it into a resident personality profile.",
+      "requires_explicit_review": true
+    },
+    {
+      "name": "complexity",
+      "sensitivity": "derived_operational_signal",
+      "operational_purpose": "Represent estimated operational case complexity for routing and outcome adjustment.",
+      "analytics_use": "allowed_if_pseudonymous",
+      "retention_expectation": "Retain with the decision record for reproducibility during the approved evaluation window.",
+      "requires_explicit_review": false
+    },
+    {
+      "name": "previous_related_cases",
+      "sensitivity": "longitudinal_derived_signal",
+      "operational_purpose": "Represent recurrence without exposing the content of the full historical interaction record.",
+      "analytics_use": "allowed_only_for_preapproved_operational_analysis",
+      "retention_expectation": "Prefer the minimum derived count rather than full message history. Any pilot linkage window must be defined before use.",
+      "requires_explicit_review": true
+    },
+    {
+      "name": "vulnerability_flag",
+      "sensitivity": "restricted_context_signal",
+      "operational_purpose": "Trigger additional human attention when service delivery may require accessibility or safety consideration.",
+      "analytics_use": "excluded_by_default",
+      "retention_expectation": "Do not retain longer than the operational need unless a specific evaluation purpose and safeguards are approved.",
+      "requires_explicit_review": true
+    },
+    {
+      "name": "department",
+      "sensitivity": "operational",
+      "operational_purpose": "Record recommended or effective routing destination.",
+      "analytics_use": "allowed_if_pseudonymous",
+      "retention_expectation": "Retain for the approved audit and evaluation window.",
+      "requires_explicit_review": false
+    },
+    {
+      "name": "priority",
+      "sensitivity": "operational",
+      "operational_purpose": "Record operational handling priority.",
+      "analytics_use": "allowed_if_pseudonymous",
+      "retention_expectation": "Retain for the approved audit and evaluation window.",
+      "requires_explicit_review": false
+    },
+    {
+      "name": "routing_reasons",
+      "sensitivity": "derived_operational_signal",
+      "operational_purpose": "Preserve the explanation trail for routing auditability.",
+      "analytics_use": "excluded_by_default",
+      "retention_expectation": "Retain with the routing audit record while the decision must remain reproducible; review free-text reasons for accidental personal data before analytics export.",
+      "requires_explicit_review": false
+    },
+    {
+      "name": "actor_id",
+      "sensitivity": "staff_pseudonymous_identifier",
+      "operational_purpose": "Attribute a human routing confirmation or override to the reviewing actor.",
+      "analytics_use": "excluded_by_default",
+      "retention_expectation": "Retain only for the approved audit requirement and keep it out of general model-training datasets.",
+      "requires_explicit_review": true
+    },
+    {
+      "name": "response_time_minutes",
+      "sensitivity": "operational_outcome",
+      "operational_purpose": "Measure service response performance.",
+      "analytics_use": "allowed_if_pseudonymous",
+      "retention_expectation": "Retain for the approved outcome-evaluation window.",
+      "requires_explicit_review": false
+    },
+    {
+      "name": "resolution_time_minutes",
+      "sensitivity": "operational_outcome",
+      "operational_purpose": "Measure service resolution performance.",
+      "analytics_use": "allowed_if_pseudonymous",
+      "retention_expectation": "Retain for the approved outcome-evaluation window.",
+      "requires_explicit_review": false
+    },
+    {
+      "name": "reassigned",
+      "sensitivity": "operational_outcome",
+      "operational_purpose": "Measure whether a case changed primary handler or team.",
+      "analytics_use": "allowed_if_pseudonymous",
+      "retention_expectation": "Retain for the approved outcome-evaluation window.",
+      "requires_explicit_review": false
+    },
+    {
+      "name": "escalated",
+      "sensitivity": "operational_outcome",
+      "operational_purpose": "Measure whether a case required escalation.",
+      "analytics_use": "allowed_if_pseudonymous",
+      "retention_expectation": "Retain for the approved outcome-evaluation window.",
+      "requires_explicit_review": false
+    },
+    {
+      "name": "satisfaction",
+      "sensitivity": "service_feedback",
+      "operational_purpose": "Represent voluntary service-outcome feedback when collected.",
+      "analytics_use": "allowed_if_pseudonymous",
+      "retention_expectation": "Retain only for the approved evaluation window and document how the score was collected.",
+      "requires_explicit_review": false
+    }
+  ],
+  "longitudinal_features": [
+    {
+      "name": "previous_related_cases",
+      "status": "approved_for_synthetic_development",
+      "operational_purpose": "Detect recurrence or unresolved service history using a minimum derived count.",
+      "retention_rationale": "A derived count is less revealing than retaining full historical message content.",
+      "pilot_requirement": "Define the linkage method, notice, access controls and maximum history window before a pilot."
+    },
+    {
+      "name": "resident_message_history",
+      "status": "not_approved",
+      "operational_purpose": "Potential future context for recurring service requests.",
+      "retention_rationale": "Full longitudinal free text creates unnecessary privacy and profiling risk for the current project stage.",
+      "pilot_requirement": "Requires a separately approved purpose, notice/consent analysis, minimisation plan, retention period and security review."
+    },
+    {
+      "name": "emotion_trajectory",
+      "status": "not_approved",
+      "operational_purpose": "Potential research feature for changes in communication or service need over time.",
+      "retention_rationale": "Longitudinal emotion-like inference can become unsupported psychological profiling if not tightly constrained.",
+      "pilot_requirement": "Requires validated operational definitions, explicit review, a clear necessity case, notice/consent analysis and a prohibition on personality or mental-health inference."
+    },
+    {
+      "name": "resident_profile_embedding",
+      "status": "not_approved",
+      "operational_purpose": "No approved Phase 1 purpose.",
+      "retention_rationale": "Persistent behavioural embeddings are unnecessary for the current routing and evaluation goals.",
+      "pilot_requirement": "Do not implement without a new governance review and documented need."
+    }
+  ],
+  "prohibited_by_default": [
+    "Commit real private resident or customer service records to Git.",
+    "Use direct identifiers in general analytics or model-training exports.",
+    "Train on raw private request text without a separately approved purpose and data-use basis.",
+    "Treat staff confirmations or overrides as automatic ground truth.",
+    "Infer mental-health conditions, personality traits or protected characteristics from service messages.",
+    "Create persistent resident-level behavioural profiles or embeddings without a new governance review.",
+    "Enable longitudinal personalisation experiments before notice/consent, minimisation, retention and access-control requirements are approved."
+  ]
+}

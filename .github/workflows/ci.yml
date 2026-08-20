@@ -34,3 +34,6 @@ jobs:
 
       - name: Routing evaluation smoke test
         run: ancova-evaluate --json > /tmp/ancova-routing-evaluation.json
+
+      - name: Data governance policy check
+        run: ancova-governance-check --json > /tmp/ancova-data-governance.json
