@@ -52,7 +52,8 @@ def test_management_report_blocks_ranking_when_design_is_not_identifiable() -> N
     assert report.overall_screening_status == "blocked"
     assert all(row["adjusted_mean_resolution_hours"] is None for row in report.department_comparison)
     assert "withheld" in markdown.lower()
-    assert "cannot support an adjusted department ranking" in report.executive_summary.lower()
+    assert "adjusted department comparison is withheld" in report.executive_summary.lower()
+    assert "reporting a department ranking here would be misleading" in report.executive_summary.lower()
 
 
 def test_validity_cli_returns_success(capsys) -> None:
