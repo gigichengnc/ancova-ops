@@ -67,11 +67,32 @@ pytest
 python -m ancova_ops.demo
 ```
 
+Run the Phase 1 API:
+
+```bash
+uvicorn ancova_ops.api:app --reload
+```
+
+Example request:
+
+```bash
+curl -X POST http://127.0.0.1:8000/v1/route \
+  -H "Content-Type: application/json" \
+  -d '{
+    "case_id": "demo-api-001",
+    "message": "The air conditioner is leaking again and an elderly resident may slip.",
+    "previous_related_cases": 2,
+    "vulnerability_flag": true
+  }'
+```
+
+The endpoint returns structured issue features, routing, priority, human-review requirements and an explanation trail. Phase 1 scores are transparent heuristics for development; they are not validated psychological or production risk measures.
+
 ## Project principles
 
 - **Human-in-the-loop:** the system supports staff rather than pretending every service case should be fully automated.
 - **Evidence before claims:** benchmark or simulated results are labelled clearly; project-specific performance claims require project-specific evidence.
-- **Interpretable first:** begin with transparent routing rules and classical statistical models before adding more complex sequence models.
+- **Interpretable first:** begin with transparent baseline logic before complex ML.
 - **Synthetic-data friendly:** early development uses synthetic cases so the software can be tested without exposing resident or customer data.
 - **Modular:** property management is the first use case, not the only possible domain.
 
@@ -79,8 +100,10 @@ python -m ancova_ops.demo
 
 ```text
 src/ancova_ops/
+├── api.py          # FastAPI request / routing interface
+├── intelligence.py # Transparent raw-text feature baseline
 ├── models.py       # Core service-case models
-├── routing.py      # Transparent baseline routing
+├── routing.py      # Explainable baseline routing
 ├── synthetic.py    # Synthetic outcome data for development
 ├── analytics.py    # ANCOVA fitting and diagnostics
 └── demo.py         # Small runnable demonstration
@@ -134,7 +157,7 @@ docs/
 
 ## Status
 
-Early development. The repository is being rebuilt from a 2026 hackathon proposal into a runnable and testable project.
+Phase 0 is complete. Phase 1 is in progress: the first API and transparent request-intelligence baseline are being added before persistence or ML integration.
 
 ## Important note on metrics
 
