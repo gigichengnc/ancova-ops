@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from .models import RoutingDecision, ServiceCase
 
+ROUTER_VERSION = "baseline-route-v1"
+
 ISSUE_KEYWORDS: dict[str, tuple[str, ...]] = {
     "maintenance": (
         "leak",
