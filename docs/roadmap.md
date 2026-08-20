@@ -105,18 +105,18 @@ Goal: investigate recurrence, seasonality and escalation trajectories without as
 
 The Phase 4 benchmark remains synthetic-only. Real longitudinal personalisation and private service-history modelling remain blocked until the cross-cutting pilot governance items are completed.
 
-## v0.5.0 — Project checkpoint
+## v0.5.x — Project checkpoint and presentation
 
-Goal: make Phases 0–4 understandable and reproducible as one coherent research/software checkpoint before adding more modelling complexity.
+Goal: make Phases 0–4 understandable, reproducible and clearly licensed as one coherent research/software checkpoint before adding more modelling complexity.
 
-- [x] package and project version aligned at `0.5.0`;
-- [x] version-drift regression test;
+- [x] package and project version alignment with regression coverage;
 - [x] changelog;
 - [x] current Phase 0–4 architecture map;
 - [x] concise project-status document;
 - [x] release-readiness checklist separating repository, pilot and production readiness;
 - [x] README converted into an external-facing project entry point;
-- [ ] select a project licence if reuse/modification/redistribution should be permitted.
+- [x] one-command reviewer showcase (`v0.5.1`);
+- [x] Apache License 2.0 selected and declared in root `LICENSE` plus package metadata (`v0.5.2`).
 
 ## Next gates — before a real-data pilot
 
