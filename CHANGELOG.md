@@ -2,6 +2,29 @@
 
 All notable project checkpoints are documented here.
 
+## [0.5.4] - 2026-08-20
+
+### Added
+
+- Root `CITATION.cff` using Citation File Format 1.2.0 so GitHub can render software citation metadata.
+- `docs/citation.md` describing GitHub citation, Zenodo integration, DOI follow-up and publication boundaries.
+- Public project author, keywords and repository/changelog/citation URLs in package metadata.
+- Regression coverage that keeps package, CFF version, Apache-2.0 license, author and repository citation metadata aligned.
+
+### Changed
+
+- Bumped project/package checkpoint from `0.5.3` to `0.5.4`.
+- Updated README, project status, release readiness and roadmap to distinguish citation readiness from DOI publication or peer review.
+- Kept `CITATION.cff` as the single citation metadata source rather than adding a speculative `.zenodo.json` file.
+
+### Citation and Zenodo note
+
+Zenodo supports both `CITATION.cff` and `.zenodo.json`, but gives `.zenodo.json` precedence when both files are present. ANCOVA Ops does not currently require Zenodo-specific grant/community metadata, so duplicate metadata is intentionally avoided. No DOI, ORCID, email address or affiliation is fabricated at this checkpoint.
+
+### Evidence and deployment status
+
+Citation readiness does not change the evidence class. Current quantitative results remain synthetic or hand-authored development evidence. A DOI, once minted, would make a software release persistently citable; it would not constitute peer review, real-world validation, private-data pilot approval or production readiness.
+
 ## [0.5.3] - 2026-08-20
 
 ### Changed
