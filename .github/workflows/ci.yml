@@ -38,6 +38,12 @@ jobs:
       - name: Evaluation validity smoke test
         run: ancova-validity --n 1200 --seed 23 --json > /tmp/ancova-validity.json
 
+      - name: Evaluation applicability smoke test
+        run: >-
+          ancova-applicability --outcome-type continuous
+          --comparison department_outcome --overlap-status supported --json
+          > /tmp/ancova-applicability.json
+
       - name: Adaptive routing policy smoke test
         run: ancova-policy evaluate --synthetic-n 1200 --seed 23 > /tmp/ancova-policy.json
 
