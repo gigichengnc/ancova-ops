@@ -35,6 +35,9 @@ jobs:
       - name: Routing evaluation smoke test
         run: ancova-evaluate --json > /tmp/ancova-routing-evaluation.json
 
+      - name: Evaluation validity smoke test
+        run: ancova-validity --n 1200 --seed 23 --json > /tmp/ancova-validity.json
+
       - name: Adaptive routing policy smoke test
         run: ancova-policy evaluate --synthetic-n 1200 --seed 23 > /tmp/ancova-policy.json
 
