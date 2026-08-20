@@ -1,134 +1,198 @@
 # Statistical Methodology
 
-## Role of ANCOVA
+## Role of the evaluation layer
 
-Analysis of covariance is an outcome-analysis method in this project. It is not the real-time request classifier.
+ANCOVA Ops is organised around **Operate → Audit → Evaluate**. The evaluation layer exists to reduce the risk that operational dashboards or raw averages are interpreted as evidence they cannot support.
 
-The current pre-specified development question is:
+ANCOVA/regression is one possible evaluation method. It is not the real-time request classifier, it is not an automatic staff-ranking engine, and it is not forced onto every analytical question.
 
-> After adjusting for urgency, frustration, case complexity and previous related cases, are model-based mean resolution times different across departments?
+The guiding rule is:
+
+> **Check whether the comparison is supportable first. Choose the method second. Report uncertainty and limitations with the result.**
+
+## Current development question
+
+For the continuous resolution-time example, the current development question is:
+
+> Among sufficiently comparable completed cases, after adjusting for measured pre-routing case mix, how do model-based mean resolution times differ across departments?
 
 The default model is:
 
 ```text
-resolution_hours ~ C(department) + urgency + frustration + complexity + previous_related_cases
+resolution_hours
+~ C(department)
++ C(issue_category)
++ urgency
++ frustration
++ complexity
++ previous_related_cases
 ```
 
-This is an OLS regression / ANCOVA-style model. Department is treated as the grouping factor and the remaining terms as covariates.
+`department` is the operational path/grouping factor. `issue_category` and the numeric covariates represent measured case mix that is known before or independently of the outcome being analysed.
 
-## What the model can and cannot establish
+This remains an observational, associational model unless a separate study design and identification argument supports causal interpretation.
 
-The Phase 2 workflow estimates adjusted associations under the fitted model and its assumptions. It does **not** automatically establish that moving a case to another department would cause its resolution time to change.
+## Why issue category matters
 
-Causal interpretation would require a study design and identification strategy that justify treatment assignment, exchangeability and other causal assumptions. Operational observational data should therefore be described as adjusted association unless stronger evidence exists.
+A raw department comparison can be badly misleading when departments handle different work. If maintenance receives complex repairs while another team receives routine requests, a slower raw mean does not establish worse process performance.
 
-## Data provenance boundary
+The previous development generator made issue category nearly equivalent to department, which was useful for simple code demonstrations but too easy for a serious evaluation example. The v0.6.0 synthetic outcome generator instead creates overlapping issue categories across departments with explicit artificial case-mix and department effects.
 
-Every analytical dataset must carry a provenance label. The current development policy approves synthetic and hand-authored development data only. Real private pilot or production data is not approved by the repository's current governance policy.
+The synthetic effects exist only so the software can be tested against known truth. They must never be reported as real operational performance.
 
-Synthetic results must never be reported as observed service performance.
+## Comparison-support and identifiability gate
 
-## Complete-case policy
+Before ANCOVA Ops publishes adjusted department estimates, it checks whether department and issue-category effects can be separated from the observed design.
 
-The current implementation uses complete cases for the fields required by the default model. This is a transparent development baseline, not a claim that complete-case analysis is universally appropriate.
+`routing_overlap_diagnostics()` reports:
 
-The report therefore exposes:
+- department × issue-category counts;
+- number of shared issue categories;
+- structural connectivity between departments through shared categories;
+- practical connectivity at a configurable minimum cell size;
+- design-matrix rank and column count;
+- department-specific support summaries;
+- one of three statuses: `supported`, `weak_overlap`, or `not_identifiable`.
 
-- missing count and missing fraction for every required field;
-- total row count;
-- complete-case count;
-- number of rows excluded for required-field missingness;
-- complete-case department group sizes.
+### Supported
 
-If required-field missingness is present, the report warns that the missing-data mechanism must be investigated before the resulting estimates are treated as representative. A future pilot should pre-specify whether complete-case analysis, multiple imputation, inverse-probability methods or another approach is justified.
+The design matrix is estimable and departments are connected through sufficiently populated shared issue categories at the configured threshold.
 
-## Diagnostics
+This permits model-based comparison. It does **not** prove causal exchangeability, absence of unmeasured confounding, correct model specification, or transportability beyond the observed case mix.
 
-`ancova-analyze` reports the following screening diagnostics.
+### Weak overlap
 
-### Residual distribution
+The model is structurally estimable, but practical overlap is thin. Adjusted estimates may be shown with a prominent warning, and conclusions should be restricted to the supported case mix or deferred until more comparable cases are collected.
 
-Jarque-Bera statistics, residual skew and residual kurtosis are reported. A poor normality screen is not, by itself, a reason to discard OLS, but it is a prompt to inspect whether inference or the outcome distribution is poorly matched to the model.
+### Not identifiable
 
-### Residual variance
+When department and issue category are inseparable from the observed routing design, the software withholds:
 
-A Breusch-Pagan test screens for heteroskedasticity. If residual variance is strongly non-constant, consider robust standard errors, an explicit variance model, transformation, or an outcome model whose distribution better matches resolution time.
+- adjusted department estimates;
+- department ANOVA results;
+- management-facing adjusted ranking language.
 
-### Multicollinearity
+Raw descriptive summaries may still be shown, but the report states that a department ranking would be misleading.
 
-Variance inflation factors are reported for non-intercept design-matrix columns. High VIF values indicate that coefficient-level interpretation may be unstable because predictors contain redundant information.
-
-### Influential observations
-
-Cook's distance and leverage are summarised with conventional screening thresholds. Flagged observations are not automatically errors and must not be deleted mechanically. They should be inspected and included in sensitivity analyses.
-
-### Homogeneity of slopes
-
-For each default covariate, the workflow fits a department-by-covariate interaction screen. For example:
-
-```text
-resolution_hours ~ C(department) * frustration + urgency + complexity + previous_related_cases
-```
-
-A meaningful interaction questions the classical ANCOVA assumption that the covariate slope is sufficiently similar across departments. If an interaction matters, prefer an interaction-aware model rather than removing the interaction simply to preserve a simpler ANCOVA.
+This refusal behaviour is intentional. Producing a number is not preferable to saying that the data cannot answer the question.
 
 ## Adjusted department estimates
 
-The report produces a model-based adjusted mean resolution time for each observed department, with a confidence interval. In the current implementation, the covariates are held at their complete-case sample means.
+When the comparison is estimable, adjusted department means are standardised over the **observed complete-case case-mix distribution**.
 
-These are adjusted estimates, not raw departmental averages and not causal treatment effects. The report states this limitation explicitly.
+Conceptually, ANCOVA Ops asks what the fitted model predicts if the same observed case mix were evaluated under each department label, then averages those predictions over that observed case mix. This avoids choosing an arbitrary categorical issue reference and is easier to interpret than fixing all covariates to one synthetic case.
 
-## When the default ANCOVA-style model is not appropriate
+The resulting estimates remain model-based associations. They must not be described as the causal effect of reassigning a case to another department unless a separate causal design justifies that interpretation.
 
-The workflow emits warnings rather than silently switching models. Depending on the failure mode, a later analysis may need:
+## v0.6.0 validity benchmark
 
-- heteroskedasticity-robust inference or a variance model when residual variance is non-constant;
-- an interaction-aware regression when department-specific slopes are important;
-- transformation, Gamma/log-link modelling, survival/time-to-event analysis or another positive-outcome model when resolution time is strongly skewed or censored;
-- robust regression or sensitivity analysis when a small number of observations dominate the fit;
-- predictor reduction or re-specification when multicollinearity is severe;
-- a pre-specified missing-data strategy when complete-case exclusion is not defensible;
-- hierarchical/multilevel models when outcomes are clustered by building, team, resident or time period;
-- designs and methods specifically intended for causal inference if the question is causal rather than descriptive/associational.
+`ancova-validity` runs deterministic synthetic scenarios in which the data-generating truth is known.
 
-The existence of a statistically significant department term is never sufficient on its own to claim operational causality.
+### 1. Known-effect recovery
 
-## Reproducible command
+Overlapping synthetic service outcomes contain explicit artificial department effects. The adjusted contrasts must recover the known contrasts within a pre-specified tolerance.
 
-Run the complete synthetic development report with:
+This tests whether the implemented standardisation and regression machinery can recover known effects in a setting designed to be identifiable.
+
+### 2. Measured confounding
+
+A two-department scenario deliberately routes complex and routine cases to departments with very different probabilities. The true department contrast is known.
+
+The benchmark compares:
+
+- a naive model that omits issue category; and
+- the case-mix-adjusted model that includes issue category.
+
+The adjusted model must materially reduce the induced bias relative to the naive model.
+
+### 3. No-overlap refusal
+
+A deterministic routing scenario sends each issue category to only one department. Department and issue-category effects are therefore not separately identifiable.
+
+The required behaviour is:
+
+```text
+identifiability = not_identifiable
+adjusted department estimates = withheld
+ANOVA department results = withheld
+management ranking = blocked
+```
+
+### 4. Slope-interaction detection
+
+A synthetic scenario deliberately gives one department a different urgency slope. The department × urgency interaction should be detected, warning that a common-slope ANCOVA interpretation is inappropriate.
+
+Passing all four scenarios validates software behaviour on known synthetic cases. It does not validate the method on real service data.
+
+## Other diagnostics
+
+When the main comparison is estimable, the workflow also reports:
+
+- required-field missingness and complete-case counts;
+- department group sizes;
+- Jarque–Bera residual screening;
+- Breusch–Pagan heteroskedasticity screening;
+- variance inflation factors;
+- Cook's distance and leverage summaries;
+- department-by-covariate interaction screens;
+- confidence intervals for case-mix-standardised department estimates.
+
+These are screening tools, not mechanical proof that every modelling assumption holds.
+
+## Complete-case policy
+
+The current implementation uses complete cases for the required fields. This is a transparent development baseline rather than a claim that complete-case analysis is universally appropriate.
+
+If required-field missingness exists, the report exposes the number of excluded rows and warns that the missing-data mechanism must be investigated. A real pilot would need a pre-specified missing-data strategy appropriate to its data-generating process.
+
+## Method follows the question
+
+The final method should depend on the outcome, data structure and decision question.
+
+Examples:
+
+- continuous resolution time with acceptable overlap and uncensored completion → regression/ANCOVA-style analysis may be reasonable;
+- binary resolved/unresolved outcome → logistic-type modelling may be more appropriate;
+- unresolved cases still under observation → survival/time-to-event analysis may be more appropriate;
+- repeated observations within site/team/customer → clustered or hierarchical modelling may be required;
+- material department-specific covariate slopes → interaction-aware modelling is preferable to a common-slope ANCOVA;
+- policy counterfactual questions → offline policy evaluation rather than ordinary ANCOVA;
+- insufficient department/case-type overlap → reject the comparison rather than switch to a more complicated model and pretend identification exists.
+
+The v1.0 applicability gate will make these boundaries explicit as `use`, `caution`, `reject`, or `recommend_alternative` decisions. It will not attempt to implement every possible statistical model.
+
+## Data provenance boundary
+
+Current repository analytics operate on approved development provenance only. Quantitative evidence is synthetic or hand-authored unless explicitly stated otherwise.
+
+Real private pilot or production data remains outside the repository's current approval boundary. Synthetic benchmark success must never be presented as observed service improvement.
+
+## Reproducible commands
+
+Run the outcome workflow:
 
 ```bash
 ancova-analyze
-```
-
-Machine-readable output:
-
-```bash
 ancova-analyze --json
 ```
 
-A development CSV can be supplied with:
+Run the management-facing report:
 
 ```bash
-ancova-analyze --csv path/to/data.csv --json
+ancova-management-report
 ```
 
-CSV input must contain `data_provenance`. The command validates the provenance against the repository's current development governance policy before analysis, so pilot or production provenance remains blocked until governance is separately updated and approved.
+Run the known-truth validity benchmark:
 
-## Programmatic API
+```bash
+ancova-validity
+ancova-validity --json
+```
 
-`ancova_ops.analytics.build_ancova_report()` returns:
+A development CSV can be supplied to `ancova-analyze` when it includes an approved `data_provenance` value and all required model fields.
 
-- formula and data provenance;
-- row counts and group sizes;
-- required-field missingness;
-- residual diagnostics;
-- Breusch-Pagan heteroskedasticity diagnostics;
-- VIF multicollinearity diagnostics;
-- Cook's-distance and leverage summaries;
-- department-by-covariate interaction p-values;
-- adjusted department estimates with uncertainty;
-- an ANOVA table;
-- explicit warnings and a non-causal interpretation note.
+## Interpretation boundary
 
-The lower-level `fit_ancova()` helper remains available when direct access to the fitted statsmodels object is needed.
+A statistically significant department term is never sufficient on its own to claim operational causality, staff quality, or policy effectiveness.
+
+The evaluation layer is intended to make unsupported conclusions harder to reach, including by refusing to produce adjusted rankings when the design cannot support them.
