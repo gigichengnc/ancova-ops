@@ -1,90 +1,97 @@
-# Release Readiness — v0.6.0
+# Release Readiness — v1.0.0
 
 ANCOVA Ops distinguishes four different meanings of "ready":
 
-1. **research-repository ready** — another developer can clone, install, test and understand the prototype;
-2. **citation/archive ready** — machine-readable software metadata is available for GitHub and archival services;
+1. **research-project ready** — the finite Operate → Audit → Evaluate prototype is complete, reproducible and reviewable;
+2. **citation/archive ready** — machine-readable software metadata exists for GitHub/archive tooling;
 3. **pilot ready** — approved to process real private service data in a controlled study;
 4. **production ready** — approved to operate as a real service-routing system.
 
-v0.6.0 targets the first category and the repository-side portion of the second category only.
+v1.0.0 completes category 1 and the repository-side portion of category 2 only.
 
-## Research-repository readiness
+## Research-project readiness
 
 - [x] Operate → Audit → Evaluate architecture is explicit;
-- [x] explainable request routing and human override are implemented;
-- [x] original machine/rule decisions remain auditable after human review;
+- [x] explainable request routing is implemented;
+- [x] human confirmation/override does not erase original machine history;
 - [x] outcomes are stored separately from routing decisions;
 - [x] raw and adjusted outcome summaries are separated;
-- [x] issue category is included as measured case mix in the default continuous-outcome model;
+- [x] issue category is included as measured case mix in the continuous-outcome example;
 - [x] department × issue-category overlap is reported;
-- [x] design identifiability is checked before adjusted rankings are published;
+- [x] design identifiability is checked before adjusted ranking;
 - [x] `not_identifiable` comparisons withhold adjusted estimates and department ANOVA output;
-- [x] management reports display a blocked/withheld state rather than manufacturing a ranking;
+- [x] management reports show blocked/withheld results instead of manufacturing a ranking;
 - [x] adjusted means are standardised over observed complete-case case mix when estimable;
 - [x] known-effect recovery is tested on synthetic data;
-- [x] measured-confounding adjustment is compared against a deliberately naive model;
+- [x] measured-confounding adjustment is compared with a deliberately naive model;
 - [x] no-overlap refusal is tested;
-- [x] slope-interaction detection is tested;
-- [x] missingness, heteroskedasticity, multicollinearity and influence diagnostics remain visible;
-- [x] `ancova-validity` is registered as a CLI workflow;
+- [x] common-slope violations are tested;
+- [x] evaluation applicability returns `use`, `caution`, `reject`, or `recommend_alternative`;
+- [x] binary outcomes are redirected to a logistic-type family;
+- [x] censored/time-to-event outcomes are redirected to a survival family;
+- [x] repeated/clustered observations are redirected to dependence-aware analysis;
+- [x] routing-policy questions are redirected to offline policy evaluation;
+- [x] causal intent is not cleared by ordinary observational adjustment;
+- [x] management reports surface applicability disposition/method family;
+- [x] the one-command showcase presents Operate → Audit → Evaluate and applicability;
+- [x] `ancova-applicability` is a registered CLI;
+- [x] `ancova-validity` is a registered CLI;
 - [x] Python 3.11 and 3.12 CI coverage exists;
-- [x] lint, unit tests and major workflow smoke tests are part of CI;
-- [x] synthetic/private-data governance boundary is executable in CI;
-- [x] adaptive-policy research remains separate from the live routing path;
-- [x] sequence/LSTM work remains explicitly deferred;
-- [x] Apache-2.0 licensing and CFF citation metadata are present.
+- [x] lint, unit tests and all major workflow smoke tests are in CI;
+- [x] synthetic/private-data governance remains executable in CI;
+- [x] adaptive-policy research remains separated from live routing;
+- [x] sequence/LSTM work remains deferred unless evidence justifies it;
+- [x] Apache-2.0 licensing and CFF citation metadata are present;
+- [x] README/status/roadmap explicitly freeze further research-project feature expansion after v1.
 
-The release should not be tagged until the v0.6.0 pull request passes the full Python 3.11/3.12 CI matrix on the final head commit.
+The v1.0.0 release must not be merged/tagged until the final PR head passes the full Python 3.11/3.12 CI matrix.
 
 ## Statistical/evaluation boundary
 
-v0.6.0 validates behaviour of the current continuous-outcome evaluation path on known synthetic scenarios. It does not prove that the method is appropriate for every outcome or every service dataset.
+A v1 `use` result means only that the declared question/data structure is compatible with the current method family at a high level. It does not prove:
 
-The current default path is only a candidate when:
+- the fitted model is true;
+- all relevant confounders are measured;
+- a department coefficient is causal;
+- the result is transportable beyond the supported case mix;
+- a staff-performance ranking is justified.
 
-- the outcome is compatible with the regression formulation;
-- department and case type are sufficiently separable to support the comparison;
-- the declared case mix is measured before the outcome and is substantively defensible;
-- diagnostics do not reveal a reason to replace the common-slope model;
-- the intended interpretation remains associational unless a stronger design is separately justified.
-
-The remaining v1.0 research-project task is an explicit applicability gate that can return `use`, `caution`, `reject`, or `recommend_alternative` instead of forcing ANCOVA onto incompatible questions.
+A different method family also cannot repair missing identification. For a department comparison with structural no-overlap, the correct disposition remains `reject`.
 
 ## Citation and archive readiness
 
 Repository-side citation readiness:
 
 - [x] root `CITATION.cff` uses CFF 1.2.0;
-- [x] title, public author name, version, release date, license and repository URL are recorded;
+- [x] public author name, title, version, release date, license and repository URL are recorded;
 - [x] no fabricated DOI, ORCID, email address or affiliation;
-- [x] `.zenodo.json` remains absent while no Zenodo-specific metadata requires a second source;
-- [x] DOI follow-up process is documented in `docs/citation.md`.
+- [x] `.zenodo.json` remains absent while no Zenodo-specific metadata requires a duplicate source;
+- [x] DOI follow-up is documented in `docs/citation.md`.
 
-External account steps remain optional publication/distribution work:
+Optional external publication/distribution work:
 
 - [ ] connect the repository owner account to Zenodo;
 - [ ] enable `gigichengnc/ancova-ops`;
 - [ ] archive a release and verify the DOI;
-- [ ] add the verified DOI back to `CITATION.cff` in a later reviewed checkpoint;
+- [ ] add a verified DOI back to `CITATION.cff`;
 - [ ] optionally add PyPI trusted publishing after package-build/distribution checks exist.
 
-A DOI or PyPI package does not increase the empirical evidence class.
+These are **post-v1 opportunities, not unfinished v1 research work**.
 
 ## Pilot readiness
 
-The following remain intentionally incomplete:
+The following remain intentionally incomplete and are outside the v1 research-project scope:
 
 - [ ] jurisdiction-specific privacy/legal review;
-- [ ] documented operational purpose and lawful/data-use basis for each private field;
-- [ ] notice and consent design where required;
-- [ ] concrete retention and deletion schedule;
-- [ ] pseudonymisation and identity-linkage design;
-- [ ] authenticated staff identities and role-based access control;
+- [ ] private-field purpose/lawful-use basis;
+- [ ] notice/consent design where required;
+- [ ] concrete retention/deletion schedule;
+- [ ] pseudonymisation and identity linkage;
+- [ ] authenticated staff identities and RBAC;
 - [ ] secure pilot storage and secrets management;
-- [ ] deletion/correction request procedure;
-- [ ] incident response and breach-handling process;
-- [ ] external AI/model-provider data-processing review if private text leaves the controlled environment;
+- [ ] deletion/correction procedure;
+- [ ] incident/breach response;
+- [ ] external model-provider data-processing review;
 - [ ] real-data annotation and outcome-quality protocol;
 - [ ] pilot monitoring and stop criteria.
 
@@ -92,30 +99,29 @@ The following remain intentionally incomplete:
 
 ## Production readiness
 
-Production requires all pilot controls plus:
+Production additionally requires:
 
-- [ ] representative real-data routing benchmark;
+- [ ] representative real-data routing validation;
 - [ ] real-data outcome-analysis validation;
-- [ ] defensible prospective or counterfactual evaluation of policy impact;
-- [ ] deployment architecture and environment separation;
-- [ ] authenticated API access and authorization;
-- [ ] observability, monitoring and alerting;
-- [ ] uptime, recovery and backup objectives;
-- [ ] security testing and dependency-management process;
-- [ ] policy activation runbook and rollback drill;
-- [ ] explicit policy-registry integration contract for `/v1/route`;
-- [ ] human escalation and manual fallback procedure;
-- [ ] model/rule change-control ownership;
-- [ ] production data-retention and audit-retention controls;
-- [ ] operational acceptance criteria approved by the service owner.
+- [ ] defensible evaluation of policy impact;
+- [ ] deployment/environment separation;
+- [ ] authenticated APIs and authorization;
+- [ ] monitoring/alerting;
+- [ ] backup/recovery objectives;
+- [ ] security/dependency-management process;
+- [ ] policy activation and rollback drills;
+- [ ] manual escalation/fallback procedures;
+- [ ] change-control ownership;
+- [ ] production retention/audit controls;
+- [ ] service-owner acceptance criteria.
 
 **Production status: NOT READY / NOT APPROVED.**
 
-## Claims allowed at v0.6.0
+## Claims allowed at v1.0.0
 
 Acceptable wording:
 
-> ANCOVA Ops v0.6.0 is an evidence-aware service-operations research prototype that supports explainable routing, auditable human review and outcome evaluation. Its synthetic validity benchmark checks known-effect recovery, measured-confounding adjustment, no-overlap refusal and slope-interaction detection, and it withholds adjusted department rankings when the observed design cannot separate department from case type.
+> ANCOVA Ops v1.0.0 is a completed evidence-aware service-operations research prototype organised around Operate, Audit and Evaluate. It implements explainable routing, auditable human review, outcome capture, synthetic validity tests, department/case-type identifiability checks and an evaluation applicability gate that can use, caution, reject or redirect a declared analytical question.
 
 Not acceptable without new evidence:
 
@@ -123,22 +129,14 @@ Not acceptable without new evidence:
 
 > ANCOVA proves a department or staff group performs better.
 
-> Passing the synthetic validity benchmark proves real-world accuracy or causality.
+> Passing synthetic validity/applicability checks proves real-world accuracy or causality.
 
-> A statistically significant adjusted department term proves that changing a route will improve the outcome.
+> A significant adjusted department term proves changing a route will improve outcomes.
 
-> A Zenodo DOI, Apache-2.0 license or green CI makes the software pilot- or production-ready.
+> A DOI, Apache-2.0 license, green CI or v1.0 tag makes the system private-data or production ready.
 
 ## Research-project completion rule
 
-For the **v1.0 research/portfolio project**, real private-data pilot controls and production infrastructure are explicitly out of scope.
+**The research/portfolio project is complete at v1.0.0 once the final PR head passes CI and the v1 release is created.**
 
-The project can be considered complete when:
-
-1. v0.6.0 validity behaviour is green in CI;
-2. the final applicability gate refuses or redirects inappropriate evaluation questions;
-3. the showcase and README present Operate → Audit → Evaluate consistently;
-4. the final v1.0 regression suite is green;
-5. evidence/governance boundaries remain explicit.
-
-After that point, new modelling or deployment work should require a concrete user, competition requirement, research question or pilot opportunity rather than being added merely because more features are possible.
+After that point, additional modelling or deployment work is post-v1 and should require a concrete user, competition requirement, research question or pilot opportunity.

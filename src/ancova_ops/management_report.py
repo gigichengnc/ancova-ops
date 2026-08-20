@@ -11,6 +11,7 @@ import pandas as pd
 
 from ancova_ops.analysis_report import load_input
 from ancova_ops.analytics import AncovaReport, build_ancova_report, prepare_complete_cases
+from ancova_ops.applicability import assess_from_ancova_report
 
 DEFAULT_OUTPUT = Path(".ancova_ops/reports/management-report.md")
 
@@ -21,6 +22,7 @@ class ManagementReport:
     formula: str
     confidence_level: float
     overall_screening_status: str
+    applicability: dict[str, object]
     executive_summary: str
     sample: dict[str, object]
     department_comparison: list[dict[str, object]]
@@ -35,6 +37,7 @@ class ManagementReport:
             "formula": self.formula,
             "confidence_level": self.confidence_level,
             "overall_screening_status": self.overall_screening_status,
+            "applicability": self.applicability,
             "executive_summary": self.executive_summary,
             "sample": self.sample,
             "department_comparison": self.department_comparison,
@@ -49,6 +52,9 @@ def build_management_report(data: pd.DataFrame, *, alpha: float = 0.05) -> Manag
     """Build a management-facing view over the reproducible outcome-evaluation workflow."""
 
     analysis = build_ancova_report(data, alpha=alpha)
+    applicability_decision = assess_from_ancova_report(analysis, alpha=alpha)
+    applicability = applicability_decision.to_dict()
+
     complete = prepare_complete_cases(data)
     raw = _raw_department_summary(complete)
     adjusted = {str(row["department"]): row for row in analysis.adjusted_estimates}
@@ -79,13 +85,22 @@ def build_management_report(data: pd.DataFrame, *, alpha: float = 0.05) -> Manag
         comparison.append(row)
 
     screening = _screening_status(analysis, alpha=alpha)
-    if analysis.identifiability["status"] == "not_identifiable":
+    disposition = str(applicability["disposition"])
+    if disposition == "reject":
         overall_status = "blocked"
+    elif disposition in {"caution", "recommend_alternative"}:
+        overall_status = "caution"
     else:
         overall_status = (
             "caution" if any(row["status"] == "caution" for row in screening) else "clear"
         )
-    executive_summary = _executive_summary(analysis, comparison, overall_status)
+
+    executive_summary = _executive_summary(
+        analysis,
+        comparison,
+        overall_status,
+        applicability=applicability,
+    )
 
     technical = {
         "identifiability": analysis.identifiability,
@@ -101,6 +116,7 @@ def build_management_report(data: pd.DataFrame, *, alpha: float = 0.05) -> Manag
         formula=analysis.formula,
         confidence_level=1.0 - alpha,
         overall_screening_status=overall_status,
+        applicability=applicability,
         executive_summary=executive_summary,
         sample={
             "n_rows": analysis.n_rows,
@@ -126,6 +142,12 @@ def render_markdown(report: ManagementReport) -> str:
     identifiability = report.technical["identifiability"]
     assert isinstance(identifiability, dict)
 
+    disposition = str(report.applicability["disposition"])
+    method_family = str(report.applicability["method_family"])
+    next_step = str(report.applicability["next_step"])
+    reasons = report.applicability["reasons"]
+    assert isinstance(reasons, (list, tuple))
+
     report_boundary = (
         "> This report separates raw observed summaries from model-adjusted estimates. "
         "Adjusted values are associations, not causal effects, and are withheld when the "
@@ -142,6 +164,8 @@ def render_markdown(report: ManagementReport) -> str:
         "",
         f"**Data provenance:** {provenance}",
         f"**Screening status:** {report.overall_screening_status.upper()}",
+        f"**Evaluation applicability:** {disposition.upper()}",
+        f"**Recommended method family:** `{method_family}`",
         f"**Department/issue-category identifiability:** {identifiability['status']}",
         "",
         report_boundary,
@@ -150,23 +174,45 @@ def render_markdown(report: ManagementReport) -> str:
         "",
         report.executive_summary,
         "",
-        "## Data and sample",
-        "",
-        f"- Total rows: {sample['n_rows']}",
-        f"- Complete cases used by the model: {sample['n_complete_cases']}",
-        f"- Rows excluded for required-field missingness: {sample['n_dropped_for_missingness']}",
-        f"- Model formula: `{report.formula}`",
-        "",
-        "## Department comparison",
-        "",
-        comparison_note,
+        "## Evaluation applicability gate",
         "",
         (
-            "| Department | N | Raw mean (h) | Raw median (h) | Adjusted mean (h) | "
-            f"{confidence_percent:.0f}% CI (h) |"
+            "The applicability gate asks whether the declared question/data structure supports the "
+            "current method before management interprets an adjusted comparison."
         ),
-        "| --- | ---: | ---: | ---: | ---: | ---: |",
+        "",
+        f"**Disposition:** `{disposition}`",
+        f"**Method family:** `{method_family}`",
+        "",
+        "Reasons:",
     ]
+    for reason in reasons:
+        lines.append(f"- {reason}")
+    lines.extend(
+        [
+            "",
+            f"**Next step:** {next_step}",
+            "",
+            f"**Boundary:** {report.applicability['interpretation_boundary']}",
+            "",
+            "## Data and sample",
+            "",
+            f"- Total rows: {sample['n_rows']}",
+            f"- Complete cases used by the model: {sample['n_complete_cases']}",
+            f"- Rows excluded for required-field missingness: {sample['n_dropped_for_missingness']}",
+            f"- Model formula: `{report.formula}`",
+            "",
+            "## Department comparison",
+            "",
+            comparison_note,
+            "",
+            (
+                "| Department | N | Raw mean (h) | Raw median (h) | Adjusted mean (h) | "
+                f"{confidence_percent:.0f}% CI (h) |"
+            ),
+            "| --- | ---: | ---: | ---: | ---: | ---: |",
+        ]
+    )
 
     for row in report.department_comparison:
         if row["adjusted_mean_resolution_hours"] is None:
@@ -438,6 +484,8 @@ def _executive_summary(
     analysis: AncovaReport,
     comparison: list[dict[str, object]],
     overall_status: str,
+    *,
+    applicability: dict[str, object],
 ) -> str:
     provenance = ", ".join(analysis.provenance)
     adjusted_rows = [
@@ -450,7 +498,8 @@ def _executive_summary(
             "department summaries are available but the adjusted department comparison is "
             "withheld because department and issue-category case mix are not separately "
             "identifiable in the observed routing design. Reporting a department ranking here "
-            "would be misleading. The available statistics are descriptive and not causal."
+            "would be misleading. The evaluation applicability gate returns "
+            f"{applicability['disposition']} and the available statistics are descriptive and not causal."
         )
 
     ranked = sorted(
@@ -470,8 +519,10 @@ def _executive_summary(
         f"case-mix-standardised mean resolution-time estimate is {fastest['department']} "
         f"({float(fastest['adjusted_mean_resolution_hours']):.2f} h) and the highest is "
         f"{slowest['department']} ({float(slowest['adjusted_mean_resolution_hours']):.2f} h). "
-        f"{warning_text} These adjusted estimates are intended for case-mix-aware investigation, "
-        "not causal ranking or automatic staff-performance decisions."
+        f"The evaluation applicability gate returns {applicability['disposition']} with method "
+        f"family {applicability['method_family']}. {warning_text} These adjusted estimates are "
+        "intended for case-mix-aware investigation, not causal ranking or automatic staff-performance "
+        "decisions."
     )
 
 

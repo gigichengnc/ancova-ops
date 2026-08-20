@@ -14,6 +14,11 @@ def test_management_report_separates_raw_and_adjusted_results() -> None:
     assert report.provenance == ("synthetic",)
     assert len(report.department_comparison) == 4
     assert report.overall_screening_status in {"clear", "caution"}
+    assert report.applicability["disposition"] in {"use", "caution"}
+    assert report.applicability["method_family"] in {
+        "regression_ancova_style",
+        "interaction_aware_regression",
+    }
     assert all("raw_mean_resolution_hours" in row for row in report.department_comparison)
     assert all("adjusted_mean_resolution_hours" in row for row in report.department_comparison)
     assert "not causal" in report.executive_summary.lower()
@@ -25,6 +30,9 @@ def test_markdown_keeps_management_and_causal_boundaries_visible() -> None:
 
     assert "# ANCOVA Ops Management Outcome Report" in markdown
     assert "## Executive summary" in markdown
+    assert "## Evaluation applicability gate" in markdown
+    assert "**Evaluation applicability:**" in markdown
+    assert "**Recommended method family:**" in markdown
     assert "## Department comparison" in markdown
     assert "Raw mean (h)" in markdown
     assert "Adjusted mean (h)" in markdown
@@ -60,6 +68,7 @@ def test_management_cli_writes_markdown_and_json(tmp_path, capsys) -> None:
     assert payload["provenance"] == ["synthetic"]
     assert payload["sample"]["n_rows"] == 140
     assert len(payload["department_comparison"]) == 4
+    assert payload["applicability"]["disposition"] in {"use", "caution"}
 
 
 def test_management_report_surfaces_missingness_as_caution() -> None:

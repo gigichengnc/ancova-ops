@@ -2,6 +2,40 @@
 
 All notable project checkpoints are documented here.
 
+## [1.0.0] - 2026-08-20
+
+### Added
+
+- `ancova-applicability`, the final evaluation-method gate for the completed Operate → Audit → Evaluate research prototype.
+- Explicit `EvaluationQuestion` and `ApplicabilityDecision` models.
+- Four high-level applicability dispositions: `use`, `caution`, `reject`, and `recommend_alternative`.
+- Method-family recommendations for binary outcomes, censored/time-to-event outcomes, repeated/clustered observations, routing-policy counterfactuals and causal-intent questions.
+- Direct reuse of v0.6 department/case-type identifiability and department-specific slope warnings in the final gate.
+- Management-report integration that surfaces applicability disposition, recommended method family, reasons, next step and interpretation boundary.
+- v1 showcase integration that presents Operate → Audit → Evaluate end to end.
+- `docs/evaluation-applicability.md` with the final method-selection/refusal framework.
+- Deterministic applicability tests and CI smoke coverage.
+
+### Changed
+
+- Bumped package/project/citation metadata to `1.0.0`.
+- Reframed the project as a completed evidence-aware service-operations research prototype rather than an indefinitely expanding ANCOVA product.
+- Made the final project identity explicit: Operate → Audit → Evaluate.
+- Made unsupported management conclusions, not automatic management decision-making, the central product/research boundary.
+- Updated the management report so method applicability is a first-class output alongside overlap/identifiability and statistical diagnostics.
+- Updated the one-command showcase to mark the research project complete/frozen at v1 while retaining private-data pilot and production locks.
+- Finalised README, statistical methodology, project status, release readiness and roadmap around the v1 completion line.
+
+### Project completion boundary
+
+v1.0.0 is the completion line for the research/portfolio project. The project deliberately does not implement every possible logistic, survival, hierarchical or causal model. Instead, the applicability gate refuses or redirects questions that should not be forced through ordinary continuous-outcome ANCOVA/regression.
+
+Further model-building, real-data work or deployment is post-v1 and should require a concrete user, competition requirement, research question or pilot opportunity.
+
+### Evidence and deployment status
+
+The v1 release preserves the existing evidence hierarchy. Current quantitative evidence is synthetic or hand-authored development evidence. Applicability rules and synthetic validity benchmarks do not establish real-world service improvement, causal effects, private-data pilot approval or production readiness.
+
 ## [0.6.0] - 2026-08-20
 
 ### Added

@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ancova-ops"
-version = "0.6.0"
-description = "Human-centred service intelligence with interpretable routing and outcome analytics"
+version = "1.0.0"
+description = "Evidence-aware service operations with explainable routing, auditable human review and guarded outcome evaluation"
 readme = "README.md"
 license = "Apache-2.0"
 authors = [
@@ -20,6 +20,7 @@ keywords = [
   "offline-evaluation",
   "longitudinal-analysis",
   "data-governance",
+  "responsible-ai",
 ]
 dependencies = [
   "fastapi>=0.115",
@@ -40,6 +41,7 @@ Citation = "https://github.com/gigichengnc/ancova-ops/blob/main/CITATION.cff"
 
 [project.scripts]
 ancova-analyze = "ancova_ops.analysis_report:main"
+ancova-applicability = "ancova_ops.applicability:main"
 ancova-evaluate = "ancova_ops.evaluation:main"
 ancova-governance-check = "ancova_ops.governance:main"
 ancova-management-report = "ancova_ops.management_report:main"

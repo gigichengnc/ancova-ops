@@ -4,10 +4,11 @@ from pathlib import Path
 import ancova_ops
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_VERSION = "0.6.0"
+EXPECTED_VERSION = "1.0.0"
 EXPECTED_REPOSITORY = "https://github.com/gigichengnc/ancova-ops"
 EXPECTED_SCRIPTS = {
     "ancova-analyze",
+    "ancova-applicability",
     "ancova-evaluate",
     "ancova-governance-check",
     "ancova-longitudinal",
@@ -29,7 +30,7 @@ def test_package_version_matches_project_metadata() -> None:
     assert ancova_ops.__version__ == EXPECTED_VERSION
 
 
-def test_v060_cli_surface_is_registered() -> None:
+def test_v100_cli_surface_is_registered() -> None:
     project = _project_metadata()
 
     assert set(project["scripts"]) == EXPECTED_SCRIPTS
