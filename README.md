@@ -4,7 +4,7 @@
 
 ANCOVA Ops is an experimental service-operations platform originating from an HKMU Hackathon 2026 concept. The repository develops that idea into a reproducible software and analytics project covering explainable request routing, human review, outcome analysis, offline policy research and longitudinal model comparison.
 
-**Current checkpoint: `v0.5.1` — Phases 0–4 implemented for synthetic/hand-authored development use, with a one-command portfolio showcase.**
+**Current checkpoint: `v0.5.2` — Phases 0–4 implemented for synthetic/hand-authored development use, with a one-command portfolio showcase and Apache-2.0 licensing.**
 
 > Real private resident/customer data, real longitudinal personalisation and production adaptive deployment are not approved at this stage.
 
@@ -71,7 +71,7 @@ resolution_time ~ department + urgency + frustration + complexity
 
 Adjusted estimates are model-based associations, not automatic causal effects or staff-performance rankings.
 
-## v0.5.1 capability map
+## v0.5.2 capability map
 
 | Capability | Status | Entry point | Evidence class |
 | --- | --- | --- | --- |
@@ -201,6 +201,10 @@ The benchmark compares a recency/frequency logistic baseline, a discrete-time ha
 ## Repository layout
 
 ```text
+LICENSE
+README.md
+CHANGELOG.md
+
 src/ancova_ops/
 ├── api.py
 ├── intelligence.py
@@ -243,7 +247,7 @@ docs/
 
 ## Evidence and deployment status
 
-Phases 0–4 and the v0.5.1 showcase have runnable development workflows. Current quantitative evidence comes from synthetic data or the small hand-authored routing fixture unless explicitly stated otherwise.
+Phases 0–4 and the v0.5.2 showcase have runnable development workflows. Current quantitative evidence comes from synthetic data or the small hand-authored routing fixture unless explicitly stated otherwise.
 
 Do **not** report current benchmark outputs as real service improvements, causal effects, production routing accuracy or real resident/customer predictions.
 
@@ -255,4 +259,6 @@ Figures in the original hackathon presentation are not treated as measured ANCOV
 
 ## License
 
-A licence has not yet been selected. Public visibility does not imply permission to reuse, modify or redistribute the project until a licence is added.
+ANCOVA Ops is licensed under the **Apache License 2.0**. See [`LICENSE`](LICENSE).
+
+The Apache-2.0 license applies to ANCOVA Ops material distributed under this repository license. Third-party dependencies and any separately identified third-party material remain subject to their own licences and notices.
