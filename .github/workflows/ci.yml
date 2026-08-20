@@ -31,3 +31,6 @@ jobs:
 
       - name: Test
         run: pytest -q
+
+      - name: Routing evaluation smoke test
+        run: ancova-evaluate --json > /tmp/ancova-routing-evaluation.json
