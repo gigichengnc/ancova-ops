@@ -15,8 +15,9 @@ It originated from an HKMU Hackathon 2026 concept and now serves as a broader se
 | --- | --- |
 | What is implemented? | Phases 0–4: routing, audit/history, outcome analytics, adaptive-policy research and longitudinal benchmarking |
 | Fastest demo | `ancova-showcase` |
-| Current release | `v0.5.3` |
+| Current release | `v0.5.4` |
 | Evidence class | Synthetic data + a small hand-authored routing fixture |
+| Citation | Root `CITATION.cff`; Zenodo-ready metadata, no DOI claimed yet |
 | Real private-data pilot / production | **Not approved** |
 | License | Apache-2.0 |
 
@@ -85,7 +86,7 @@ resolution_time ~ department + urgency + frustration + complexity
 
 Adjusted estimates are model-based associations, not automatic causal effects or staff-performance rankings.
 
-## v0.5.3 capability map
+## v0.5.4 capability map
 
 | Capability | Status | Entry point | Evidence class |
 | --- | --- | --- | --- |
@@ -100,6 +101,7 @@ Adjusted estimates are model-based associations, not automatic causal effects or
 | Adaptive-routing offline study | Implemented | `ancova-policy evaluate` | Synthetic logged-policy data |
 | Policy approval / rollback registry | Implemented locally | `ancova-policy` | Development lifecycle control |
 | Longitudinal recurrence benchmark | Implemented | `ancova-longitudinal` | Synthetic longitudinal histories |
+| Citation metadata | Implemented | `CITATION.cff` | CFF 1.2.0; DOI not yet minted |
 | LSTM / sequence modelling | Deferred | — | Requires incremental-value evidence |
 | Real private-data pilot | Blocked | — | Separate governance approval required |
 | Production deployment | Blocked | — | Real-data + security/operations evidence required |
@@ -216,6 +218,7 @@ The benchmark compares a recency/frequency logistic baseline, a discrete-time ha
 
 ```text
 LICENSE
+CITATION.cff
 README.md
 CHANGELOG.md
 
@@ -247,6 +250,7 @@ docs/
 ├── project-status.md
 ├── release-readiness.md
 ├── portfolio-showcase.md
+├── citation.md
 ├── roadmap.md
 ├── hackathon-origin.md
 ├── data-model.md
@@ -261,7 +265,7 @@ docs/
 
 ## Evidence and deployment status
 
-Phases 0–4 and the v0.5.3 showcase have runnable development workflows. Current quantitative evidence comes from synthetic data or the small hand-authored routing fixture unless explicitly stated otherwise.
+Phases 0–4 and the v0.5.4 showcase have runnable development workflows. Current quantitative evidence comes from synthetic data or the small hand-authored routing fixture unless explicitly stated otherwise.
 
 Do **not** report current benchmark outputs as real service improvements, causal effects, production routing accuracy or real resident/customer predictions.
 
@@ -270,6 +274,14 @@ A real-data pilot remains blocked until privacy/legal review, notice/consent req
 ## Hackathon-origin metrics
 
 Figures in the original hackathon presentation are not treated as measured ANCOVA Ops outcomes unless they can be traced to project-specific experiments. See [`docs/hackathon-origin.md`](docs/hackathon-origin.md).
+
+## Citation
+
+ANCOVA Ops includes a root [`CITATION.cff`](CITATION.cff) file using Citation File Format 1.2.0. Use GitHub's **Cite this repository** control or the CFF metadata when citing the software.
+
+No DOI is claimed at this checkpoint. The repository is prepared for Zenodo archiving, but the Zenodo/GitHub account integration must be enabled separately before relying on automatic archival of future releases. After a verified DOI is minted, it should be added back to `CITATION.cff` in a reviewed release.
+
+See [`docs/citation.md`](docs/citation.md) for the citation and Zenodo workflow.
 
 ## GitHub storefront settings
 

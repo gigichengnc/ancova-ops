@@ -1,6 +1,6 @@
-# Project Status — v0.5.3
+# Project Status — v0.5.4
 
-ANCOVA Ops v0.5.3 is a reproducible development and research checkpoint covering service-request structuring, explainable routing, outcome analysis, offline adaptive-policy research and synthetic longitudinal modelling, with a reviewer-facing one-command showcase, polished GitHub storefront and explicit Apache-2.0 licensing.
+ANCOVA Ops v0.5.4 is a reproducible development and research checkpoint covering service-request structuring, explainable routing, outcome analysis, offline adaptive-policy research and synthetic longitudinal modelling, with a reviewer-facing one-command showcase, polished GitHub storefront, Apache-2.0 licensing and machine-readable citation metadata.
 
 It is **not** a production deployment and is **not** approved for real private resident/customer data.
 
@@ -19,11 +19,12 @@ It is **not** a production deployment and is **not** approved for real private r
 | Policy approval / rollback registry | Implemented locally | `ancova-policy approve`, `activate`, `rollback` | Development lifecycle control |
 | Longitudinal recurrence benchmark | Implemented | `ancova-longitudinal` | Synthetic longitudinal histories |
 | Repository licensing | Implemented | `LICENSE`, package metadata | Apache-2.0 for repository-licensed ANCOVA Ops material |
+| Citation metadata | Implemented | `CITATION.cff` | CFF 1.2.0; no DOI minted yet |
 | LSTM / sequence model | Deferred | none | Not justified by current benchmark |
 | Real private-data pilot | Blocked | none | Requires separate governance approval |
 | Production adaptive routing | Blocked | none | Requires real-data validation and deployment controls |
 
-## What v0.5.3 demonstrates
+## What v0.5.4 demonstrates
 
 1. An unstructured service request can be converted into a structured, explainable routing recommendation with versioned implementation metadata.
 2. Human review can confirm or override routing without erasing the original machine/rule recommendation.
@@ -35,8 +36,9 @@ It is **not** a production deployment and is **not** approved for real private r
 8. An external reviewer can run one command and inspect the Phase 1–4 evidence chain without manually assembling outputs from separate commands.
 9. Reuse terms for ANCOVA Ops repository material are explicit through Apache-2.0.
 10. Repository presentation and formal release metadata are synchronised without changing the underlying evidence class.
+11. GitHub and archival services can consume one `CITATION.cff` source for title, author, version, license, repository and software-description metadata.
 
-## What v0.5.3 does not demonstrate
+## What v0.5.4 does not demonstrate
 
 - real-world routing accuracy;
 - causal improvement in service outcomes;
@@ -47,7 +49,9 @@ It is **not** a production deployment and is **not** approved for real private r
 - evidence that an LSTM or other sequence model is needed;
 - any new real-world evidence merely because the portfolio showcase aggregates existing outputs;
 - any relicensing of third-party dependencies under Apache-2.0;
-- pilot or production readiness merely because the repository is open-source licensed or polished for external review.
+- pilot or production readiness merely because the repository is open-source licensed or polished for external review;
+- a Zenodo DOI until a Zenodo software record is actually created;
+- peer review merely because a DOI or archival record may later exist.
 
 ## Command surface
 
@@ -94,7 +98,14 @@ The repository deliberately separates evidence classes:
 3. **Synthetic logged-policy results** — useful for validating offline policy-evaluation mechanics, not production counterfactual evidence.
 4. **Synthetic longitudinal results** — useful for model-comparison and leakage testing, not resident/customer forecasting claims.
 5. **Portfolio showcase output** — an aggregation of classes 1–4, not a higher evidence class.
-6. **Real pilot evidence** — not present in v0.5.3 and cannot be implied from the earlier classes.
+6. **Citation/archive metadata** — makes software easier to identify and cite, but does not increase the empirical evidence class.
+7. **Real pilot evidence** — not present in v0.5.4 and cannot be implied from the earlier classes.
+
+## Citation and archiving
+
+The root `CITATION.cff` file uses Citation File Format 1.2.0 and records the public software title, author name, version, release date, Apache-2.0 license, repository URL, abstract and keywords. The project intentionally does not invent a DOI, ORCID, email address or affiliation.
+
+A `.zenodo.json` file is not maintained at this checkpoint because Zenodo would give it precedence over `CITATION.cff`; there is currently no concrete Zenodo-specific grants/community requirement that justifies duplicate metadata. See `docs/citation.md` for the integration and DOI follow-up workflow.
 
 ## Licensing
 
@@ -114,4 +125,4 @@ Production deployment additionally requires real-data validation, authenticated 
 
 ## Version
 
-Project metadata, the Python package and the portfolio showcase report version all report `0.5.3`. CI contains regression tests that fail if those versions, the registered CLI surface or Apache-2.0 metadata drift apart.
+Project metadata, the Python package, the portfolio showcase report version and `CITATION.cff` all report `0.5.4`. CI contains regression tests that fail if those versions, the registered CLI surface, Apache-2.0 metadata or core citation metadata drift apart.
