@@ -17,14 +17,14 @@ Goal: create a runnable, testable project skeleton.
 
 Goal: accept a real request and produce a structured, reviewable routing recommendation.
 
-- request/response API contract;
-- issue taxonomy;
-- baseline text classifier;
-- urgency/context extraction interface;
-- persistence layer;
-- routing decision audit log;
-- manual override / correction capture;
-- evaluation dataset for classifier and router.
+- [x] request/response API contract;
+- [x] issue taxonomy;
+- [x] transparent baseline text classifier;
+- [x] urgency/context extraction interface;
+- [ ] persistence layer;
+- [ ] routing decision audit log;
+- [ ] manual override / correction capture;
+- [ ] evaluation dataset for classifier and router.
 
 ## Phase 2 — Outcome analytics
 
