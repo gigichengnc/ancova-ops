@@ -13,5 +13,9 @@ venv/
 htmlcov/
 dist/
 build/
+.ancova_ops/
+*.sqlite
+*.sqlite3
+*.db
 data/private/
 data/raw/
