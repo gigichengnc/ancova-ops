@@ -4,9 +4,35 @@
 
 ANCOVA Ops is an experimental service-operations platform originating from an HKMU Hackathon 2026 concept. The repository develops that idea into a reproducible software and analytics project covering explainable request routing, human review, outcome analysis, offline policy research and longitudinal model comparison.
 
-**Current checkpoint: `v0.5.0` — Phases 0–4 implemented for synthetic/hand-authored development use.**
+**Current checkpoint: `v0.5.1` — Phases 0–4 implemented for synthetic/hand-authored development use, with a one-command portfolio showcase.**
 
 > Real private resident/customer data, real longitudinal personalisation and production adaptive deployment are not approved at this stage.
+
+## One-command showcase
+
+After installation, the fastest way to understand the project is:
+
+```bash
+ancova-showcase
+```
+
+This generates:
+
+```text
+.ancova_ops/showcase/showcase.md
+```
+
+For Markdown plus structured JSON:
+
+```bash
+ancova-showcase \
+  --output .ancova_ops/showcase/showcase.md \
+  --json-output .ancova_ops/showcase/showcase.json
+```
+
+The showcase runs the existing service-intelligence example, routing benchmark, ANCOVA outcome-analysis workflow, adaptive-routing offline study, longitudinal benchmark and governance/readiness summary in one deterministic report. It does **not** introduce a new model or turn synthetic results into real-world evidence.
+
+See [`docs/portfolio-showcase.md`](docs/portfolio-showcase.md).
 
 ## What the project does
 
@@ -45,10 +71,11 @@ resolution_time ~ department + urgency + frustration + complexity
 
 Adjusted estimates are model-based associations, not automatic causal effects or staff-performance rankings.
 
-## v0.5.0 capability map
+## v0.5.1 capability map
 
 | Capability | Status | Entry point | Evidence class |
 | --- | --- | --- | --- |
+| Portfolio showcase | Implemented | `ancova-showcase` | Aggregates existing development evidence |
 | Request intelligence + explainable routing | Implemented | FastAPI `/v1/route` | Transparent development rules |
 | Immutable case / routing audit history | Implemented | SQLite persistence | Local development records |
 | Human confirmation / override | Implemented | routing-review API | Human feedback, not automatic ground truth |
@@ -63,7 +90,7 @@ Adjusted estimates are model-based associations, not automatic causal effects or
 | Real private-data pilot | Blocked | — | Separate governance approval required |
 | Production deployment | Blocked | — | Real-data + security/operations evidence required |
 
-For the detailed checkpoint boundary, see [`docs/project-status.md`](docs/project-status.md) and [`docs/release-readiness.md`](docs/release-readiness.md). The release history is in [`CHANGELOG.md`](CHANGELOG.md).
+For detailed boundaries, see [`docs/project-status.md`](docs/project-status.md), [`docs/release-readiness.md`](docs/release-readiness.md) and [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Quick start
 
@@ -72,12 +99,12 @@ python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
 pytest
-python -m ancova_ops.demo
+ancova-showcase
 ```
 
-The package supports Python 3.11+ and CI currently tests Python 3.11 and 3.12.
+The package supports Python 3.11+ and CI tests Python 3.11 and 3.12.
 
-## Phase 1 — Service-intelligence API
+## Service-intelligence API
 
 Run the API:
 
@@ -85,7 +112,7 @@ Run the API:
 uvicorn ancova_ops.api:app --reload
 ```
 
-Example routing request:
+Example request:
 
 ```bash
 curl -X POST http://127.0.0.1:8000/v1/route \
@@ -98,9 +125,7 @@ curl -X POST http://127.0.0.1:8000/v1/route \
   }'
 ```
 
-The API returns structured issue features, routing, priority, human-review requirements, explanation reasons and implementation version identifiers. Machine/rule recommendations are preserved even when a later human review overrides the effective routing.
-
-By default, local case history is stored in `.ancova_ops/ancova_ops.sqlite3`, which is ignored by Git.
+Machine/rule recommendations are preserved even when a later human review changes the effective operational routing. Local development case history is stored in `.ancova_ops/ancova_ops.sqlite3` by default and is ignored by Git.
 
 Core endpoints:
 
@@ -113,93 +138,52 @@ GET  /v1/cases/{case_id}/routing-reviews
 PUT  /v1/cases/{case_id}/outcome
 ```
 
-## Routing evaluation
+## Development workflows
+
+Routing evaluation:
 
 ```bash
 ancova-evaluate
 ancova-evaluate --json
 ```
 
-The current transparent baseline is tested on a small hand-authored fixture. Its deterministic development results are:
+The transparent baseline currently scores `10 / 11` department accuracy, `2 / 5` expected-human-review recall and `11 / 11` explanation coverage on a small hand-authored development fixture. These are fixture results, not production estimates.
 
-- department accuracy: `10 / 11`;
-- expected-human-review recall: `2 / 5`;
-- explanation coverage: `11 / 11`.
-
-These are fixture results, not production estimates. See [`docs/routing-evaluation.md`](docs/routing-evaluation.md).
-
-## Data-governance boundary
+Governance validation:
 
 ```bash
 ancova-governance-check
 ancova-governance-check --json
 ```
 
-ANCOVA Ops currently operates under a **synthetic-only development policy**. The machine-readable policy in `config/data-governance.json` blocks real private records, direct identifiers, raw private-message training, unsupported psychological profiling and unapproved longitudinal personalisation.
-
-See [`docs/data-governance.md`](docs/data-governance.md).
-
-## Phase 2 — Outcome analytics
-
-Technical analysis:
+Outcome analysis and management reporting:
 
 ```bash
 ancova-analyze
 ancova-analyze --json
-```
-
-Management-facing report:
-
-```bash
 ancova-management-report
 ```
 
-The analysis workflow includes missingness accounting, department group sizes, residual diagnostics, Breusch–Pagan heteroskedasticity screening, VIF checks, influence diagnostics, department-by-covariate interactions, adjusted department estimates and confidence intervals.
+The ANCOVA/regression workflow exposes missingness, group sizes, residual diagnostics, heteroskedasticity, multicollinearity, influence, interaction checks, adjusted estimates, confidence intervals and warnings. The management report keeps raw observed summaries separate from adjusted estimates.
 
-The management report keeps raw observed summaries separate from adjusted model estimates and carries warnings into the management view.
-
-See [`docs/statistical-methodology.md`](docs/statistical-methodology.md) and [`docs/management-report.md`](docs/management-report.md).
-
-## Phase 3 — Adaptive-routing research
+Adaptive-routing research:
 
 ```bash
 ancova-policy evaluate
-```
-
-The offline workflow uses deterministic synthetic logged-routing history with timestamps and known action propensities. It trains a transparent candidate on an earlier window and evaluates baseline and candidate on a later window with support-aware inverse-propensity methods.
-
-Candidate lifecycle commands include:
-
-```bash
 ancova-policy evaluate --register
 ancova-policy status
-ancova-policy approve --version <version> --reviewer <reviewer> --rationale <text>
-ancova-policy activate --version <version> --actor <actor>
-ancova-policy rollback --version baseline-route-v1 --actor <actor> --rationale <text>
 ```
 
-Passing the synthetic offline gate does not authorize deployment. Registry activation is intentionally **not wired into `/v1/route`**.
+The candidate is evaluated only on synthetic logged-policy data with chronological validation and support-aware inverse-propensity methods. Passing an offline gate does not authorise deployment, and registry activation is intentionally not wired into `/v1/route`.
 
-See [`docs/adaptive-routing.md`](docs/adaptive-routing.md).
-
-## Phase 4 — Longitudinal benchmark
+Longitudinal benchmark:
 
 ```bash
 ancova-longitudinal
 ancova-longitudinal --json
 ```
 
-The benchmark creates deterministic synthetic entity-level service histories with recurrence and seasonality, builds features using only pre-cutoff events, and applies a purged chronological split so training follow-up cannot overlap the validation period.
-
-It compares on the same future validation window:
-
-1. recency/frequency logistic baseline;
-2. discrete-time logistic hazard model;
-3. random-forest recurrence classifier.
-
-The comparison reports ROC-AUC, Brier score, calibration bias and survival concordance where applicable. Sequence modelling remains `deferred_not_justified_by_current_benchmark` until a later same-benchmark experiment demonstrates reproducible incremental value.
-
-See [`docs/longitudinal-benchmark.md`](docs/longitudinal-benchmark.md).
+The benchmark compares a recency/frequency logistic baseline, a discrete-time hazard model and a random forest on the same later validation window with a purged chronological split. Sequence modelling remains `deferred_not_justified_by_current_benchmark` until a same-benchmark experiment demonstrates reproducible incremental value.
 
 ## Project principles
 
@@ -230,6 +214,7 @@ src/ancova_ops/
 ├── management_report.py
 ├── adaptive.py
 ├── longitudinal.py
+├── showcase.py
 ├── synthetic.py
 └── demo.py
 
@@ -243,6 +228,7 @@ docs/
 ├── architecture.md
 ├── project-status.md
 ├── release-readiness.md
+├── portfolio-showcase.md
 ├── roadmap.md
 ├── hackathon-origin.md
 ├── data-model.md
@@ -257,7 +243,7 @@ docs/
 
 ## Evidence and deployment status
 
-Phases 0–4 have runnable development workflows. Current quantitative evidence comes from synthetic data or the small hand-authored routing fixture unless explicitly stated otherwise.
+Phases 0–4 and the v0.5.1 showcase have runnable development workflows. Current quantitative evidence comes from synthetic data or the small hand-authored routing fixture unless explicitly stated otherwise.
 
 Do **not** report current benchmark outputs as real service improvements, causal effects, production routing accuracy or real resident/customer predictions.
 
