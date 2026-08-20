@@ -52,10 +52,14 @@ def assess_evaluation_question(question: EvaluationQuestion) -> ApplicabilityDec
             disposition="reject",
             method_family="no_adjusted_department_comparison",
             reasons=(
-                "Department and case type are not separately identifiable from the declared "
-                "routing design.",
-                "Changing statistical model family cannot recover a department contrast that the "
-                "observed design does not identify.",
+                (
+                    "Department and case type are not separately identifiable from the declared "
+                    "routing design."
+                ),
+                (
+                    "Changing statistical model family cannot recover a department contrast that the "
+                    "observed design does not identify."
+                ),
             ),
             next_step=(
                 "Do not rank departments. Collect overlapping comparable cases, restrict the "
@@ -72,8 +76,10 @@ def assess_evaluation_question(question: EvaluationQuestion) -> ApplicabilityDec
             disposition="recommend_alternative",
             method_family="offline_policy_evaluation",
             reasons=(
-                "The question compares routing policies or counterfactual routing actions rather "
-                "than ordinary observed department means.",
+                (
+                    "The question compares routing policies or counterfactual routing actions rather "
+                    "than ordinary observed department means."
+                ),
             ),
             next_step=(
                 "Use logged-policy support/propensity-aware evaluation or a prospective policy "
@@ -90,8 +96,10 @@ def assess_evaluation_question(question: EvaluationQuestion) -> ApplicabilityDec
             disposition="recommend_alternative",
             method_family="causal_design_and_identification",
             reasons=(
-                "The declared question asks for a causal effect, while ordinary observational "
-                "case-mix adjustment only establishes model-based association.",
+                (
+                    "The declared question asks for a causal effect, while ordinary observational "
+                    "case-mix adjustment only establishes model-based association."
+                ),
             ),
             next_step=(
                 "Define the intervention, target estimand, assignment mechanism and identification "
@@ -125,8 +133,10 @@ def assess_evaluation_question(question: EvaluationQuestion) -> ApplicabilityDec
             disposition="recommend_alternative",
             method_family="logistic_type_model",
             reasons=(
-                "The declared outcome is binary, so an ordinary continuous-outcome ANCOVA model "
-                "does not match the outcome scale.",
+                (
+                    "The declared outcome is binary, so an ordinary continuous-outcome ANCOVA model "
+                    "does not match the outcome scale."
+                ),
             ),
             next_step=(
                 "Use a logistic/binomial-type model or another binary-outcome method appropriate to "
@@ -142,8 +152,10 @@ def assess_evaluation_question(question: EvaluationQuestion) -> ApplicabilityDec
             disposition="recommend_alternative",
             method_family="survival_time_to_event_model",
             reasons=(
-                "The declared outcome is time-to-event or contains unresolved/censored cases, so "
-                "ordinary completed-case resolution-time ANCOVA can discard follow-up information.",
+                (
+                    "The declared outcome is time-to-event or contains unresolved/censored cases, so "
+                    "ordinary completed-case resolution-time ANCOVA can discard follow-up information."
+                ),
             ),
             next_step=(
                 "Use a survival/time-to-event framework that represents censoring explicitly and "
@@ -160,8 +172,10 @@ def assess_evaluation_question(question: EvaluationQuestion) -> ApplicabilityDec
             disposition="recommend_alternative",
             method_family="clustered_or_hierarchical_model",
             reasons=(
-                "Repeated or clustered observations violate the ordinary independence assumption "
-                "when within-group dependence is material.",
+                (
+                    "Repeated or clustered observations violate the ordinary independence assumption "
+                    "when within-group dependence is material."
+                ),
             ),
             next_step=(
                 "Use clustered standard errors, a hierarchical/mixed model, GEE, or another design "
