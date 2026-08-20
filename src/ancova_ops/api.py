@@ -3,7 +3,7 @@ from __future__ import annotations
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field, field_validator
 
-from .intelligence import BaselineRequestIntelligence, INTELLIGENCE_VERSION
+from .intelligence import INTELLIGENCE_VERSION, BaselineRequestIntelligence
 from .models import ServiceCase
 from .persistence import (
     CaseConflictError,
