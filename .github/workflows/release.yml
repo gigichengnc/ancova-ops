@@ -2,21 +2,24 @@ name: Release checkpoint
 
 on:
   workflow_dispatch:
-  push:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
     branches: [main]
-    paths:
-      - ".github/workflows/release.yml"
 
 permissions:
   contents: write
 
 jobs:
   release:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out repository
+      - name: Check out release commit
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || 'main' }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -67,6 +70,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.project.outputs.version }}
+          TARGET_SHA: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
         shell: bash
         run: |
           tag="v${VERSION}"
@@ -76,6 +80,6 @@ jobs:
           fi
 
           gh release create "${tag}" \
-            --target "${GITHUB_SHA}" \
+            --target "${TARGET_SHA}" \
             --title "ANCOVA Ops ${tag}" \
             --notes-file /tmp/ancova-release-notes.md
