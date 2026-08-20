@@ -136,13 +136,48 @@ curl -X PUT http://127.0.0.1:8000/v1/cases/demo-api-001/outcome \
 
 Phase 1 scores are transparent heuristics for development; they are not validated psychological or production risk measures. Human confirmations and overrides are also feedback signals rather than automatically trusted training labels.
 
+## Routing evaluation
+
+Run the deterministic Phase 1 routing benchmark:
+
+```bash
+ancova-evaluate
+```
+
+Machine-readable output:
+
+```bash
+ancova-evaluate --json
+```
+
+The first benchmark uses `data/evaluation/hand_authored_v1.json`, which is explicitly labelled as a hand-authored software-development fixture rather than real operational ground truth.
+
+Current transparent-baseline results on that fixture are:
+
+- department accuracy: `10 / 11`;
+- high-risk human-review recall: `2 / 5`;
+- routing-explanation coverage: `11 / 11`.
+
+These figures are deliberately not perfect. The fixture includes ambiguous leasing wording and safety/security cases that expose weaknesses in the current threshold rules.
+
+A candidate implementation can be compared on the same fixture:
+
+```bash
+ancova-evaluate \
+  --candidate my_package.my_router:predict \
+  --candidate-name experimental-router-v1
+```
+
+A candidate is only marked `improved` when it uses the same fixture, does not regress on the comparable headline metrics, and improves at least one of them. See `docs/routing-evaluation.md` for metric definitions and limitations.
+
 ## Project principles
 
 - **Human-in-the-loop:** the system supports staff rather than pretending every service case should be fully automated.
 - **Evidence before claims:** benchmark or simulated results are labelled clearly; project-specific performance claims require project-specific evidence.
 - **Interpretable first:** begin with transparent baseline logic before complex ML.
-- **Synthetic-data friendly:** early development uses synthetic cases so the software can be tested without exposing resident or customer data.
+- **Synthetic-data friendly:** early development uses synthetic or hand-authored cases so the software can be tested without exposing resident or customer data.
 - **Auditability:** original cases, routing explanations, implementation versions and human reviews are preserved instead of silently overwritten.
+- **Same-dataset comparison:** routing improvements must be demonstrated against the baseline on the same labelled benchmark.
 - **Modular:** property management is the first use case, not the only possible domain.
 
 ## Repository layout
@@ -154,9 +189,13 @@ src/ancova_ops/
 ├── models.py       # Core service-case models
 ├── persistence.py  # SQLite case, machine-decision, review and outcome storage
 ├── routing.py      # Explainable baseline routing
+├── evaluation.py   # Deterministic routing benchmark and candidate comparison
 ├── synthetic.py    # Synthetic outcome data for development
 ├── analytics.py    # ANCOVA fitting and diagnostics
 └── demo.py         # Small runnable demonstration
+
+data/evaluation/
+└── hand_authored_v1.json
 
 docs/
 ├── hackathon-origin.md
@@ -164,6 +203,7 @@ docs/
 ├── statistical-methodology.md
 ├── data-model.md
 ├── human-routing-feedback.md
+├── routing-evaluation.md
 └── roadmap.md
 ```
 
@@ -188,7 +228,7 @@ docs/
 - case persistence and routing audit log
 - outcome capture
 - human confirmation / override capture
-- routing evaluation harness
+- deterministic routing evaluation harness
 
 ### Phase 2 — Outcome analytics
 
@@ -211,11 +251,11 @@ docs/
 
 ## Status
 
-Phase 0 is complete. Phase 1 now includes the request API, transparent request-intelligence baseline, SQLite case persistence, append-only routing audit history, outcome capture, and separate human confirmation/override records. The routing evaluation harness is next.
+Phase 0 is complete. The Phase 1 MVP foundation now includes the request API, transparent request-intelligence baseline, SQLite case persistence, append-only routing audit history, outcome capture, separate human confirmation/override records, and a deterministic same-dataset routing evaluation harness. Before any real pilot data is introduced, the project still needs explicit privacy and data-governance boundaries; deeper outcome analytics follow in Phase 2.
 
 ## Important note on metrics
 
-Figures shown in the original hackathon presentation are not treated here as measured ANCOVA Ops outcomes unless they can be traced to a project-specific experiment. External benchmarks, simulated examples and target metrics will be labelled as such.
+Figures shown in the original hackathon presentation are not treated here as measured ANCOVA Ops outcomes unless they can be traced to a project-specific experiment. The routing benchmark figures above describe a small hand-authored fixture only and are not production estimates. External benchmarks, simulated examples and target metrics will be labelled as such.
 
 ## License
 

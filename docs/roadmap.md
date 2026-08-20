@@ -26,7 +26,9 @@ Goal: accept a real request and produce a structured, reviewable routing recomme
 - [x] outcome capture fields;
 - [x] human confirmation / override capture;
 - [x] effective routing view without overwriting machine history;
-- [ ] evaluation dataset for classifier and router.
+- [x] hand-authored routing evaluation fixture;
+- [x] deterministic baseline metrics;
+- [x] candidate-vs-baseline comparison harness.
 
 ## Phase 2 — Outcome analytics
 
