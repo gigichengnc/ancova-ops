@@ -8,10 +8,7 @@ The original hackathon concept focused on property-management concierge operatio
 
 ## Core idea
 
-ANCOVA Ops separates two jobs that are often mixed together in AI demos:
-
-1. **Operational intelligence** — understand a request, structure it and route it.
-2. **Outcome evaluation** — measure what actually improves service performance while controlling for relevant covariates.
+ANCOVA Ops separates operational decisions from statistical evaluation rather than using one model to do everything.
 
 ```text
 Resident / user request
@@ -32,17 +29,21 @@ Operational outcome
         v
 Historical dataset
         |
-        v
-Statistical analysis + model validation
+        +--> ANCOVA / regression + diagnostics
+        |         |
+        |         v
+        |    Management evidence report
         |
-        v
-Management evidence report
+        +--> Offline routing-policy evaluation
+        |         |
+        |         v
+        |    Human approval / versioning / rollback
         |
-        v
-Offline routing-policy evaluation
-        |
-        v
-Human approval / versioning / rollback
+        +--> Synthetic longitudinal benchmark
+                  |
+                  v
+           Simple vs survival vs tree models
+           before sequence-model complexity
 ```
 
 ## Why ANCOVA?
@@ -57,7 +58,7 @@ A simplified research model might look like:
 resolution_time ~ department + urgency + frustration + complexity
 ```
 
-Later phases may also test interactions such as:
+Later analyses may also test interactions such as:
 
 ```text
 resolution_time ~ department * frustration + urgency + complexity
@@ -69,13 +70,15 @@ The repository documents assumptions and validation requirements instead of trea
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
 pytest
 python -m ancova_ops.demo
 ```
 
-Run the Phase 1 API:
+## Phase 1 API
+
+Run the API:
 
 ```bash
 uvicorn ancova_ops.api:app --reload
@@ -140,11 +143,11 @@ curl -X PUT http://127.0.0.1:8000/v1/cases/demo-api-001/outcome \
   }'
 ```
 
-Phase 1 scores are transparent heuristics for development; they are not validated psychological or production risk measures. Human confirmations and overrides are also feedback signals rather than automatically trusted training labels.
+Phase 1 scores are transparent heuristics for development; they are not validated psychological or production risk measures. Human confirmations and overrides are feedback signals rather than automatically trusted training labels.
 
 ## Routing evaluation
 
-Run the deterministic Phase 1 routing benchmark:
+Run the deterministic routing benchmark:
 
 ```bash
 ancova-evaluate
@@ -156,7 +159,7 @@ Machine-readable output:
 ancova-evaluate --json
 ```
 
-The first benchmark uses `data/evaluation/hand_authored_v1.json`, which is explicitly labelled as a hand-authored software-development fixture rather than real operational ground truth.
+The first benchmark uses `data/evaluation/hand_authored_v1.json`, explicitly labelled as a hand-authored software-development fixture rather than real operational ground truth.
 
 Current transparent-baseline results on that fixture are:
 
@@ -174,25 +177,25 @@ ancova-evaluate \
   --candidate-name experimental-router-v1
 ```
 
-A candidate is only marked `improved` when it uses the same fixture, does not regress on the comparable headline metrics, and improves at least one of them. See `docs/routing-evaluation.md` for metric definitions and limitations.
+A candidate is only marked `improved` when it uses the same fixture, does not regress on the comparable headline metrics, and improves at least one of them. See `docs/routing-evaluation.md`.
 
 ## Data-governance boundary
 
 ANCOVA Ops currently operates under a **synthetic-only development policy**. Real private resident/customer records are not approved for this repository or the current development workflow.
 
-The machine-readable policy is `config/data-governance.json`. Validate it with:
+Validate the machine-readable policy with:
 
 ```bash
 ancova-governance-check
 ```
 
-The current guardrails prohibit direct identifiers, training on raw private request text, automatic use of staff overrides as ground truth, and longitudinal personalisation before a separate pilot review. Raw request text and vulnerability context are excluded from general analytics by default.
+Current guardrails prohibit direct identifiers, training on raw private request text, automatic use of staff overrides as ground truth, and longitudinal personalisation before a separate pilot review. Raw request text and vulnerability context are excluded from general analytics by default.
 
-Every sensitive or longitudinal feature must have a registered operational purpose, retention expectation and pilot requirement before it is introduced. See `docs/data-governance.md`.
+Every sensitive or longitudinal feature must have a registered operational purpose, retention expectation and pilot requirement before real-data use. See `docs/data-governance.md`.
 
 ## Outcome analytics
 
-Run the Phase 2 ANCOVA/regression workflow on the built-in synthetic development data:
+Run the Phase 2 ANCOVA/regression workflow on built-in synthetic development data:
 
 ```bash
 ancova-analyze
@@ -204,7 +207,7 @@ Machine-readable output:
 ancova-analyze --json
 ```
 
-The workflow exposes sample counts, required-field missingness, department group sizes, residual diagnostics, Breusch-Pagan heteroskedasticity screening, VIF multicollinearity checks, Cook's-distance/leverage screening, department-by-covariate interactions, adjusted department estimates with confidence intervals, warnings and the data provenance.
+The workflow exposes sample counts, required-field missingness, department group sizes, residual diagnostics, Breusch-Pagan heteroskedasticity screening, VIF multicollinearity checks, Cook's-distance/leverage screening, department-by-covariate interactions, adjusted department estimates with confidence intervals, warnings and data provenance.
 
 Adjusted estimates are model-based associations with covariates held at their complete-case sample means. They are not causal effects unless a separate study design and identification argument supports causal interpretation.
 
@@ -232,7 +235,7 @@ ancova-management-report \
   --json-output .ancova_ops/reports/management-report.json
 ```
 
-The report keeps raw observed complete-case summaries separate from adjusted estimates, shows a management screening dashboard, carries forward all statistical warnings, and explicitly states that the adjusted comparison is not an automatic staff-performance league table. See `docs/management-report.md`.
+The report keeps raw observed complete-case summaries separate from adjusted estimates, shows a management screening dashboard, carries forward statistical warnings, and explicitly states that the adjusted comparison is not an automatic staff-performance league table. See `docs/management-report.md`.
 
 ## Adaptive routing research
 
@@ -276,19 +279,51 @@ ancova-policy rollback \
 
 The registry is stored under `.ancova_ops/` and is ignored by Git. Registry activation does **not** automatically replace the router behind `/v1/route`; operational deployment remains a separate future integration and governance decision. See `docs/adaptive-routing.md`.
 
+## Longitudinal recurrence benchmark
+
+Phase 4 asks whether longitudinal complexity earns its place before introducing sequence models.
+
+Run the deterministic synthetic benchmark:
+
+```bash
+ancova-longitudinal
+```
+
+Machine-readable output:
+
+```bash
+ancova-longitudinal --json
+```
+
+The benchmark generates artificial entity-level service histories with recurrence feedback and seasonality, then builds prediction snapshots using only information available at each cutoff. It compares three model families on the **same later validation period**:
+
+1. a recency/frequency logistic baseline;
+2. a discrete-time logistic hazard model for recurrence timing;
+3. a random-forest recurrence classifier.
+
+The 30-day recurrence comparison reports ROC-AUC, Brier score and calibration bias. The survival-style model also reports a concordance index for the censored time-to-next-case outcome.
+
+A purged chronological split prevents a subtle form of leakage: training snapshots are removed when their 90-day follow-up window would reach into the validation period. The report also exposes feature-time, follow-up and provenance leakage checks.
+
+The current complexity rule requires a richer model to improve ROC-AUC by at least `0.02` over the simple baseline without worsening Brier score on the same future window before it is considered incrementally useful.
+
+**No LSTM or sequence model is included.** Sequence modelling remains `deferred_not_justified_by_current_benchmark` until a separate same-benchmark experiment demonstrates reproducible incremental value over the strongest simpler approach. See `docs/longitudinal-benchmark.md`.
+
 ## Project principles
 
 - **Human-in-the-loop:** the system supports staff rather than pretending every service case should be fully automated.
 - **Evidence before claims:** benchmark or simulated results are labelled clearly; project-specific performance claims require project-specific evidence.
 - **Interpretable first:** begin with transparent baseline logic before complex ML.
+- **Complexity must earn its place:** survival, tree and future sequence models are compared against simpler references on the same future window.
 - **Synthetic-only by default:** development uses synthetic or hand-authored cases; real private records require a separately approved pilot policy.
 - **Data minimisation:** operational usefulness does not automatically justify analytics, training or long-term retention.
 - **Auditability:** original cases, routing explanations, implementation versions and human reviews are preserved instead of silently overwritten.
 - **Same-dataset comparison:** routing improvements must be demonstrated against the baseline on the same labelled benchmark.
 - **Raw versus adjusted separation:** observed department summaries are not silently substituted for case-mix-adjusted model estimates.
 - **Non-causal reporting:** adjusted associations are not presented as causal staff or department rankings.
-- **Offline before deployment:** a policy candidate must survive time-aware, support-aware evaluation and explicit human approval before any deployment integration is considered.
+- **Offline before deployment:** a policy candidate must survive time-aware, support-aware evaluation and explicit human approval before deployment integration is considered.
 - **Rollback by design:** policy lifecycle history is preserved and a previously approved baseline can be restored without deleting evidence.
+- **Leakage-aware longitudinal evaluation:** future outcomes cannot enter model features or training labels that overlap the validation period.
 - **Modular:** property management is the first use case, not the only possible domain.
 
 ## Repository layout
@@ -302,6 +337,7 @@ src/ancova_ops/
 ├── routing.py           # Explainable baseline routing
 ├── evaluation.py        # Deterministic routing benchmark and candidate comparison
 ├── adaptive.py          # Time-aware offline policy evaluation and lifecycle controls
+├── longitudinal.py      # Synthetic recurrence/time-to-event benchmark
 ├── governance.py        # Machine-readable policy validation and analytics field gate
 ├── synthetic.py         # Synthetic outcome and logged-policy data for development
 ├── analytics.py         # ANCOVA fitting, adjusted estimates and diagnostics
@@ -325,6 +361,7 @@ docs/
 ├── data-governance.md
 ├── management-report.md
 ├── adaptive-routing.md
+├── longitudinal-benchmark.md
 └── roadmap.md
 ```
 
@@ -332,68 +369,37 @@ docs/
 
 ### Phase 0 — Foundation
 
-- project structure and development conventions
-- service-case data schema
-- synthetic dataset generator
-- baseline routing engine
-- ANCOVA analysis skeleton
-- documentation of the hackathon origin and corrected technical architecture
+Project structure, service-case schema, synthetic outcomes, transparent routing and CI.
 
 ### Phase 1 — Working service-intelligence MVP
 
-- request API
-- structured issue extraction
-- urgency and contextual scoring
-- department classification
-- human-readable routing explanation
-- case persistence and routing audit log
-- outcome capture
-- human confirmation / override capture
-- deterministic routing evaluation harness
+Request API, structured issue extraction, contextual scoring, routing, persistence, human review, outcome capture and deterministic routing evaluation.
 
 ### Cross-cutting governance
 
-- synthetic-only development boundary
-- field sensitivity and purpose registry
-- retention/deletion expectations
-- analytics export restrictions
-- longitudinal-feature approval register
-- machine-readable governance check in CI
+Synthetic-only boundary, field-purpose registry, retention/deletion expectations, analytics restrictions, longitudinal-feature controls and CI validation.
 
 ### Phase 2 — Outcome analytics
 
-- reproducible ANCOVA workflow
-- model assumption and influence checks
-- department and case-mix analysis
-- adjusted estimates with uncertainty
-- technical analysis output
-- management-facing Markdown and structured report output
+Reproducible ANCOVA/regression, diagnostics, adjusted estimates with uncertainty and technical/management reporting.
 
 ### Phase 3 — Adaptive routing
 
-- transparent outcome-aware routing candidate
-- synthetic logged policy with known action propensities
-- time-aware train/validation design
-- support-aware IPS offline evaluation
-- explicit counterfactual limitations
-- human approval for policy changes
-- versioning, lifecycle history and rollback
+Transparent outcome-aware policy candidate, synthetic logging propensities, time-aware offline IPS evaluation, human approval, versioning and rollback.
 
-### Phase 4 — Longitudinal prediction
+### Phase 4 — Longitudinal modelling
 
-- recurring-case and escalation modelling
-- seasonality / user-history experiments
-- compare sequence models against simpler baselines before adopting them
+Synthetic recurrence histories, leakage-safe time splits, recency/frequency baseline, discrete-time hazard model and tree comparator. Sequence models remain deferred until incremental value is demonstrated on the same benchmark.
 
 ## Status
 
-Phase 0, the Phase 1 service-intelligence MVP foundation, the Phase 2 synthetic outcome-analysis/reporting workflow and the Phase 3 synthetic adaptive-routing evaluation framework are implemented. The repository also has an explicit synthetic-only data-governance boundary with machine-readable field and longitudinal-feature controls.
+Phases 0–4 now have runnable development workflows. Phase 4 completes the first synthetic longitudinal comparison without adopting sequence-model complexity by default.
 
-Real private pilot data remains prohibited until a separate pilot policy defines jurisdiction-specific notice/consent requirements, access controls, concrete retention periods and deletion procedures. The Phase 3 policy registry is intentionally not wired to the production request path; real-data policy learning and operational deployment remain blocked until those governance and integration decisions are completed.
+The repository remains under an explicit synthetic-only data-governance boundary. Real private pilot data, real longitudinal personalisation, real-data adaptive policy learning and operational deployment remain prohibited until a separate pilot policy defines jurisdiction-specific notice/consent requirements, access controls, concrete retention periods and deletion procedures.
 
 ## Important note on metrics
 
-Figures shown in the original hackathon presentation are not treated here as measured ANCOVA Ops outcomes unless they can be traced to a project-specific experiment. The routing benchmark figures above describe a small hand-authored fixture only and are not production estimates. Phase 3 IPS results are generated from synthetic logged-policy data and must not be reported as real service improvements. External benchmarks, simulated examples and target metrics will be labelled as such.
+Figures shown in the original hackathon presentation are not treated here as measured ANCOVA Ops outcomes unless they can be traced to a project-specific experiment. The routing benchmark figures above describe a small hand-authored fixture only and are not production estimates. Phase 3 IPS results are generated from synthetic logged-policy data. Phase 4 recurrence metrics are generated from synthetic longitudinal histories. None of these synthetic results should be reported as real service improvements.
 
 ## License
 
