@@ -1,12 +1,26 @@
 # ANCOVA Ops
 
+[![CI](https://github.com/gigichengnc/ancova-ops/actions/workflows/ci.yml/badge.svg)](https://github.com/gigichengnc/ancova-ops/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/gigichengnc/ancova-ops?display_name=tag)](https://github.com/gigichengnc/ancova-ops/releases/tag/v0.5.2)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue.svg)](pyproject.toml)
+
 **Human-centred service intelligence for turning unstructured requests into measurable, adaptive operations.**
 
-ANCOVA Ops is an experimental service-operations platform originating from an HKMU Hackathon 2026 concept. The repository develops that idea into a reproducible software and analytics project covering explainable request routing, human review, outcome analysis, offline policy research and longitudinal model comparison.
+ANCOVA Ops is a reproducible research/software prototype that turns unstructured service requests into explainable routing recommendations, preserves human review and audit history, records outcomes, and evaluates operations with downstream ANCOVA/regression, offline policy research and leakage-aware longitudinal benchmarks.
 
-**Current checkpoint: `v0.5.2` — Phases 0–4 implemented for synthetic/hand-authored development use, with a one-command portfolio showcase and Apache-2.0 licensing.**
+It originated from an HKMU Hackathon 2026 concept and now serves as a broader service-operations research platform; property management is the first use case, not the product boundary.
 
-> Real private resident/customer data, real longitudinal personalisation and production adaptive deployment are not approved at this stage.
+| Reviewer question | Current answer |
+| --- | --- |
+| What is implemented? | Phases 0–4: routing, audit/history, outcome analytics, adaptive-policy research and longitudinal benchmarking |
+| Fastest demo | `ancova-showcase` |
+| Current release | `v0.5.2` |
+| Evidence class | Synthetic data + a small hand-authored routing fixture |
+| Real private-data pilot / production | **Not approved** |
+| License | Apache-2.0 |
+
+> Current benchmark outputs are development evidence. They are not real-world service-improvement claims, causal department rankings or production-readiness evidence.
 
 ## One-command showcase
 
@@ -256,6 +270,10 @@ A real-data pilot remains blocked until privacy/legal review, notice/consent req
 ## Hackathon-origin metrics
 
 Figures in the original hackathon presentation are not treated as measured ANCOVA Ops outcomes unless they can be traced to project-specific experiments. See [`docs/hackathon-origin.md`](docs/hackathon-origin.md).
+
+## GitHub storefront settings
+
+Recommended repository About text, topic tags and social-preview copy are documented in [`docs/github-storefront.md`](docs/github-storefront.md). These settings are intentionally kept separate from model/evidence claims.
 
 ## License
 
