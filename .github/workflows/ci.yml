@@ -38,5 +38,11 @@ jobs:
       - name: Outcome analysis smoke test
         run: ancova-analyze --synthetic-n 120 --seed 41 --json > /tmp/ancova-analysis.json
 
+      - name: Management report smoke test
+        run: >-
+          ancova-management-report --synthetic-n 120 --seed 41
+          --output /tmp/ancova-management-report.md
+          --json-output /tmp/ancova-management-report.json
+
       - name: Data governance policy check
         run: ancova-governance-check --json > /tmp/ancova-data-governance.json
