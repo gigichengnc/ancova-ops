@@ -62,7 +62,9 @@ Goal: evaluate service outcomes credibly.
 - [x] explicit model warnings and alternative-model guidance;
 - [x] machine-readable and human-readable analysis command;
 - [x] synthetic failure-condition tests and CI smoke test;
-- [ ] management-facing dashboard or richer report visualisation.
+- [x] management-facing Markdown report and structured summary;
+- [x] raw-versus-adjusted department comparison;
+- [x] management screening dashboard with visible warnings.
 
 ## Phase 3 — Adaptive routing
 

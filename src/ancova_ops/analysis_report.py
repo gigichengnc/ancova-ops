@@ -38,7 +38,9 @@ def _build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _load_input(args: argparse.Namespace) -> pd.DataFrame:
+def load_input(args: argparse.Namespace) -> pd.DataFrame:
+    """Load synthetic or approved development data for outcome analysis commands."""
+
     if args.csv is None:
         return generate_outcomes(n=args.synthetic_n, seed=args.seed)
 
@@ -126,7 +128,7 @@ def main(argv: list[str] | None = None) -> int:
     if not 0 < args.alpha < 1:
         raise ValueError("alpha must be between 0 and 1")
 
-    data = _load_input(args)
+    data = load_input(args)
     report = build_ancova_report(data, alpha=args.alpha)
     payload = report.to_dict()
 
