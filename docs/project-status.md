@@ -1,6 +1,6 @@
-# Project Status — v0.5.1
+# Project Status — v0.5.2
 
-ANCOVA Ops v0.5.1 is a reproducible development and research checkpoint covering service-request structuring, explainable routing, outcome analysis, offline adaptive-policy research and synthetic longitudinal modelling, with a reviewer-facing one-command showcase layer.
+ANCOVA Ops v0.5.2 is a reproducible development and research checkpoint covering service-request structuring, explainable routing, outcome analysis, offline adaptive-policy research and synthetic longitudinal modelling, with a reviewer-facing one-command showcase layer and explicit Apache-2.0 licensing.
 
 It is **not** a production deployment and is **not** approved for real private resident/customer data.
 
@@ -18,11 +18,12 @@ It is **not** a production deployment and is **not** approved for real private r
 | Adaptive-routing offline study | Implemented | `ancova-policy evaluate` | Synthetic logged-policy data |
 | Policy approval / rollback registry | Implemented locally | `ancova-policy approve`, `activate`, `rollback` | Development lifecycle control |
 | Longitudinal recurrence benchmark | Implemented | `ancova-longitudinal` | Synthetic longitudinal histories |
+| Repository licensing | Implemented | `LICENSE`, package metadata | Apache-2.0 for repository-licensed ANCOVA Ops material |
 | LSTM / sequence model | Deferred | none | Not justified by current benchmark |
 | Real private-data pilot | Blocked | none | Requires separate governance approval |
 | Production adaptive routing | Blocked | none | Requires real-data validation and deployment controls |
 
-## What v0.5.1 demonstrates
+## What v0.5.2 demonstrates
 
 1. An unstructured service request can be converted into a structured, explainable routing recommendation with versioned implementation metadata.
 2. Human review can confirm or override routing without erasing the original machine/rule recommendation.
@@ -32,8 +33,9 @@ It is **not** a production deployment and is **not** approved for real private r
 6. Longitudinal recurrence modelling can be benchmarked with leakage controls and simpler references before sequence-model complexity is considered.
 7. Data-governance boundaries are executable in CI rather than existing only as prose.
 8. An external reviewer can run one command and inspect the Phase 1–4 evidence chain without manually assembling outputs from separate commands.
+9. Reuse terms for ANCOVA Ops repository material are explicit through Apache-2.0 rather than being left under an unspecified no-license state.
 
-## What v0.5.1 does not demonstrate
+## What v0.5.2 does not demonstrate
 
 - real-world routing accuracy;
 - causal improvement in service outcomes;
@@ -42,7 +44,9 @@ It is **not** a production deployment and is **not** approved for real private r
 - safe use of real resident/customer histories;
 - evidence that adaptive routing outperforms the baseline in a real deployment;
 - evidence that an LSTM or other sequence model is needed;
-- any new real-world evidence merely because the portfolio showcase aggregates existing outputs.
+- any new real-world evidence merely because the portfolio showcase aggregates existing outputs;
+- any relicensing of third-party dependencies under Apache-2.0;
+- pilot or production readiness merely because the repository is open-source licensed.
 
 ## Command surface
 
@@ -89,7 +93,13 @@ The repository deliberately separates evidence classes:
 3. **Synthetic logged-policy results** — useful for validating offline policy-evaluation mechanics, not production counterfactual evidence.
 4. **Synthetic longitudinal results** — useful for model-comparison and leakage testing, not resident/customer forecasting claims.
 5. **Portfolio showcase output** — an aggregation of classes 1–4, not a higher evidence class.
-6. **Real pilot evidence** — not present in v0.5.1 and cannot be implied from the earlier classes.
+6. **Real pilot evidence** — not present in v0.5.2 and cannot be implied from the earlier classes.
+
+## Licensing
+
+ANCOVA Ops repository material distributed under the project license is licensed under the Apache License 2.0. The SPDX identifier in project metadata is `Apache-2.0`; the canonical license text is stored in the root `LICENSE` file.
+
+Third-party dependencies and any separately identified third-party material remain subject to their own licences and notices. A separate notices file should be introduced when incorporated/adapted material creates an actual notice-preservation obligation rather than as a speculative placeholder.
 
 ## Current blockers before a real pilot
 
@@ -103,4 +113,4 @@ Production deployment additionally requires real-data validation, authenticated 
 
 ## Version
 
-Project metadata and the Python package both report `0.5.1`. CI contains a regression test that fails if those versions or the registered CLI surface drift apart.
+Project metadata, the Python package and the portfolio showcase report version all report `0.5.2`. CI contains regression tests that fail if those versions, the registered CLI surface or Apache-2.0 metadata drift apart.
