@@ -1,23 +1,30 @@
 from __future__ import annotations
 
+from typing import Literal
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field, field_validator
 
 from .intelligence import INTELLIGENCE_VERSION, BaselineRequestIntelligence
-from .models import ServiceCase
+from .models import RoutingDecision, ServiceCase
 from .persistence import (
     CaseConflictError,
     CaseOutcome,
+    ReviewConflictError,
     SQLiteCaseStore,
     StoredRoutingDecision,
+    StoredRoutingReview,
     default_database_path,
 )
 from .routing import ROUTER_VERSION, baseline_route
 
 app = FastAPI(
     title="ANCOVA Ops API",
-    version="0.3.0",
-    description="Structured service-request intelligence, explainable routing and audit persistence.",
+    version="0.4.0",
+    description=(
+        "Structured service-request intelligence, explainable routing, audit persistence "
+        "and human routing feedback."
+    ),
 )
 
 _intelligence = BaselineRequestIntelligence()
@@ -70,6 +77,47 @@ class RoutingAuditResponse(BaseModel):
     reasons: list[str]
 
 
+class RoutingStateResponse(BaseModel):
+    source: Literal["machine_recommendation", "human_review"]
+    department: str
+    priority: str
+    requires_human_review: bool
+    secondary_notify: str | None
+
+
+class RoutingReviewRequest(BaseModel):
+    decision_id: int = Field(ge=1)
+    actor_id: str = Field(min_length=1, max_length=200)
+    reason: str = Field(min_length=1, max_length=2000)
+    department: str = Field(min_length=1, max_length=100)
+    priority: Literal["normal", "high", "critical"]
+    requires_human_review: bool
+    secondary_notify: str | None = Field(default=None, max_length=100)
+
+    @field_validator("actor_id", "reason", "department")
+    @classmethod
+    def reject_blank_review_text(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("must not be blank")
+        return value
+
+
+class RoutingReviewResponse(BaseModel):
+    review_id: int
+    decision_id: int
+    created_at: str
+    actor_type: str
+    actor_id: str
+    action: Literal["confirmed", "overridden"]
+    reason: str
+    final_decision: RoutingStateResponse
+    feedback_note: str = (
+        "A human confirmation or override is a feedback signal. It is not automatically "
+        "treated as ground truth for model training or evaluation."
+    )
+
+
 class OutcomeRequest(BaseModel):
     response_time_minutes: float | None = Field(default=None, ge=0)
     resolution_time_minutes: float | None = Field(default=None, ge=0)
@@ -93,6 +141,8 @@ class CaseRecordResponse(BaseModel):
     vulnerability_flag: bool
     created_at: str
     latest_decision: RoutingAuditResponse | None
+    latest_review: RoutingReviewResponse | None
+    effective_routing: RoutingStateResponse | None
     outcome: OutcomeResponse | None
 
 
@@ -111,6 +161,29 @@ def _audit_response(stored: StoredRoutingDecision) -> RoutingAuditResponse:
         requires_human_review=stored.decision.requires_human_review,
         secondary_notify=stored.decision.secondary_notify,
         reasons=list(stored.decision.reasons),
+    )
+
+
+def _routing_state(decision: RoutingDecision, *, source: str) -> RoutingStateResponse:
+    return RoutingStateResponse(
+        source=source,
+        department=decision.department,
+        priority=decision.priority,
+        requires_human_review=decision.requires_human_review,
+        secondary_notify=decision.secondary_notify,
+    )
+
+
+def _review_response(stored: StoredRoutingReview) -> RoutingReviewResponse:
+    return RoutingReviewResponse(
+        review_id=stored.review_id,
+        decision_id=stored.decision_id,
+        created_at=stored.created_at,
+        actor_type=stored.actor_type,
+        actor_id=stored.actor_id,
+        action=stored.action,
+        reason=stored.reason,
+        final_decision=_routing_state(stored.final_decision, source="human_review"),
     )
 
 
@@ -185,6 +258,23 @@ def get_case(case_id: str) -> CaseRecordResponse:
             satisfaction=stored.outcome.satisfaction,
         )
 
+    latest_decision = (
+        None if stored.latest_decision is None else _audit_response(stored.latest_decision)
+    )
+    latest_review = None if stored.latest_review is None else _review_response(stored.latest_review)
+
+    effective_routing = None
+    if stored.latest_review is not None:
+        effective_routing = _routing_state(
+            stored.latest_review.final_decision,
+            source="human_review",
+        )
+    elif stored.latest_decision is not None:
+        effective_routing = _routing_state(
+            stored.latest_decision.decision,
+            source="machine_recommendation",
+        )
+
     return CaseRecordResponse(
         case_id=stored.case.case_id,
         message=stored.case.message,
@@ -195,9 +285,9 @@ def get_case(case_id: str) -> CaseRecordResponse:
         previous_related_cases=stored.case.previous_related_cases,
         vulnerability_flag=stored.case.vulnerability_flag,
         created_at=stored.created_at,
-        latest_decision=(
-            None if stored.latest_decision is None else _audit_response(stored.latest_decision)
-        ),
+        latest_decision=latest_decision,
+        latest_review=latest_review,
+        effective_routing=effective_routing,
         outcome=outcome,
     )
 
@@ -208,6 +298,44 @@ def get_routing_audit(case_id: str) -> list[RoutingAuditResponse]:
     if store.get_case(case_id) is None:
         raise HTTPException(status_code=404, detail="case not found")
     return [_audit_response(item) for item in store.list_routing_decisions(case_id)]
+
+
+@app.post(
+    "/v1/cases/{case_id}/routing-reviews",
+    response_model=RoutingReviewResponse,
+)
+def post_routing_review(case_id: str, payload: RoutingReviewRequest) -> RoutingReviewResponse:
+    final_decision = RoutingDecision(
+        department=payload.department,
+        priority=payload.priority,
+        requires_human_review=payload.requires_human_review,
+        secondary_notify=payload.secondary_notify,
+        reasons=(),
+    )
+    try:
+        review = _store().save_routing_review(
+            case_id,
+            payload.decision_id,
+            final_decision,
+            actor_id=payload.actor_id,
+            reason=payload.reason,
+        )
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail="case or routing decision not found") from exc
+    except ReviewConflictError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return _review_response(review)
+
+
+@app.get(
+    "/v1/cases/{case_id}/routing-reviews",
+    response_model=list[RoutingReviewResponse],
+)
+def get_routing_reviews(case_id: str) -> list[RoutingReviewResponse]:
+    store = _store()
+    if store.get_case(case_id) is None:
+        raise HTTPException(status_code=404, detail="case not found")
+    return [_review_response(item) for item in store.list_routing_reviews(case_id)]
 
 
 @app.put("/v1/cases/{case_id}/outcome", response_model=OutcomeResponse)
