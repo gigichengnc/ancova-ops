@@ -21,8 +21,9 @@ Goal: accept a real request and produce a structured, reviewable routing recomme
 - [x] issue taxonomy;
 - [x] transparent baseline text classifier;
 - [x] urgency/context extraction interface;
-- [ ] persistence layer;
-- [ ] routing decision audit log;
+- [x] persistence layer;
+- [x] routing decision audit log;
+- [x] outcome capture fields;
 - [ ] manual override / correction capture;
 - [ ] evaluation dataset for classifier and router.
 
