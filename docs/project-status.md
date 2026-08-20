@@ -1,6 +1,6 @@
-# Project Status — v0.5.2
+# Project Status — v0.5.3
 
-ANCOVA Ops v0.5.2 is a reproducible development and research checkpoint covering service-request structuring, explainable routing, outcome analysis, offline adaptive-policy research and synthetic longitudinal modelling, with a reviewer-facing one-command showcase layer and explicit Apache-2.0 licensing.
+ANCOVA Ops v0.5.3 is a reproducible development and research checkpoint covering service-request structuring, explainable routing, outcome analysis, offline adaptive-policy research and synthetic longitudinal modelling, with a reviewer-facing one-command showcase, polished GitHub storefront and explicit Apache-2.0 licensing.
 
 It is **not** a production deployment and is **not** approved for real private resident/customer data.
 
@@ -23,7 +23,7 @@ It is **not** a production deployment and is **not** approved for real private r
 | Real private-data pilot | Blocked | none | Requires separate governance approval |
 | Production adaptive routing | Blocked | none | Requires real-data validation and deployment controls |
 
-## What v0.5.2 demonstrates
+## What v0.5.3 demonstrates
 
 1. An unstructured service request can be converted into a structured, explainable routing recommendation with versioned implementation metadata.
 2. Human review can confirm or override routing without erasing the original machine/rule recommendation.
@@ -33,9 +33,10 @@ It is **not** a production deployment and is **not** approved for real private r
 6. Longitudinal recurrence modelling can be benchmarked with leakage controls and simpler references before sequence-model complexity is considered.
 7. Data-governance boundaries are executable in CI rather than existing only as prose.
 8. An external reviewer can run one command and inspect the Phase 1–4 evidence chain without manually assembling outputs from separate commands.
-9. Reuse terms for ANCOVA Ops repository material are explicit through Apache-2.0 rather than being left under an unspecified no-license state.
+9. Reuse terms for ANCOVA Ops repository material are explicit through Apache-2.0.
+10. Repository presentation and formal release metadata are synchronised without changing the underlying evidence class.
 
-## What v0.5.2 does not demonstrate
+## What v0.5.3 does not demonstrate
 
 - real-world routing accuracy;
 - causal improvement in service outcomes;
@@ -46,7 +47,7 @@ It is **not** a production deployment and is **not** approved for real private r
 - evidence that an LSTM or other sequence model is needed;
 - any new real-world evidence merely because the portfolio showcase aggregates existing outputs;
 - any relicensing of third-party dependencies under Apache-2.0;
-- pilot or production readiness merely because the repository is open-source licensed.
+- pilot or production readiness merely because the repository is open-source licensed or polished for external review.
 
 ## Command surface
 
@@ -93,7 +94,7 @@ The repository deliberately separates evidence classes:
 3. **Synthetic logged-policy results** — useful for validating offline policy-evaluation mechanics, not production counterfactual evidence.
 4. **Synthetic longitudinal results** — useful for model-comparison and leakage testing, not resident/customer forecasting claims.
 5. **Portfolio showcase output** — an aggregation of classes 1–4, not a higher evidence class.
-6. **Real pilot evidence** — not present in v0.5.2 and cannot be implied from the earlier classes.
+6. **Real pilot evidence** — not present in v0.5.3 and cannot be implied from the earlier classes.
 
 ## Licensing
 
@@ -113,4 +114,4 @@ Production deployment additionally requires real-data validation, authenticated 
 
 ## Version
 
-Project metadata, the Python package and the portfolio showcase report version all report `0.5.2`. CI contains regression tests that fail if those versions, the registered CLI surface or Apache-2.0 metadata drift apart.
+Project metadata, the Python package and the portfolio showcase report version all report `0.5.3`. CI contains regression tests that fail if those versions, the registered CLI surface or Apache-2.0 metadata drift apart.
