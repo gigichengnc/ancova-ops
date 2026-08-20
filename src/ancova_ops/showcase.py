@@ -10,7 +10,7 @@ from .adaptive import build_offline_comparison
 from .analytics import build_ancova_report
 from .evaluation import baseline_predict, evaluate_predictor, load_dataset
 from .governance import load_policy, validate_policy
-from .intelligence import BaselineRequestIntelligence, INTELLIGENCE_VERSION
+from .intelligence import INTELLIGENCE_VERSION, BaselineRequestIntelligence
 from .longitudinal import run_longitudinal_benchmark
 from .models import ServiceCase
 from .routing import ROUTER_VERSION, baseline_route
