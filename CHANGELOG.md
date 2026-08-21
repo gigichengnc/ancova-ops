@@ -2,6 +2,23 @@
 
 All notable project checkpoints are documented here.
 
+## [1.1.1] - 2026-08-21
+
+### Changed
+
+- Reworked the README first screen so a first-time reviewer can immediately see that ReasonedOps is a runnable local research prototype rather than only a concept or methodology document.
+- Added a concrete working-status table covering the API, audit trail, human override, outcome capture, management reporting, applicability checks and research benchmarks.
+- Added a 60-second proof path using `reasoned-showcase`, including the generated report location.
+- Added a direct FastAPI health check and example `/v1/route` request so reviewers can verify the operational path without reading the full methodology first.
+- Clarified the distinction between a working local prototype, a real private-data pilot and a production deployment.
+- Reworded the project-origin statement to reflect the author's participation in HKMU Hackathon 2026.
+- Updated the canonical FastAPI title/version from the former ANCOVA Ops branding to ReasonedOps and aligned it with the package version.
+- Bumped package and citation metadata to `1.1.1`.
+
+### Evidence and deployment status
+
+This is a usability, documentation and branding-consistency patch. It does not add a new evidence class or establish real-world service improvement. Current quantitative evidence remains synthetic or hand-authored development evidence. Real private-data pilot use and production deployment remain not approved.
+
 ## [1.1.0] - 2026-08-21
 
 ### Renamed
@@ -181,7 +198,7 @@ The showcase only reorganises existing hand-authored and synthetic development e
 - Corrected the original hackathon architecture so ANCOVA is used for downstream outcome analysis rather than per-message scoring.
 - Reframed emotional/contextual scores as transparent operational heuristics rather than psychological measurements.
 - Made synthetic or hand-authored provenance explicit throughout evaluation workflows.
-- Deferred LSTM/sequence modelling until a same-benchmark experiment can demonstrate incremental value over simpler approaches.
+- Deferred LSTM/sequence modelling until a same-benchmark experiment can demonstrate incremental value over simpler baselines.
 - Aligned package `__version__` with the project metadata at `0.5.0` and added a regression test to prevent future version drift.
 
 ### Evidence status
