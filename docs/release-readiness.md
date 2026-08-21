@@ -82,7 +82,7 @@ The v1.4.3 release-candidate `CITATION.cff` intentionally has **no top-level DOI
 - [x] README describes the v1.4.3 audit-closeout provenance plan;
 - [x] release/citation/status docs describe exact-tag alignment;
 - [x] `CHANGELOG.md` includes a `1.4.3` section;
-- [ ] PR CI passes Python 3.11, Python 3.12 and distribution jobs.
+- [x] PR CI passes Python 3.11, Python 3.12 and distribution jobs.
 
 ### After merge to main
 
