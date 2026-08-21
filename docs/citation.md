@@ -10,7 +10,7 @@ ReasonedOps is the author's own project. **HKMU Hackathon 2026** is referenced o
 
 When `CITATION.cff` is present on the default branch, GitHub can expose a **Cite this repository** control and render citation formats from the file.
 
-The v1.4.3 release-candidate metadata records:
+The current v1.4.3 citation metadata records:
 
 - software title: ReasonedOps;
 - author: Gigi Cheng;
@@ -20,70 +20,55 @@ The v1.4.3 release-candidate metadata records:
 - repository URL;
 - the tightened rule-based Operate description;
 - the explicit unmeasured-confounding limitation benchmark;
-- no fabricated ORCID, email, affiliation or future DOI.
+- verified v1.4.3 Zenodo version DOI: `10.5281/zenodo.22046490`;
+- no fabricated ORCID, email or affiliation.
 
-## Why the v1.4.3 release candidate has no top-level DOI yet
+## Verified v1.4.3 archive
 
-Zenodo's GitHub integration mints an immutable **version DOI after it ingests a GitHub release**. Therefore a v1.4.3 release candidate cannot truthfully contain its own version DOI before the release exists.
+The GitHub `v1.4.3` tag is identical to the intended v1.4.3 release commit. Zenodo's GitHub integration has ingested that release and shows it as **Published**.
 
-The previous v1.4.2 DOI must not be copied forward into the v1.4.3 `CITATION.cff`, because that would make the new snapshot cite a different archived snapshot.
-
-The intended sequence is:
+The verified immutable v1.4.3 version DOI is:
 
 ```text
-prepare v1.4.3 metadata without a top-level version DOI
-      ↓
-merge after CI
-      ↓
-GitHub Release v1.4.3 is created from that exact commit
-      ↓
-Zenodo ingests v1.4.3 and mints its immutable version DOI
-      ↓
-verify the DOI + creator/title/version/license
-      ↓
-post-release sync the verified DOI into main-branch citation docs
+10.5281/zenodo.22046490
 ```
 
-The release workflow is idempotent for an existing tag. Once `v1.4.3` exists, a later documentation-only DOI sync on `main` does **not** require or justify another version bump.
+The repository therefore records that exact DOI in `CITATION.cff` on the default branch.
+
+This DOI identifies the archived v1.4.3 snapshot. It must not be retroactively inserted into the immutable Git tag itself; the release tag remains the source snapshot that Zenodo archived.
 
 ## Existing verified Zenodo archives
 
-The Zenodo GitHub integration already shows:
+The Zenodo GitHub integration shows:
 
 ```text
 v1.4.1  →  10.5281/zenodo.22044222
 v1.4.2  →  10.5281/zenodo.22044621
+v1.4.3  →  10.5281/zenodo.22046490
 ```
 
-Those remain valid immutable version DOIs for those historical snapshots.
-
-`10.5281/zenodo.22044621` is specifically the **v1.4.2 version DOI**. It is not reused as the DOI for v1.4.3.
+Each is an immutable version DOI for its corresponding archived snapshot.
 
 ## Version DOI vs concept DOI
 
 Zenodo can distinguish an immutable **version DOI** from a **concept DOI** representing all versions.
 
-The screenshots verified the v1.4.1 and v1.4.2 version DOIs, but the all-versions concept DOI has not yet been independently captured in this repository. The README therefore does not currently show a DOI badge rather than silently using the latest version DOI as though it were an all-versions identifier.
+The v1.4.3 integration screen displays `10.5281/zenodo.22046490` both on the v1.4.3 release row and in the repository DOI badge area. That is sufficient evidence to record it as the **v1.4.3 version DOI**. It is not sufficient, by itself, to relabel it as a separate all-versions concept DOI.
 
-After v1.4.3 is archived, verify both identifiers if Zenodo displays both:
+The repository therefore does **not** claim a concept DOI unless Zenodo independently exposes a distinct `Cite all versions` identifier and that identifier is captured directly.
 
-- **version DOI** → use for the exact v1.4.3 citation;
-- **concept / all-versions DOI** → suitable for a stable project-level README badge.
-
-Do not infer either identifier from record-number patterns.
+This is also why the README does not infer a project-level concept DOI from record-number patterns or from the latest-version badge.
 
 ## PyPI / Zenodo provenance alignment
 
-The earlier public state had a deliberate but awkward distinction:
+Before v1.4.3, the public state was:
 
 ```text
 PyPI installable artifact  = 1.4.0
 preferred Zenodo snapshot  = 1.4.2
 ```
 
-The executable project logic between those checkpoints was largely unchanged, but the artifacts were still different snapshots. For an audit/provenance-oriented project, that distinction is worth closing.
-
-v1.4.3 is the audit-closeout checkpoint. The goal is:
+v1.4.3 closes that provenance gap by using one exact source tag:
 
 ```text
 GitHub tag v1.4.3
@@ -92,7 +77,9 @@ GitHub tag v1.4.3
       = source of PyPI reasoned-ops==1.4.3
 ```
 
-The PyPI workflow should therefore be run with the exact existing tag `v1.4.3` only after the release has passed CI and been archived.
+The GitHub/Zenodo side is now verified. The remaining publication step is to run the PyPI Trusted Publishing workflow with the exact existing tag `v1.4.3`, then verify the public wheel in a fresh environment.
+
+A later DOI-sync commit on `main` is documentation/citation metadata only. It must **not** become the source for the PyPI 1.4.3 artifact; PyPI must still publish from the immutable `v1.4.3` tag.
 
 ## Why there is no `.zenodo.json`
 
