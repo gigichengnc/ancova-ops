@@ -1,6 +1,16 @@
-# Portfolio Showcase — ReasonedOps v1.2.0
+# Portfolio Showcase — ReasonedOps v1.3.0
 
-`reasoned-showcase` is the fastest way to prove that the repository is executable.
+`reasoned-showcase` is the fastest way to prove that the rebuilt repository is executable after reading the project story.
+
+Recommended reviewer order:
+
+```text
+original/README.md
+      ↓
+docs/before-vs-after.md
+      ↓
+reasoned-showcase
+```
 
 Run:
 
@@ -52,7 +62,7 @@ A `reject` result is intentional: it means the current design should not be turn
 
 The showcase also includes the existing routing fixture, synthetic regression/ANCOVA outcome example, offline routing-policy research and synthetic longitudinal benchmark.
 
-Those results are there to demonstrate software behaviour and research workflow integration. They are not production performance estimates.
+Those results demonstrate software behaviour and research workflow integration. They are not production performance estimates.
 
 ## Markdown plus JSON
 
@@ -70,8 +80,10 @@ reasoned-showcase --json
 
 ## Reviewer interpretation
 
-After running the command, a reviewer should be able to answer:
+After reading the rebuild story and running the command, a reviewer should be able to answer:
 
+- What did the original Hackathon concept try to solve? **Documented under `original/`.**
+- What was technically corrected during the rebuild? **Documented in the before/after and concept audit.**
 - Can the repository actually execute? **Yes.**
 - Can it route a request and explain the route? **Yes, as a local development prototype.**
 - Can a human override the route without deleting machine history? **Yes.**
