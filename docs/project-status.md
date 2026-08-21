@@ -1,15 +1,15 @@
-# Project Status — ReasonedOps v1.4.1
+# Project Status — ReasonedOps v1.4.2
 
-ReasonedOps is a completed local research/software prototype and retrospective rebuild of an **HKMU Hackathon 2026** concierge concept.
+ReasonedOps is a completed local research/software prototype that originated from my participation in **HKMU Hackathon 2026** and evolved into its current evidence-aware service-operations form.
 
 The current project story is:
 
 ```text
-original concept
+early Hackathon-stage concept
       ↓
 audit assumptions
       ↓
-rebuild as Operate → Audit → Evaluate
+evolve into Operate → Audit → Evaluate
       ↓
 validate software behaviour with public development evidence
       ↓
@@ -23,12 +23,12 @@ define the next real evidence gate
 ```
 
 **Research/portfolio project:** COMPLETED  
-**Current GitHub/citation checkpoint:** v1.4.1  
+**Current GitHub/citation checkpoint:** v1.4.2  
 **Python distribution build:** VERIFIED  
 **PyPI publication:** PUBLISHED — `reasoned-ops==1.4.0`  
 **External package install check:** VERIFIED FROM PUBLIC PYPI ARTIFACT  
 **Zenodo GitHub integration:** ENABLED FOR `gigichengnc/reasoned-ops`  
-**Zenodo DOI:** PENDING INGESTION/VERIFICATION OF THE v1.4.1 RELEASE  
+**Zenodo DOI:** PENDING INGESTION/VERIFICATION OF THE CURRENT ARCHIVE RELEASE  
 **Real private-data pilot:** NOT APPROVED  
 **Production deployment:** NOT APPROVED
 
@@ -48,20 +48,20 @@ define the next real evidence gate
 | Offline policy research | Evaluates candidate routing policies on synthetic logged-policy data. |
 | Longitudinal research | Benchmarks recurrence/time-to-next-case models on synthetic histories. |
 | Governance check | Enforces the repository's synthetic/private-data development policy. |
-| Rebuild record | Preserves the reconstructed original concept, before/after comparison, concept audit and model decisions. |
+| Development-history record | Preserves the reconstructed early concept, before/after comparison, concept audit and model decisions for the same project. |
 | Python distribution | Builds wheel + source distribution and verifies clean-wheel installation in CI. |
 | PyPI publishing | Published through GitHub OIDC Trusted Publishing with no stored long-lived PyPI token. |
 | Public artifact verification | `reasoned-ops==1.4.0` installed from PyPI in a Windows environment outside the repository checkout; Operate → Audit → Evaluate paths were exercised successfully. |
-| Citation/archive | `CITATION.cff` is aligned to v1.4.1 and the repository is enabled for Zenodo GitHub release archiving. |
+| Citation/archive | `CITATION.cff` is aligned to v1.4.2 and the repository is enabled for Zenodo GitHub release archiving. |
 
 ## Portfolio narrative
 
-The repository is intentionally presented as a **rebuild case study**, not as a startup-style product landing page.
+The repository is intentionally presented as a **project-evolution case study**, not as a startup-style product landing page and not as a rebuild of somebody else's project.
 
 Start with:
 
-1. [`../original/README.md`](../original/README.md) — reconstructed original Hackathon concept;
-2. [`before-vs-after.md`](before-vs-after.md) — original concept vs current rebuild;
+1. [`../original/README.md`](../original/README.md) — reconstructed early Hackathon-stage version of this project;
+2. [`before-vs-after.md`](before-vs-after.md) — early concept vs current project;
 3. [`original-concept-audit.md`](original-concept-audit.md) — assumptions preserved/corrected/deferred;
 4. [`model-decisions.md`](model-decisions.md) — why methods/models were selected, rejected or deferred;
 5. [`../README.md`](../README.md) — runnable overview and portfolio story;
@@ -125,7 +125,7 @@ See [`publication-verification.md`](publication-verification.md) for the exact b
 
 This establishes package distribution and executable local behaviour from the public artifact. It is not independent scientific validation.
 
-The v1.4.1 checkpoint is separate: it is a citation/archive-only release prepared after the repository was enabled in Zenodo. It does not imply that `reasoned-ops==1.4.1` has been published on PyPI.
+The v1.4.2 checkpoint is separate: it is a citation/wording correction release prepared for the current Zenodo archive path. It does not imply that `reasoned-ops==1.4.2` has been published on PyPI.
 
 ## Evaluation boundary
 
@@ -156,7 +156,7 @@ Current quantitative development evidence is limited to:
 
 The external PyPI verification demonstrates installability and executable software behaviour; it does not add a real-world outcome evidence class.
 
-There is no representative real-company or real-resident/customer pilot dataset in v1.4.1.
+There is no representative real-company or real-resident/customer pilot dataset in v1.4.2.
 
 ## What this project does not prove
 
@@ -179,4 +179,6 @@ The research/portfolio project is complete. If ReasonedOps is ever resumed for a
 
 ## Project origin
 
-The project originated from my participation in **HKMU Hackathon 2026** and was originally developed under the name **ANCOVA Ops**. It was renamed **ReasonedOps** because ANCOVA/regression is only one method inside the Evaluate layer, not the product itself.
+ReasonedOps is the same project that originated from my participation in **HKMU Hackathon 2026**. It was originally developed under the name **ANCOVA Ops** and later renamed **ReasonedOps** because ANCOVA/regression is only one method inside the Evaluate layer, not the product itself.
+
+The Hackathon name is included only as a factual origin reference; ReasonedOps is independently developed and is not presented as an official HKMU product or endorsement.

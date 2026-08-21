@@ -6,15 +6,15 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue.svg)](pyproject.toml)
 
-A retrospective rebuild of an **HKMU Hackathon 2026** concierge concept into a runnable, auditable service-operations research prototype.
+ReasonedOps originated from my participation in **HKMU Hackathon 2026** and evolved into a runnable, auditable service-operations research prototype.
 
-The original project asked whether an AI-assisted concierge could understand a resident request, consider urgency and communication context, and route the case to the right team.
+The project began by asking whether an AI-assisted concierge could understand a resident request, consider urgency and communication context, and route the case to the right team.
 
-During the rebuild, a second problem became more important:
+As the project evolved, a second problem became more important:
 
 > After an operational system starts producing data, how do we stop managers from drawing conclusions that the data cannot actually support?
 
-ReasonedOps rebuilds the original idea around three separate responsibilities:
+ReasonedOps now separates three responsibilities:
 
 > **Operate → Audit → Evaluate**
 
@@ -22,13 +22,15 @@ It is not designed to make management decisions automatically. It is designed to
 
 The project was originally developed under the name **ANCOVA Ops**. It was renamed **ReasonedOps** because ANCOVA/regression is only one method inside the Evaluate layer, not the product itself.
 
+**HKMU Hackathon 2026 is referenced only to describe the project's origin. ReasonedOps is independently developed and is not presented as an official HKMU product or endorsement.**
+
 ## Portfolio snapshot
 
 | Item | Current project state |
 | --- | --- |
 | Original problem | Understand and route unstructured service requests more intelligently |
 | Original setting | Property-management / concierge service requests |
-| Rebuild question | Can the same system also preserve accountability and stop misleading outcome comparisons? |
+| Evolution question | Can the same system also preserve accountability and stop misleading outcome comparisons? |
 | Operate | Runnable FastAPI request-intelligence + explainable routing workflow |
 | Audit | SQLite persistence for original case, machine route, human review, effective route and outcome |
 | Evaluate | Raw summaries, overlap/identifiability checks, method applicability, guarded regression/ANCOVA reporting |
@@ -54,7 +56,7 @@ For the clearest summary of how the project changed, start with [`docs/before-vs
 
 ## The original question
 
-The HKMU Hackathon concept was broadly:
+At HKMU Hackathon 2026, the project direction was broadly:
 
 ```text
 resident / tenant request
@@ -74,13 +76,13 @@ outcome feedback
 
 That direction contained several useful ideas: natural-language intake, human-centred triage, recurring-case awareness, and learning from outcomes.
 
-But the concept also mixed together tasks that should have been separated.
+But the early concept also mixed together tasks that should have been separated.
 
 The reconstructed starting point is preserved under [`original/`](original/README.md).
 
-## Why rebuild it?
+## Why did the project evolve?
 
-The rebuild began because several questions in the original concept were not technically or methodologically clean.
+As development continued, several questions in the early concept were not technically or methodologically clean.
 
 - **ANCOVA was placed too close to message understanding.** ANCOVA cannot parse or filter an individual request; it belongs downstream on accumulated outcome data.
 - **A final route was not enough for accountability.** Later evaluation needs to know what the system recommended, why, whether a person changed it, and what outcome followed.
@@ -94,7 +96,7 @@ The detailed audit is in [`docs/original-concept-audit.md`](docs/original-concep
 
 ## What changed
 
-| Original Hackathon concept | ReasonedOps rebuild | Why the change matters |
+| Early Hackathon-stage concept | ReasonedOps today | Why the change matters |
 | --- | --- | --- |
 | AI concierge / routing as the centre | **Operate → Audit → Evaluate** | Routing alone cannot show whether the process later improved |
 | NLP + emotional/context signals | Transparent operational request intelligence | Keeps triage signals separate from unsupported psychological claims |
@@ -235,7 +237,7 @@ Do not produce an adjusted department ranking from this design.
 
 If overlap is sufficient, the evaluation layer can then use an appropriate adjusted workflow and report uncertainty and warnings.
 
-That refusal behaviour is one of the main results of the rebuild.
+That refusal behaviour is one of the main results of the project's evolution.
 
 ## One-command reviewer path
 
@@ -339,7 +341,7 @@ The project deliberately records several decisions **not** to escalate complexit
 
 See [`docs/model-decisions.md`](docs/model-decisions.md).
 
-## Rebuilt architecture
+## Current architecture
 
 ```text
 SERVICE REQUEST
@@ -456,7 +458,7 @@ reasoned-governance-check
 
 ```text
 .
-├── original/                  # reconstructed HKMU Hackathon starting concept
+├── original/                  # reconstructed early Hackathon-stage concept
 ├── src/reasoned_ops/          # current Python implementation
 ├── data/
 │   └── evaluation/            # hand-authored public development fixture
@@ -467,14 +469,14 @@ reasoned-governance-check
 └── .github/workflows/         # CI, GitHub release and PyPI publishing workflows
 ```
 
-The repository intentionally keeps **historical project lineage** separate from the current implementation.
+The repository intentionally keeps **the project's own historical development** separate from the current implementation.
 
 ## Documentation guide
 
 Start here:
 
-- [`original/README.md`](original/README.md) — reconstructed original Hackathon concept;
-- [`docs/before-vs-after.md`](docs/before-vs-after.md) — clearest original-vs-rebuild comparison;
+- [`original/README.md`](original/README.md) — reconstructed early Hackathon-stage concept;
+- [`docs/before-vs-after.md`](docs/before-vs-after.md) — clearest early-vs-current comparison;
 - [`docs/original-concept-audit.md`](docs/original-concept-audit.md) — what was preserved, corrected, narrowed or deferred;
 - [`docs/model-decisions.md`](docs/model-decisions.md) — why methods/models were selected, rejected or deferred;
 - [`docs/architecture.md`](docs/architecture.md) — current technical architecture;
@@ -526,7 +528,7 @@ Only after that would production integration or more complex modelling be justif
 
 ## Historical preservation
 
-ReasonedOps is a rebuild, not a rewrite of history.
+ReasonedOps preserves the history of the same project rather than presenting its current form as if it appeared fully formed.
 
 The project originated from my participation in **HKMU Hackathon 2026** and was originally developed under the name **ANCOVA Ops**. Historical changelog entries retain that earlier name where it accurately describes the project at the time.
 

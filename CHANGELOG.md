@@ -2,6 +2,20 @@
 
 All notable project checkpoints are documented here.
 
+## [1.4.2] - 2026-08-21
+
+### Changed
+
+- Clarified that ReasonedOps is the author's own project, originating from participation in HKMU Hackathon 2026 and evolving into its current Operate → Audit → Evaluate form.
+- Replaced current-facing language that could be read as a rebuild of another project with project-evolution wording.
+- Updated `CITATION.cff` so Zenodo-facing metadata uses the corrected project-origin framing.
+- Added an explicit README boundary that the Hackathon name is referenced only to describe project origin and does not present ReasonedOps as an official HKMU product or endorsement.
+- Added regression coverage preventing the misleading retrospective-rebuild wording from returning to the current README or citation metadata.
+
+### Publication boundary
+
+v1.4.2 is a wording/citation correction only. It does not change software behaviour, evidence status, the currently verified PyPI artifact (`reasoned-ops==1.4.0`), private-data approval or production readiness.
+
 ## [1.4.1] - 2026-08-21
 
 ### Changed

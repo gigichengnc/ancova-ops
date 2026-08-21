@@ -4,6 +4,8 @@ ReasonedOps ships a root [`CITATION.cff`](../CITATION.cff) file so the software 
 
 The project was formerly called **ANCOVA Ops**. From v1.1.0 onward, new citations should use **ReasonedOps** and the canonical repository `gigichengnc/reasoned-ops`.
 
+ReasonedOps is the author's own project. **HKMU Hackathon 2026** is referenced only to describe where the project began; it is not presented as an official HKMU product or endorsement.
+
 ## GitHub citation
 
 When `CITATION.cff` is present on the default branch, GitHub can expose a **Cite this repository** control and render citation formats from the file.
@@ -30,14 +32,14 @@ Add `.zenodo.json` later only if a concrete Zenodo-specific requirement justifie
 
 The GitHub account is connected to Zenodo and `gigichengnc/reasoned-ops` has been enabled for automatic preservation of **new** GitHub releases.
 
-v1.4.1 is the first checkpoint intentionally prepared after that enablement. Its purpose is archival/citation synchronization rather than new functionality.
+v1.4.1 was the first checkpoint created after that enablement. v1.4.2 is the preferred current citation checkpoint because it corrects project-origin wording so the software is described as one project that evolved from its Hackathon starting point, rather than as a rebuild of another project.
 
 Current sequence:
 
 ```text
 Zenodo integration enabled
       ↓
-release v1.4.1 after successful main CI
+release v1.4.2 after successful main CI
       ↓
 Zenodo ingests the GitHub release
       ↓
@@ -56,16 +58,16 @@ The current process is:
 
 1. GitHub account connected to Zenodo — **complete**.
 2. `gigichengnc/reasoned-ops` enabled in the Zenodo GitHub integration — **complete**.
-3. Create GitHub Release v1.4.1 after successful `main` CI — **pending until the release workflow completes**.
-4. Wait for Zenodo to ingest the release and create the software record.
+3. Create GitHub Release v1.4.2 after successful `main` CI.
+4. Wait for Zenodo to ingest the release and create/update the software record.
 5. Review creator, title, version, license and archive metadata.
 6. Record the verified DOI in repository citation metadata.
 
-The earlier v1.4.0 release existed before Zenodo enablement, so v1.4.1 is used as the clean post-enablement archive checkpoint rather than assuming retroactive ingestion.
+The earlier v1.4.0 release existed before Zenodo enablement. v1.4.2 is therefore the preferred current post-enablement citation checkpoint with corrected project-origin wording.
 
 ## After a DOI exists
 
-Once Zenodo has minted a DOI for the v1.4.1 ReasonedOps release:
+Once Zenodo has minted a DOI for the v1.4.2 ReasonedOps release:
 
 1. verify the creator, title, version, license and release metadata in Zenodo;
 2. add the verified version DOI to `CITATION.cff` using the `doi` field;
@@ -80,9 +82,9 @@ A Zenodo DOI makes the software release persistently identifiable and citable. I
 
 The currently published and externally verified PyPI artifact is `reasoned-ops==1.4.0`.
 
-v1.4.1 is being created as a GitHub/Zenodo archive checkpoint. Unless it is separately published through the PyPI Trusted Publishing workflow, do not claim that PyPI contains version 1.4.1.
+v1.4.2 is a GitHub/Zenodo citation/wording checkpoint. Unless it is separately published through the PyPI Trusted Publishing workflow, do not claim that PyPI contains version 1.4.2.
 
-This distinction is intentional because v1.4.1 changes citation/archive metadata, not functional behaviour.
+This distinction is intentional because v1.4.2 changes citation/presentation metadata, not functional behaviour.
 
 ## Publication boundary
 

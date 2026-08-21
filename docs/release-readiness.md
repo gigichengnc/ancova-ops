@@ -1,6 +1,6 @@
-# Release Readiness — ReasonedOps v1.4.1
+# Release Readiness — ReasonedOps v1.4.2
 
-ReasonedOps v1.4.1 is a **completed local research/software prototype and portfolio rebuild case study** with a validated, publicly published Python distribution and a post-enablement Zenodo archive checkpoint. That is different from being approved for a real private-data pilot or production deployment.
+ReasonedOps v1.4.2 is a **completed local research/software prototype and project-evolution case study** with a validated, publicly published Python distribution and a Zenodo archive path. That is different from being approved for a real private-data pilot or production deployment.
 
 ## What is ready now
 
@@ -20,19 +20,19 @@ ReasonedOps v1.4.1 is a **completed local research/software prototype and portfo
 - [x] `reasoned-ops==1.4.0` is published on PyPI through GitHub OIDC Trusted Publishing.
 - [x] the public PyPI artifact has been installed and exercised outside the repository checkout.
 - [x] Apache-2.0 licensing and `CITATION.cff` are present.
-- [x] `CITATION.cff` is aligned to the v1.4.1 archive checkpoint.
+- [x] `CITATION.cff` is aligned to the v1.4.2 citation checkpoint.
 - [x] the GitHub repository is enabled for Zenodo release archiving.
-- [x] the original Hackathon concept is reconstructed separately under `original/`.
-- [x] a before/after comparison explains how and why the project changed.
+- [x] the project's early Hackathon-stage concept is reconstructed separately under `original/`.
+- [x] a before/after comparison explains how and why the same project changed.
 - [x] the original concept audit distinguishes useful ideas from corrected or unsupported assumptions.
 - [x] major model/method decisions are recorded, including explicit decisions not to escalate complexity.
 
-## Portfolio/rebuild readiness
+## Portfolio/evolution readiness
 
 The reviewer path is intentionally narrative:
 
 ```text
-original concept
+early concept
       ↓
 before / after
       ↓
@@ -51,7 +51,7 @@ evidence boundary
 next real evidence gate
 ```
 
-This structure makes the project learning history visible instead of presenting the final code as if it appeared fully formed.
+This structure makes the project's own learning history visible instead of presenting the final code as if it appeared fully formed.
 
 ## Python distribution and PyPI status
 
@@ -93,7 +93,7 @@ known-truth validity benchmark
 **PyPI code/workflow readiness: COMPLETE.**  
 **PyPI publication: COMPLETE for v1.4.0.**  
 **Public artifact install/execution check: COMPLETE.**  
-**PyPI v1.4.1 publication: NOT CLAIMED; v1.4.1 is an archive/citation checkpoint unless separately published.**
+**PyPI v1.4.2 publication: NOT CLAIMED; v1.4.2 is a citation/wording checkpoint unless separately published.**
 
 See `docs/pypi.md` for reuse and publishing details and `docs/publication-verification.md` for the verification record.
 
@@ -103,14 +103,14 @@ The verification demonstrates package distribution and executable local behaviou
 
 The repository owner has connected GitHub to Zenodo and enabled `gigichengnc/reasoned-ops` for automatic preservation of new GitHub releases.
 
-v1.4.1 is intentionally created **after** that enablement so Zenodo can ingest a new release rather than relying on retroactive capture of v1.4.0.
+v1.4.2 is the preferred current citation checkpoint because it corrects the project-origin wording before the DOI is treated as the canonical public citation.
 
 The archive sequence is:
 
 ```text
 Zenodo GitHub integration enabled
       ↓
-GitHub Release v1.4.1 after successful main CI
+GitHub Release v1.4.2 after successful main CI
       ↓
 Zenodo ingestion
       ↓
@@ -122,7 +122,7 @@ add the verified DOI back to repository citation metadata
 ```
 
 **Zenodo integration: ENABLED.**  
-**Post-enablement release: PENDING UNTIL v1.4.1 IS CREATED.**  
+**Preferred archive release: v1.4.2 after successful main CI.**  
 **DOI: PENDING UNTIL ZENODO INGESTION IS VERIFIED.**
 
 ## What is not ready
@@ -156,13 +156,13 @@ Production additionally requires representative real-data validation, deployment
 
 Reasonable:
 
-> ReasonedOps is a runnable evidence-aware service-operations research prototype rebuilt from an HKMU Hackathon concierge concept. It can route requests, preserve machine and human decision history, record outcomes, and refuse or redirect unsupported analytical comparisons.
+> ReasonedOps is a runnable evidence-aware service-operations research prototype that originated from the author's participation in HKMU Hackathon 2026 and evolved into its current Operate → Audit → Evaluate form. It can route requests, preserve machine and human decision history, record outcomes, and refuse or redirect unsupported analytical comparisons.
 
-> The repository documents how the original concept was audited and technically corrected.
+> The repository documents how the project's early concept was audited and technically corrected over time.
 
 > ReasonedOps is publicly distributed on PyPI as `reasoned-ops==1.4.0`; the released artifact has been installed and its local Operate → Audit → Evaluate workflow exercised outside the repository checkout.
 
-> The v1.4.1 checkpoint is prepared for post-enablement Zenodo release archiving with aligned citation metadata.
+> The v1.4.2 checkpoint is prepared for Zenodo release archiving with corrected project-origin wording and aligned citation metadata.
 
 Not supported without new evidence:
 
@@ -174,15 +174,15 @@ Not supported without new evidence:
 
 ## Citation/archive and package-index status
 
-Package-index publication is complete for v1.4.0. Zenodo integration is enabled and v1.4.1 is the archive checkpoint:
+Package-index publication is complete for v1.4.0. Zenodo integration is enabled and v1.4.2 is the preferred citation/archive checkpoint:
 
 - [x] register the `reasoned-ops` PyPI Trusted Publisher;
 - [x] publish `reasoned-ops==1.4.0` through the trusted workflow;
 - [x] verify the public package in an environment outside the repository checkout;
 - [x] connect the repository owner account to Zenodo;
 - [x] enable `reasoned-ops` for GitHub release archiving;
-- [ ] create GitHub Release v1.4.1 after successful main CI;
-- [ ] verify that Zenodo ingests v1.4.1;
+- [ ] create GitHub Release v1.4.2 after successful main CI;
+- [ ] verify that Zenodo ingests v1.4.2;
 - [ ] verify the Zenodo DOI and archived metadata;
 - [ ] add the verified DOI back to `CITATION.cff`.
 
