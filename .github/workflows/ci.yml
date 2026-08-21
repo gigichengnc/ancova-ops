@@ -70,3 +70,56 @@ jobs:
 
       - name: Data governance policy check
         run: reasoned-governance-check --json > /tmp/reasoned-data-governance.json
+
+  distribution:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install build frontend
+        run: python -m pip install --upgrade build
+
+      - name: Build wheel and source distribution
+        run: python -m build
+
+      - name: Verify distribution files
+        shell: bash
+        run: |
+          test "$(find dist -maxdepth 1 -name '*.whl' | wc -l)" -eq 1
+          test "$(find dist -maxdepth 1 -name '*.tar.gz' | wc -l)" -eq 1
+          ls -lh dist/
+
+      - name: Install built wheel in clean virtual environment
+        shell: bash
+        run: |
+          python -m venv /tmp/reasoned-wheel-venv
+          /tmp/reasoned-wheel-venv/bin/python -m pip install --upgrade pip
+          /tmp/reasoned-wheel-venv/bin/python -m pip install dist/*.whl
+
+      - name: Smoke test installed wheel
+        shell: bash
+        run: |
+          /tmp/reasoned-wheel-venv/bin/python - <<'PY'
+          import reasoned_ops
+          from reasoned_ops import ServiceCase, baseline_route
+
+          assert reasoned_ops.__version__ == "1.4.0"
+          decision = baseline_route(
+              ServiceCase(
+                  case_id="wheel-smoke",
+                  message="The air conditioner is leaking again.",
+                  previous_related_cases=2,
+              )
+          )
+          assert decision.department == "maintenance"
+          print(reasoned_ops.__version__, decision.department, decision.priority)
+          PY
+          /tmp/reasoned-wheel-venv/bin/reasoned-applicability --help >/dev/null
