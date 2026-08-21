@@ -31,7 +31,7 @@ The project was originally developed under the name **ANCOVA Ops**. It was renam
 | Original problem | Understand and route unstructured service requests more intelligently |
 | Original setting | Property-management / concierge service requests |
 | Evolution question | Can the same system preserve accountability and stop misleading outcome comparisons? |
-| Operate | **Rule-based request features + deterministic explainable routing baseline** exposed through FastAPI |
+| Operate | **Rule-based request features + deterministic routing baseline** exposed through FastAPI; v1.4.4 hardens word/phrase matching and safety-review rules |
 | Audit | SQLite persistence for original case, machine route, human review, effective route and outcome |
 | Evaluate | Raw summaries, overlap/identifiability checks, method applicability, guarded regression/ANCOVA reporting |
 | Refusal behaviour | Can withhold a department ranking when the observed design cannot support it |
@@ -40,25 +40,26 @@ The project was originally developed under the name **ANCOVA Ops**. It was renam
 | Model escalation | LSTM / sequence modelling deferred until it can beat simpler baselines on the same benchmark |
 | Validation | Hand-authored fixtures + deterministic synthetic known-truth and known-limitation scenarios |
 | Python distribution | Wheel + source distribution build and clean-wheel installation validated in CI |
-| Final v1 release | **v1.4.3 audit close-out** — external-audit corrections + artifact-alignment checkpoint |
-| PyPI status | **Published and externally exercised:** `reasoned-ops==1.4.3` |
+| Previously verified public release | **v1.4.3** — GitHub / Zenodo / PyPI aligned and externally exercised |
+| Current code checkpoint | **v1.4.4 release candidate** — post-audit routing, applicability and diagnostics bugfixes |
+| PyPI status | Currently published and externally exercised: `reasoned-ops==1.4.3`; v1.4.4 is not public until exact-tag release verification is complete |
 | Zenodo archives | v1.4.1 → `10.5281/zenodo.22044222`; v1.4.2 → `10.5281/zenodo.22044621`; v1.4.3 → `10.5281/zenodo.22046490` |
-| v1.4.3 provenance | Git tag / GitHub Release / Zenodo archive / PyPI package aligned to version `1.4.3` |
+| v1.4.4 provenance | **Pending release**; no DOI is claimed before Zenodo ingests the exact v1.4.4 tag |
 | Real-world performance claim | **Not made**; representative real-pilot evidence does not exist in this repository |
 | Development data boundary | Synthetic / hand-authored public development evidence only |
 | Production status | **Not approved** |
-| Project status | **Completed / frozen v1** |
+| Project status | v1 reopened only for the v1.4.4 audit bugfix close-out; freeze again after public-artifact alignment |
 | Project identity | **ReasonedOps — Operate → Audit → Evaluate** |
 
-Install the final public v1 package:
+Install the currently verified public package:
 
 ```bash
 pip install reasoned-ops==1.4.3
 ```
 
-The v1.4.3 close-out uses the **same Git tag** as the source for the GitHub release, Zenodo archive and PyPI publication. This closes the earlier situation where the preferred citable checkpoint and the publicly installable checkpoint had different version numbers.
+The v1.4.4 hardening checkpoint exists because a further adversarial review found reproducible Operate and evidence-gate issues after v1.4.3: substring collisions such as `current`/`rent` and `feedback`/`fee`, emergency/safety requests that did not reliably enter human review, a standalone applicability CLI that could be told overlap was `supported`, and VIF warnings calculated on categorical dummy columns. Those findings are fixed with regression coverage before v1 is frozen again.
 
-The exact v1.4.3 Zenodo version DOI is `10.5281/zenodo.22046490`. Current `CITATION.cff` records that verified DOI on the default branch without changing the immutable release tag.
+The v1.4.4 release will use the **same Git tag** as the source for the GitHub release, Zenodo archive and PyPI publication. The release-candidate `CITATION.cff` therefore intentionally carries no v1.4.3 DOI; the exact v1.4.4 DOI will only be recorded after Zenodo mints it.
 
 For the clearest summary of how the project changed, start with [`docs/before-vs-after.md`](docs/before-vs-after.md).
 
@@ -133,14 +134,14 @@ Imagine this request arrives:
 The air conditioner is leaking again. This is the third time and the wet floor could be dangerous.
 ```
 
-From the final public v1 package:
+From the currently verified public package:
 
 ```bash
 pip install reasoned-ops==1.4.3
 uvicorn reasoned_ops.api:app --reload
 ```
 
-Or from a repository checkout:
+Or from the current v1.4.4 repository checkpoint:
 
 ```bash
 python -m venv .venv
@@ -177,7 +178,7 @@ intelligence_version
 router_version
 ```
 
-These fields are produced by a **transparent rule/keyword baseline plus declared thresholds**. Terms such as `frustration` are operational text features, not psychological measurements. The baseline exists so future NLP/ML approaches have something explicit to outperform rather than replacing a simple method merely because a more complex model is available.
+These fields are produced by a **transparent rule/phrase baseline plus declared thresholds**. v1.4.4 uses word/phrase boundaries rather than raw substring matching and adds explicit emergency, safety and security human-review paths. Terms such as `frustration` remain operational text features, not psychological measurements. The baseline exists so future NLP/ML approaches have something explicit to outperform rather than replacing a simple method merely because a more complex model is available.
 
 ### 2. Audit — preserve what the machine and human each decided
 
@@ -257,7 +258,7 @@ adjusted department contrast is badly biased and reverses the known true directi
 
 `PASS` for this scenario therefore means **the benchmark successfully reproduced and disclosed a known false-negative mode**. It does **not** mean ReasonedOps detected hidden confounding.
 
-The existing `use` interpretation boundary explicitly says that the gate does not prove model correctness, absence of unmeasured confounding, or causal identification. The new benchmark turns that disclosure into executable evidence of what the current safeguards cannot detect.
+The existing `use` interpretation boundary explicitly says that the gate does not prove model correctness, absence of unmeasured confounding, or causal identification. The benchmark turns that disclosure into executable evidence of what the current safeguards cannot detect.
 
 This distinction matters: ReasonedOps can refuse some unsupported comparisons that are visible in observed data, but it cannot certify that unrecorded causes do not exist.
 
@@ -279,7 +280,7 @@ The generated report walks through one service request and later evidence checks
 
 ## Public release verification
 
-The final `reasoned-ops==1.4.3` package was published from the exact Git tag `v1.4.3`, after the same release had been archived by Zenodo.
+The previously verified `reasoned-ops==1.4.3` package was published from the exact Git tag `v1.4.3`, after the same release had been archived by Zenodo.
 
 The publishing workflow verified:
 
@@ -314,7 +315,7 @@ requires_human_review = True
 secondary_notify = community_management
 ```
 
-This establishes installability, exact-version provenance and executable local behaviour for the final public v1 artifact. It does **not** establish independent scientific effectiveness, causal business impact, private-data approval, or production readiness.
+That establishes installability, exact-version provenance and executable local behaviour for v1.4.3. It does **not** establish independent scientific effectiveness, causal business impact, private-data approval, or production readiness. v1.4.4 must repeat the same exact-tag public-artifact verification before becoming the new frozen checkpoint.
 
 See [`docs/publication-verification.md`](docs/publication-verification.md).
 
@@ -343,7 +344,7 @@ SERVICE REQUEST
 OPERATE
 rule-based request features
       ↓
-deterministic explainable routing recommendation
+deterministic routing recommendation + rule trace
       |
       +------> human confirmation / override
                        |
@@ -376,12 +377,12 @@ ANCOVA is one tool inside **Evaluate**. It is not the project identity.
 
 The repository separates several evidence classes:
 
-- **Hand-authored routing fixture:** deterministic routing behaviour, expected-human-review cases and explanation coverage. This is an implementation benchmark, not external accuracy.
+- **Hand-authored routing fixture:** deterministic routing behaviour, expected-human-review cases and rule-trace coverage. v1.4.4 adds adversarial substring and safety cases. This is an implementation benchmark, not external accuracy.
 - **Synthetic known-truth outcome scenarios:** known-effect recovery, measured-confounding adjustment, no-overlap refusal and slope-interaction detection.
 - **Synthetic known-limitation scenario:** hidden confounding deliberately omitted from the observed frame to demonstrate a false-negative mode the implemented checks cannot identify.
 - **Synthetic adaptive-policy logs:** deterministic logged-policy data with known propensities, chronological validation, support diagnostics and deployment locks.
 - **Synthetic longitudinal histories:** simpler recurrence/time approaches compared under leakage-aware chronological validation.
-- **Public artifact execution:** the final PyPI 1.4.3 artifact installed and exercised outside the repository checkout.
+- **Public artifact execution:** v1.4.3 is the currently externally exercised PyPI artifact; v1.4.4 remains a release candidate until exact-tag publication and fresh-environment verification are complete.
 
 None of these evidence classes establishes real service improvement or causal effectiveness.
 
@@ -457,11 +458,11 @@ ReasonedOps demonstrates a disciplined service-operations workflow; it does **no
 
 Important limitations remain:
 
-- Operate is a deterministic rule/keyword baseline, not a trained NLP model;
+- Operate is a deterministic rule/phrase baseline, not a trained NLP model;
 - routing evaluation is hand-authored development evidence;
 - outcome, adaptive-policy and longitudinal quantitative evidence is synthetic;
 - observed-data diagnostics cannot rule out unmeasured confounding;
-- the validity benchmark now demonstrates one such false-negative mode explicitly;
+- the validity benchmark demonstrates one such false-negative mode explicitly;
 - no representative real private-data pilot has been run;
 - adjusted regression results are not causal effects by default;
 - authentication/RBAC and production security are outside the research prototype;
@@ -472,7 +473,7 @@ Important limitations remain:
 
 The next meaningful step is **not another model**.
 
-ReasonedOps v1 is now frozen. If the project is ever resumed for a real use case, the next gate is:
+ReasonedOps v1 was reopened only to correct reproducible audit findings in v1.4.3. After v1.4.4 is archived, published from the exact tag and externally rechecked, v1 should be frozen again. If the project is later resumed for a real use case, the next gate is:
 
 ```text
 specific organisation / service process

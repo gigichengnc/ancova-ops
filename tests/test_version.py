@@ -117,7 +117,7 @@ def test_current_presentation_calls_operate_rule_based() -> None:
     readme = (PROJECT_ROOT / "README.md").read_text(encoding="utf-8")
     comparison = (PROJECT_ROOT / "docs" / "before-vs-after.md").read_text(encoding="utf-8")
 
-    assert "Rule-based request features + deterministic explainable routing baseline" in readme
+    assert "Rule-based request features + deterministic routing baseline" in readme
     assert "It does not claim a trained NLP model" in readme
     assert "Rule-based request features" in comparison
     assert "Transparent operational request intelligence" not in readme
