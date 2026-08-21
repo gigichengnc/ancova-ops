@@ -17,17 +17,31 @@ class RequestFeatures:
     reasons: tuple[str, ...]
 
 
+EMERGENCY_TERMS = (
+    "fire",
+    "smoke",
+    "gas leak",
+    "gas smell",
+    "carbon monoxide",
+    "flooding",
+    "injured",
+    "injury",
+    "trapped",
+)
+SAFETY_TERMS = ("danger", "unsafe", "slip", "fall", "spark", "sparks", "trapped")
+TIME_PRESSURE_TERMS = ("urgent", "immediately", "right now", "as soon as possible", "asap")
+RECURRENCE_TERMS = ("again", "still not", "third time", "second time", "keeps happening")
+STRONG_COMPLAINT_TERMS = ("unacceptable", "angry", "furious", "ridiculous", "no one helped")
+VULNERABILITY_TERMS = ("elderly", "wheelchair", "disabled", "small child", "baby")
+
 CATEGORY_RULES: tuple[tuple[str, tuple[str, ...]], ...] = (
-    (
-        "emergency",
-        ("fire", "smoke", "gas leak", "gas smell", "carbon monoxide", "trapped"),
-    ),
+    ("emergency", EMERGENCY_TERMS),
     (
         "air_conditioning",
         ("air con", "air-con", "air conditioner", "a/c", "ac broken", "ac not working"),
     ),
     ("water_leak", ("water leak", "leaking", "leak", "burst pipe", "flood", "dripping")),
-    ("electrical", ("power", "electric", "socket", "outlet", "spark", "blackout")),
+    ("electrical", ("power", "electric", "socket", "outlet", "spark", "sparks", "blackout")),
     ("noise_complaint", ("noise", "noisy", "loud music", "loud")),
     ("security", ("intruder", "theft", "stolen", "fight", "suspicious", "security")),
     ("lease_question", ("lease", "tenancy", "renewal", "renew my contract")),
@@ -45,23 +59,6 @@ CATEGORY_COMPLEXITY = {
     "payment_question": 3.5,
     "general_request": 5.0,
 }
-
-EMERGENCY_TERMS = (
-    "fire",
-    "smoke",
-    "gas leak",
-    "gas smell",
-    "carbon monoxide",
-    "flooding",
-    "injured",
-    "injury",
-    "trapped",
-)
-SAFETY_TERMS = ("danger", "unsafe", "slip", "fall", "sparks", "trapped")
-TIME_PRESSURE_TERMS = ("urgent", "immediately", "right now", "as soon as possible", "asap")
-RECURRENCE_TERMS = ("again", "still not", "third time", "second time", "keeps happening")
-STRONG_COMPLAINT_TERMS = ("unacceptable", "angry", "furious", "ridiculous", "no one helped")
-VULNERABILITY_TERMS = ("elderly", "wheelchair", "disabled", "small child", "baby")
 
 
 def contains_term(text: str, term: str) -> bool:
