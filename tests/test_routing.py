@@ -5,6 +5,20 @@ from reasoned_ops.models import ServiceCase
 from reasoned_ops.routing import baseline_route
 
 
+def _route_message(message: str, *, case_id: str = "test-case"):
+    intelligence = BaselineRequestIntelligence()
+    features = intelligence.analyze(message)
+    case = ServiceCase(
+        case_id=case_id,
+        message=message,
+        issue_category=features.issue_category,
+        urgency=features.urgency,
+        frustration=features.frustration,
+        complexity=features.complexity,
+    )
+    return baseline_route(case)
+
+
 def test_repeated_high_context_maintenance_case_is_escalated() -> None:
     case = ServiceCase(
         case_id="case-1",
@@ -49,27 +63,43 @@ def test_low_context_payment_question_stays_normal_priority() -> None:
         "The kitchen is on fire.",
         "There is smoke in the corridor.",
         "There is a gas leak near the lift.",
+        "A resident is trapped in the lift.",
+        "Someone is injured after flooding in the lobby.",
     ],
 )
 def test_emergency_requests_use_dedicated_human_triage_path(message: str) -> None:
-    intelligence = BaselineRequestIntelligence()
-    features = intelligence.analyze(message)
-    case = ServiceCase(
-        case_id="emergency-case",
-        message=message,
-        issue_category=features.issue_category,
-        urgency=features.urgency,
-        frustration=features.frustration,
-        complexity=features.complexity,
-    )
-
-    decision = baseline_route(case)
+    decision = _route_message(message, case_id="emergency-case")
 
     assert decision.department == "emergency_response"
     assert decision.priority == "critical"
     assert decision.requires_human_review is True
     assert decision.secondary_notify == "community_management"
     assert any("immediate human triage" in reason for reason in decision.reasons)
+
+
+def test_non_emergency_safety_context_requires_human_review() -> None:
+    decision = _route_message(
+        "There are sparks from the electric socket. Please come right now.",
+        case_id="electrical-safety",
+    )
+
+    assert decision.department == "maintenance"
+    assert decision.priority in {"high", "critical"}
+    assert decision.requires_human_review is True
+    assert decision.secondary_notify == "community_management"
+    assert any("safety context requires human review" in reason for reason in decision.reasons)
+
+
+def test_explicit_security_incident_requires_human_review() -> None:
+    decision = _route_message(
+        "A suspicious intruder is trying doors right now.",
+        case_id="security-incident",
+    )
+
+    assert decision.department == "security"
+    assert decision.priority in {"high", "critical"}
+    assert decision.requires_human_review is True
+    assert any("security incident requires human review" in reason for reason in decision.reasons)
 
 
 @pytest.mark.parametrize(
