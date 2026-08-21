@@ -1,9 +1,23 @@
-# Project Status — ReasonedOps v1.2.0
+# Project Status — ReasonedOps v1.3.0
 
-ReasonedOps is a completed local research/software prototype for following a service case through **request → routing → human review → outcome → evaluation**.
+ReasonedOps is a completed local research/software prototype and retrospective rebuild of an **HKMU Hackathon 2026** concierge concept.
+
+The current project story is:
+
+```text
+original concept
+      ↓
+audit assumptions
+      ↓
+rebuild as Operate → Audit → Evaluate
+      ↓
+validate software behaviour with public development evidence
+      ↓
+define the next real evidence gate
+```
 
 **Research/portfolio project:** COMPLETED  
-**Current codebase checkpoint:** v1.2.0  
+**Current portfolio/code checkpoint:** v1.3.0  
 **Real private-data pilot:** NOT APPROVED  
 **Production deployment:** NOT APPROVED
 
@@ -12,7 +26,7 @@ ReasonedOps is a completed local research/software prototype for following a ser
 | Area | Working behaviour |
 | --- | --- |
 | Request intake | Accepts a text service request through the FastAPI `/v1/route` endpoint. |
-| Request intelligence | Extracts transparent development-stage issue, urgency, frustration and complexity signals. |
+| Request intelligence | Extracts transparent development-stage issue, urgency, communication-intensity and complexity signals. |
 | Routing | Returns a department, priority, human-review flag and reasons. |
 | Human review | Staff can confirm or override a routing decision. |
 | Audit history | Original machine/rule decisions remain stored after a human override. |
@@ -23,16 +37,29 @@ ReasonedOps is a completed local research/software prototype for following a ser
 | Offline policy research | Evaluates candidate routing policies on synthetic logged-policy data. |
 | Longitudinal research | Benchmarks recurrence/time-to-next-case models on synthetic histories. |
 | Governance check | Enforces the repository's synthetic/private-data development policy. |
+| Rebuild record | Preserves the reconstructed original concept, before/after comparison, concept audit and model decisions. |
+
+## Portfolio narrative
+
+From v1.3.0, the repository is intentionally presented as a **rebuild case study**, not as a startup-style product landing page.
+
+Start with:
+
+1. [`../original/README.md`](../original/README.md) — reconstructed original Hackathon concept;
+2. [`before-vs-after.md`](before-vs-after.md) — original concept vs current rebuild;
+3. [`original-concept-audit.md`](original-concept-audit.md) — assumptions preserved/corrected/deferred;
+4. [`model-decisions.md`](model-decisions.md) — why methods/models were selected, rejected or deferred;
+5. [`../README.md`](../README.md) — runnable overview and portfolio story.
 
 ## Canonical codebase
 
-From v1.2.0 onward there is one application namespace:
+There is one application namespace:
 
 ```text
 src/reasoned_ops/
 ```
 
-The temporary legacy `ancova_ops` package used during the v1.1 rename migration has been removed. Public commands use the `reasoned-` prefix.
+Public commands use the `reasoned-` prefix:
 
 ```text
 reasoned-showcase
@@ -73,7 +100,7 @@ Current quantitative development evidence is limited to:
 - synthetic logged-policy data;
 - synthetic longitudinal histories.
 
-There is no representative real-company or real-resident/customer pilot dataset in v1.2.0.
+There is no representative real-company or real-resident/customer pilot dataset in v1.3.0.
 
 ## What this project does not prove
 
@@ -86,8 +113,12 @@ The repository does **not** prove that ReasonedOps:
 - is production-ready;
 - delivers a measured commercial return on investment.
 
-Those claims would require a separate real-data pilot, governance approval and a defensible evaluation design.
+Those claims require a separate real-data pilot, governance approval and a defensible evaluation design.
+
+## Next evidence gate
+
+The research/portfolio project is complete. If ReasonedOps is ever resumed for a real use case, the next substantive step is not another synthetic model. It is a controlled real-data evidence process with privacy/governance approval, representative cases, predefined evaluation questions and explicit stop criteria.
 
 ## Project origin
 
-The project originated from my participation in the **HKMU Hackathon 2026** and was originally developed under the name **ANCOVA Ops**. It was renamed **ReasonedOps** in v1.1.0 because ANCOVA/regression is only one method inside the Evaluate layer, not the product itself.
+The project originated from my participation in **HKMU Hackathon 2026** and was originally developed under the name **ANCOVA Ops**. It was renamed **ReasonedOps** because ANCOVA/regression is only one method inside the Evaluate layer, not the product itself.

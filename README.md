@@ -1,31 +1,130 @@
-# ReasonedOps
+# ReasonedOps: From an AI Concierge Concept to Evidence-Aware Service Operations
 
 [![CI](https://github.com/gigichengnc/reasoned-ops/actions/workflows/ci.yml/badge.svg)](https://github.com/gigichengnc/reasoned-ops/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/gigichengnc/reasoned-ops?display_name=tag)](https://github.com/gigichengnc/reasoned-ops/releases/latest)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue.svg)](pyproject.toml)
 
-**A runnable service-operations prototype that follows a case from request → routing → human review → outcome → evidence check.**
+A retrospective rebuild of an **HKMU Hackathon 2026** concierge concept into a runnable, auditable service-operations research prototype.
 
-ReasonedOps does three practical things:
+The original project asked whether an AI-assisted concierge could understand a resident request, consider urgency and communication context, and route the case to the right team.
 
-1. **Operate:** read a service request and recommend where it should go, with reasons.
-2. **Audit:** keep the original request, machine recommendation, human override and final outcome as separate records.
-3. **Evaluate:** later check whether a management claim such as “Team A is slower” or “the new routing policy improved performance” is actually supported by comparable data.
+During the rebuild, a second problem became more important:
 
-> **It is not designed to make management decisions. It is designed to make unsupported management conclusions harder to reach.**
+> After an operational system starts producing data, how do we stop managers from drawing conclusions that the data cannot actually support?
 
-## What does that look like in practice?
+ReasonedOps rebuilds the original idea around three separate responsibilities:
 
-Imagine a resident submits this request:
+> **Operate → Audit → Evaluate**
+
+It is not designed to make management decisions automatically. It is designed to make **unsupported management conclusions harder to reach**.
+
+The project was originally developed under the name **ANCOVA Ops**. It was renamed **ReasonedOps** because ANCOVA/regression is only one method inside the Evaluate layer, not the product itself.
+
+## Portfolio snapshot
+
+| Item | Current project state |
+| --- | --- |
+| Original problem | Understand and route unstructured service requests more intelligently |
+| Original setting | Property-management / concierge service requests |
+| Rebuild question | Can the same system also preserve accountability and stop misleading outcome comparisons? |
+| Operate | Runnable FastAPI request-intelligence + explainable routing workflow |
+| Audit | SQLite persistence for original case, machine route, human review, effective route and outcome |
+| Evaluate | Raw summaries, overlap/identifiability checks, method applicability, guarded regression/ANCOVA reporting |
+| Refusal behaviour | Can withhold a department ranking when the observed design cannot support it |
+| Other research | Offline adaptive-policy evaluation + leakage-aware longitudinal benchmark |
+| Model escalation | LSTM / sequence modelling deferred until it can beat simpler baselines on the same benchmark |
+| Validation | Hand-authored fixtures + deterministic synthetic known-truth scenarios |
+| Real-world performance claim | **Not made**; representative real-pilot evidence does not exist in this repository |
+| Development data boundary | Synthetic / hand-authored public development evidence only |
+| Production status | **Not approved** |
+| Project identity | **ReasonedOps — Operate → Audit → Evaluate** |
+
+For the clearest summary of how the project changed, start with [`docs/before-vs-after.md`](docs/before-vs-after.md).
+
+## The original question
+
+The HKMU Hackathon concept was broadly:
+
+```text
+resident / tenant request
+        ↓
+NLP + urgency / emotional context
+        ↓
+department classification
+        ↓
+historical context
+        ↓
+adaptive routing
+        ↓
+department queue
+        ↓
+outcome feedback
+```
+
+That direction contained several useful ideas: natural-language intake, human-centred triage, recurring-case awareness, and learning from outcomes.
+
+But the concept also mixed together tasks that should have been separated.
+
+The reconstructed starting point is preserved under [`original/`](original/README.md).
+
+## Why rebuild it?
+
+The rebuild began because several questions in the original concept were not technically or methodologically clean.
+
+- **ANCOVA was placed too close to message understanding.** ANCOVA cannot parse or filter an individual request; it belongs downstream on accumulated outcome data.
+- **A final route was not enough for accountability.** Later evaluation needs to know what the system recommended, why, whether a person changed it, and what outcome followed.
+- **Raw department averages can be badly misleading.** A team that handles harder cases may look slower even when its process is not worse.
+- **A statistical model should be allowed to say “do not compare”.** If department and case type do not overlap, no attractive adjusted ranking should be manufactured.
+- **The project name had become too narrow.** A system that can recommend logistic, survival, cluster-aware, or offline-policy methods is not really an “ANCOVA product”.
+- **More complex AI was not automatically progress.** Sequence/LSTM work is deferred until the same benchmark shows incremental value over simpler approaches.
+- **Proposal targets are not measured evidence.** Presentation-era percentages are not treated as ReasonedOps performance results.
+
+The detailed audit is in [`docs/original-concept-audit.md`](docs/original-concept-audit.md).
+
+## What changed
+
+| Original Hackathon concept | ReasonedOps rebuild | Why the change matters |
+| --- | --- | --- |
+| AI concierge / routing as the centre | **Operate → Audit → Evaluate** | Routing alone cannot show whether the process later improved |
+| NLP + emotional/context signals | Transparent operational request intelligence | Keeps triage signals separate from unsupported psychological claims |
+| ANCOVA described near emotion filtering | ANCOVA only after accumulated outcomes exist | Statistical outcome analysis is not message understanding |
+| Department recommendation | Versioned route + human-readable reasons | The recommendation can be reconstructed and challenged |
+| Human-centred idea | Append-only human confirm / override history | Human judgement becomes part of the audit trail |
+| Outcome feedback | Outcome stored separately from routing history | Later outcomes do not rewrite the earlier decision |
+| Compare service performance | Check department × case-type overlap first | Different teams may be handling fundamentally different work |
+| Adjusted model produces answer | `supported`, `weak_overlap`, or `not_identifiable` | The software can refuse an unsupported ranking |
+| ANCOVA as intellectual centre | Applicability gate selects or rejects method families | Method follows the question |
+| Adaptive routing ambition | Offline policy evaluation with deployment lock | Historical-policy research is not silently promoted to live automation |
+| Longitudinal history | Leakage-aware synthetic benchmark | Future information must not leak into historical evaluation |
+| More advanced sequence model later | LSTM explicitly deferred | Complexity must earn its place |
+
+See [`docs/before-vs-after.md`](docs/before-vs-after.md) for the fuller technical comparison.
+
+## What actually runs
+
+ReasonedOps is a **local research/software prototype**, not only a conceptual document.
+
+### A concrete service case
+
+Imagine this request arrives:
 
 ```text
 The air conditioner is leaking again. This is the third time and the wet floor could be dangerous.
 ```
 
-### 1. ReasonedOps routes the case
+### 1. Operate — structure and route the request
 
-Send the request to the local API:
+Start the API:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -e ".[dev]"
+uvicorn reasoned_ops.api:app --reload
+```
+
+Send the request:
 
 ```bash
 curl -X POST http://127.0.0.1:8000/v1/route \
@@ -38,7 +137,7 @@ curl -X POST http://127.0.0.1:8000/v1/route \
   }'
 ```
 
-The response contains operational fields such as:
+The response contains structured operational fields such as:
 
 ```text
 issue_category
@@ -53,15 +152,15 @@ intelligence_version
 router_version
 ```
 
-So the software does not only return a department name. It also records **why** the route was recommended and which logic/version produced it.
+The important point is not only that a department is returned. The system also records **why** the recommendation was made and which logic/version produced it.
 
-### 2. A human can confirm or override it
+### 2. Audit — preserve what the machine and human each decided
 
 The machine recommendation is not final authority.
 
-A staff member can confirm it or submit a different final route through the routing-review endpoint. The original machine recommendation is still kept.
+A staff member can confirm or override the route. ReasonedOps preserves the original machine decision rather than replacing it.
 
-The stored history therefore looks conceptually like this:
+Conceptually:
 
 ```text
 Original request
@@ -71,194 +170,286 @@ Machine recommendation
 Human confirmation / override
       ↓
 Effective route
+      ↓
+Observed outcome
 ```
 
-This matters when someone later asks:
+This makes later questions auditable:
 
 ```text
 Why was this case sent there?
-Did the staff member change the recommendation?
-Which system version made the original recommendation?
+What did the system originally recommend?
+Did a staff member change it?
+Which system version was used?
+What happened afterward?
 ```
 
-### 3. The outcome is recorded separately
+### 3. Record the outcome separately
 
-When the case is completed, an outcome can be attached:
+When the case is complete, an outcome can be stored through the API.
 
-```bash
-curl -X PUT http://127.0.0.1:8000/v1/cases/demo-001/outcome \
-  -H "Content-Type: application/json" \
-  -d '{
-    "response_time_minutes": 20,
-    "resolution_time_minutes": 180,
-    "reassigned": false,
-    "escalated": false,
-    "satisfaction": 8
-  }'
-```
+The outcome is a separate record from the routing decision so the system does not rewrite the historical decision after learning what happened.
 
-ReasonedOps keeps that outcome separate from the routing decision instead of rewriting history after the result is known.
+### 4. Evaluate — management asks a harder question
 
-### 4. Later, management asks a question
-
-For example:
+Suppose a dashboard later shows:
 
 ```text
-“Maintenance takes 18 hours on average while Security takes 7.
-Is Maintenance performing worse?”
+Maintenance  18 hours average resolution time
+Security      7 hours average resolution time
 ```
 
-A normal dashboard might immediately rank Maintenance below Security.
+A naive conclusion is:
 
-ReasonedOps first checks whether the comparison is meaningful.
+> Maintenance performs worse.
 
-If Maintenance mostly receives complex repair cases while Security receives simpler complaints, the two groups may not have enough comparable cases. In that situation ReasonedOps can return:
+ReasonedOps asks a different question first:
+
+> Did Maintenance and Security actually handle comparable cases?
+
+If Maintenance mainly handled complex repairs and Security mainly handled simpler complaints, the observed design may not support a department comparison at all.
+
+In that situation the correct result can be:
 
 ```text
 REJECT
 Do not produce an adjusted department ranking from this design.
 ```
 
-If there is enough overlap between comparable cases, the evaluation workflow can continue with case-mix adjustment, diagnostics and uncertainty reporting.
+If overlap is sufficient, the evaluation layer can then use an appropriate adjusted workflow and report uncertainty and warnings.
 
-That is the core idea of the project: **do the operational work, preserve the evidence trail, then check whether the data really supports the conclusion.**
+That refusal behaviour is one of the main results of the rebuild.
 
----
+## One-command reviewer path
 
-## Run it locally
-
-### Install
-
-```bash
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -e ".[dev]"
-pytest
-```
-
-### Start the API
-
-```bash
-uvicorn reasoned_ops.api:app --reload
-```
-
-Health check:
-
-```bash
-curl http://127.0.0.1:8000/health
-```
-
-Expected response:
-
-```json
-{"status":"ok"}
-```
-
-### Generate the one-command showcase
+Run:
 
 ```bash
 reasoned-showcase
 ```
 
-It writes:
+The command executes the current development workflows and writes:
 
 ```text
 .reasoned_ops/showcase/showcase.md
 ```
 
-The showcase runs the existing development workflows and summarises the current routing, audit, evaluation, policy-research, longitudinal and governance evidence in one file.
+The generated report walks through one service request and then shows how the later evidence checks behave.
 
----
+The results are synthetic / hand-authored development evidence, not production performance estimates.
 
-## What works now?
+## Method and model decisions
 
-| Capability | What it actually does | Status |
-| --- | --- | --- |
-| Request routing API | Turns a text request into operational signals and an explainable route recommendation | Working local prototype |
-| Human routing review | Confirms or overrides a recommendation without deleting the original decision | Working local prototype |
-| Audit history | Stores request, routing decisions, reviews, versions and outcome records separately | Working local prototype |
-| Outcome capture | Stores response time, resolution time, reassignment, escalation and satisfaction | Working local prototype |
-| Management report | Separates raw summaries from adjusted estimates and shows interpretation warnings | Working local prototype |
-| Comparison-support check | Detects weak/no department × case-type overlap and can withhold a ranking | Working local prototype |
-| Method applicability | Returns `use`, `caution`, `reject` or `recommend_alternative` | Working local prototype |
-| Routing benchmark | Runs a small hand-authored development fixture | Working development benchmark |
-| Policy evaluation | Runs offline evaluation on synthetic logged-policy data | Research workflow |
-| Longitudinal benchmark | Tests recurrence/time-to-next-case models on synthetic histories | Research workflow |
-| Real private-data operation | Process real resident/customer records | **Not approved** |
-| Production deployment | Enterprise authentication, security, monitoring and live operations | **Not claimed** |
+The project deliberately records several decisions **not** to escalate complexity or claims.
 
-## Main API endpoints
+- transparent routing remains the reference baseline;
+- ANCOVA was moved downstream instead of being forced into message understanding;
+- no-overlap department comparisons are withheld;
+- binary, censored, clustered and policy-counterfactual questions can be redirected to other method families;
+- regression/ANCOVA output is non-causal by default;
+- adaptive routing remains offline;
+- longitudinal evaluation uses chronological leakage controls;
+- LSTM remains deferred until justified by the same benchmark.
+
+See [`docs/model-decisions.md`](docs/model-decisions.md).
+
+## Rebuilt architecture
 
 ```text
-POST /v1/route
-GET  /v1/cases/{case_id}
-GET  /v1/cases/{case_id}/routing-decisions
-POST /v1/cases/{case_id}/routing-reviews
-GET  /v1/cases/{case_id}/routing-reviews
-PUT  /v1/cases/{case_id}/outcome
+SERVICE REQUEST
+      |
+      v
+OPERATE
+request intelligence
+      ↓
+explainable routing recommendation
+      |
+      +------> human confirmation / override
+                       |
+                       v
+AUDIT
+original request + machine decision + human review + effective route
+                       |
+                       v
+observed outcome
+      |
+      v
+EVALUATE
+raw summaries
+      ↓
+comparison-support / identifiability gate
+      ↓
+method applicability
+      |
+      +--> USE / CAUTION: guarded regression / ANCOVA when appropriate
+      |
+      +--> REJECT: do not make the comparison
+      |
+      +--> RECOMMEND_ALTERNATIVE: logistic / survival / cluster-aware /
+                                 offline-policy family as appropriate
 ```
 
-## Main commands
+ANCOVA is one tool inside **Evaluate**. It is not the project identity.
 
-```bash
-reasoned-showcase
+## Evidence and validation
+
+The repository separates several forms of development evidence:
+
+### Hand-authored routing fixture
+
+A small fixture checks deterministic routing behaviour, expected-human-review cases and explanation coverage.
+
+It is an implementation benchmark, not external accuracy.
+
+### Synthetic known-truth outcome scenarios
+
+The validity benchmark deliberately constructs situations where the data-generating truth is known. It checks whether the software can:
+
+- approximately recover known effects;
+- reduce measured case-mix confounding;
+- refuse a structural no-overlap comparison;
+- detect a deliberately introduced slope interaction.
+
+These scenarios validate software/statistical behaviour, not real service impact.
+
+### Synthetic adaptive-policy logs
+
+Offline policy research uses deterministic logged-policy data with known propensities, chronological validation, support diagnostics and deployment locks.
+
+### Synthetic longitudinal histories
+
+The longitudinal benchmark compares simpler recurrence/time approaches under leakage-aware chronological validation.
+
+## Reproducibility
+
+The GitHub Actions CI matrix runs on Python **3.11** and **3.12** and checks:
+
+- package installation;
+- Ruff linting;
+- unit/regression tests;
+- routing evaluation;
+- evaluation validity;
+- applicability decisions;
+- adaptive-policy workflow;
+- longitudinal benchmark;
+- outcome analysis;
+- management report;
+- portfolio showcase;
+- data-governance policy.
+
+Main command-line entry points are:
+
+```text
 reasoned-evaluate
 reasoned-validity
-reasoned-applicability --json
+reasoned-applicability
 reasoned-analyze
 reasoned-management-report
-reasoned-policy evaluate
+reasoned-policy
 reasoned-longitudinal
+reasoned-showcase
 reasoned-governance-check
 ```
 
-## Where does ANCOVA fit?
-
-ANCOVA is **one evaluation method**, not the product.
-
-For the current continuous resolution-time example, the evaluation model can adjust for measured case mix such as issue category, urgency, frustration, complexity and previous related cases. Before doing that comparison, ReasonedOps checks whether departments and case types can actually be separated from the observed data.
-
-If the question should use another method family, the applicability gate redirects it instead of forcing ANCOVA onto the problem. Examples include binary outcomes, censored time-to-event outcomes, repeated/clustered observations, routing-policy counterfactuals and causal questions.
-
-See [`docs/statistical-methodology.md`](docs/statistical-methodology.md) and [`docs/evaluation-applicability.md`](docs/evaluation-applicability.md) for the technical details.
-
-## Repository structure
+## Repository map
 
 ```text
-src/reasoned_ops/     application and research code
-tests/                regression and workflow tests
-data/evaluation/      small hand-authored development fixture
-config/               machine-readable development governance policy
-docs/                 architecture, methodology and research notes
+.
+├── original/                  # reconstructed HKMU Hackathon starting concept
+├── src/reasoned_ops/          # current Python implementation
+├── data/
+│   └── evaluation/            # hand-authored public development fixture
+├── config/                    # machine-readable data-governance boundary
+├── docs/                      # audits, comparisons, methodology and decisions
+├── tests/                     # unit / regression tests
+└── .github/workflows/         # CI + release checkpoint workflow
 ```
 
-There is no separate legacy application package in the v1.2 codebase; `reasoned_ops` is the single canonical Python namespace.
+The repository intentionally keeps **historical project lineage** separate from the current implementation.
 
-## Project origin
+## Documentation guide
 
-The project originated from my participation in the **HKMU Hackathon 2026** and was originally developed under the name **ANCOVA Ops**. It was renamed **ReasonedOps** in v1.1.0 because ANCOVA/regression is only one method inside the Evaluate layer, not the product itself.
+Start here:
 
-Property management remains the first worked use case, not the product boundary.
+- [`original/README.md`](original/README.md) — reconstructed original Hackathon concept;
+- [`docs/before-vs-after.md`](docs/before-vs-after.md) — clearest original-vs-rebuild comparison;
+- [`docs/original-concept-audit.md`](docs/original-concept-audit.md) — what was preserved, corrected, narrowed or deferred;
+- [`docs/model-decisions.md`](docs/model-decisions.md) — why methods/models were selected, rejected or deferred;
+- [`docs/architecture.md`](docs/architecture.md) — current technical architecture;
+- [`docs/statistical-methodology.md`](docs/statistical-methodology.md) — guarded outcome-analysis workflow;
+- [`docs/evaluation-applicability.md`](docs/evaluation-applicability.md) — `use` / `caution` / `reject` / alternative-method gate;
+- [`docs/management-report.md`](docs/management-report.md) — management-facing evidence report;
+- [`docs/data-governance.md`](docs/data-governance.md) — development data/privacy boundary;
+- [`docs/project-status.md`](docs/project-status.md) — current completion and deployment status.
 
-## Evidence boundary
+## Current limitations
 
-The repository currently uses synthetic data and a small hand-authored routing fixture for quantitative development evidence.
+ReasonedOps demonstrates a disciplined service-operations workflow; it does **not** establish real-world effectiveness.
 
-Current outputs should **not** be presented as proof of:
+Important limitations remain:
 
-- real service improvement;
-- causal department or staff performance;
-- production routing accuracy;
-- validated psychological measurement;
-- real-world return on investment;
-- approval to process private resident/customer histories.
+- routing evaluation is hand-authored development evidence;
+- outcome, adaptive-policy and longitudinal quantitative evidence is synthetic;
+- no representative real private-data pilot has been run;
+- adjusted regression results are not causal effects by default;
+- authentication/RBAC and production security are outside the research prototype;
+- real longitudinal personalisation is not approved;
+- production deployment is not approved.
 
-A real pilot would require separate privacy/legal review, access control, retention/deletion design, secure storage, real-data quality checks and a defensible evaluation plan.
+## Next evidence gate
 
-## License and citation
+The next meaningful step is **not another model**.
 
-ReasonedOps is licensed under the **Apache License 2.0**. See [`LICENSE`](LICENSE).
+If the project is ever resumed for a real use case, the next gate is:
 
-Software citation metadata is in [`CITATION.cff`](CITATION.cff). No DOI is claimed until an archival record is independently verified.
+```text
+specific organisation / service process
+        ↓
+privacy + governance approval
+        ↓
+representative real cases
+        ↓
+independent routing / outcome-quality protocol
+        ↓
+predefined questions and stop criteria
+        ↓
+run the existing baseline once
+        ↓
+report what the real evidence supports
+```
 
-For deeper technical material, see [`docs/architecture.md`](docs/architecture.md), [`docs/data-model.md`](docs/data-model.md), [`docs/project-status.md`](docs/project-status.md), [`docs/release-readiness.md`](docs/release-readiness.md), and [`CHANGELOG.md`](CHANGELOG.md).
+Only after that would production integration or more complex modelling be justified.
+
+## Historical preservation
+
+ReasonedOps is a rebuild, not a rewrite of history.
+
+The project originated from my participation in **HKMU Hackathon 2026** and was originally developed under the name **ANCOVA Ops**. Historical changelog entries retain that earlier name where it accurately describes the project at the time.
+
+The current implementation lives under `src/reasoned_ops/`; the reconstructed starting concept lives under `original/`.
+
+The strongest result of the project is the progression itself:
+
+```text
+hackathon concept
+      ↓
+audit assumptions
+      ↓
+separate operational and analytical tasks
+      ↓
+build explainable routing
+      ↓
+preserve decision history
+      ↓
+capture outcomes separately
+      ↓
+check whether comparisons are supportable
+      ↓
+select, caution, reject or redirect the method
+      ↓
+defer unjustified complexity
+      ↓
+define the next real evidence gate
+```
+
+That is what **ReasonedOps** now represents.

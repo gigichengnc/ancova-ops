@@ -1,10 +1,14 @@
 # GitHub Storefront Recommendations
 
-This page records repository-level presentation settings for ReasonedOps. These settings improve discoverability and reviewer comprehension; they do not change the evidence class or deployment readiness of the project.
+This page records repository-level presentation settings for ReasonedOps. These settings improve reviewer comprehension; they do not change the evidence class or deployment readiness of the project.
 
 ## Recommended About description
 
-> Routes service requests, preserves machine/human decision history, records outcomes, and blocks unsupported management comparisons.
+> Rebuild of an HKMU Hackathon concierge concept into explainable routing, auditable decisions and guarded outcome evaluation.
+
+A shorter alternative:
+
+> Operate → Audit → Evaluate: a service-operations rebuild that can refuse unsupported management comparisons.
 
 ## Recommended topics
 
@@ -21,9 +25,9 @@ Use a focused set rather than filling every available topic slot:
 - `data-governance`
 - `responsible-ai`
 - `fastapi`
-- `statsmodels`
-- `scikit-learn`
 - `python`
+
+`ancova` remains a useful technical topic tag, but it should not dominate the repository description because ANCOVA/regression is only one method inside Evaluate.
 
 ## Recommended social-preview copy
 
@@ -33,13 +37,13 @@ Primary text:
 
 Secondary text:
 
-> Request → Route → Human Review → Outcome → Evidence Check
+> Hackathon concept → Operate → Audit → Evaluate
 
 Boundary line:
 
-> Local research prototype · Apache-2.0
+> Research rebuild · synthetic/hand-authored evidence
 
-A social-preview image should avoid performance percentages, production claims or language implying that the current research workflows have been validated on real resident/customer data.
+A social-preview image is optional. If one is ever used, it should avoid performance percentages, production claims or language implying validation on real resident/customer data.
 
 ## Repository website field
 
@@ -49,18 +53,22 @@ Leave the repository website field blank until there is a stable public demo or 
 
 The README should expose information in this order:
 
-1. What the software does to one real-looking service case.
-2. How to run that case locally.
-3. What records are preserved when a human overrides the recommendation.
-4. How the later evaluation layer can refuse a misleading comparison.
-5. What currently works and what is still research-only.
-6. Technical architecture and statistical details only after the concrete workflow is clear.
+1. Where the project came from.
+2. What the original concept tried to solve.
+3. Why the concept was rebuilt.
+4. What changed and why.
+5. What the current code actually runs.
+6. What evidence supports the development decisions.
+7. What the project still does not prove.
+8. What the next real evidence gate would be.
+
+This ordering intentionally matches the repository's strongest portfolio story: a student Hackathon concept was revisited, audited, corrected and rebuilt into a reproducible research/software case study.
 
 ## Claim boundary
 
 Acceptable storefront language:
 
-> Runnable research/software prototype for explainable service routing, auditable human review, outcome capture and guarded evaluation.
+> ReasonedOps is a retrospective rebuild of an HKMU Hackathon service-concierge concept into a runnable research prototype for explainable routing, auditable human review and guarded outcome evaluation.
 
 Avoid language such as:
 

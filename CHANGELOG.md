@@ -2,6 +2,30 @@
 
 All notable project checkpoints are documented here.
 
+## [1.3.0] - 2026-08-21
+
+### Added
+
+- `original/README.md`, a public reconstruction of the HKMU Hackathon 2026 concierge concept that preserves project lineage without publishing presentation-only/private source material.
+- `docs/before-vs-after.md`, a reviewer-facing comparison of the original concept and the ReasonedOps rebuild.
+- `docs/original-concept-audit.md`, documenting which original assumptions were preserved, corrected, narrowed or deferred.
+- `docs/model-decisions.md`, recording why ANCOVA moved downstream, unsupported comparisons are refused, adaptive routing stays offline and LSTM remains deferred.
+- Regression coverage ensuring the rebuild-story files remain part of the repository checkpoint.
+
+### Changed
+
+- Reframed the repository presentation from a startup-style product overview into a retrospective engineering/research rebuild case study.
+- Rewrote the README around: original question → why rebuild → what changed → what runs → evidence/model decisions → limitations → next evidence gate.
+- Made the project origin and learning progression visible before deep implementation detail.
+- Reworked the architecture documentation into a current version-neutral system map and added comparison-support / applicability before statistical modelling.
+- Marked the old v0.5.0 checkpoint summary explicitly as historical rather than current ReasonedOps status.
+- Updated project status and release-readiness documentation for the v1.3 portfolio narrative.
+- Bumped package and citation metadata to `1.3.0`.
+
+### Evidence and deployment status
+
+This release changes portfolio structure, historical preservation, documentation and reviewer comprehension. It does not add representative real-world evidence or increase deployment readiness. Quantitative development evidence remains synthetic or hand-authored; real private-data pilot use and production deployment remain not approved.
+
 ## [1.2.0] - 2026-08-21
 
 ### Changed

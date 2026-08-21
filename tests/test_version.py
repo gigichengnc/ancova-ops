@@ -4,7 +4,7 @@ from pathlib import Path
 import reasoned_ops
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_VERSION = "1.2.0"
+EXPECTED_VERSION = "1.3.0"
 EXPECTED_REPOSITORY = "https://github.com/gigichengnc/reasoned-ops"
 EXPECTED_SCRIPTS = {
     "reasoned-analyze",
@@ -30,7 +30,7 @@ def test_package_version_matches_project_metadata() -> None:
     assert reasoned_ops.__version__ == EXPECTED_VERSION
 
 
-def test_v120_cli_surface_is_registered() -> None:
+def test_v130_cli_surface_is_registered() -> None:
     project = _project_metadata()
 
     assert project["name"] == "reasoned-ops"
@@ -43,6 +43,36 @@ def test_legacy_namespace_is_removed() -> None:
 
     for path in (PROJECT_ROOT / "src" / "reasoned_ops").rglob("*.py"):
         assert legacy_name not in path.read_text(encoding="utf-8")
+
+
+def test_rebuild_story_files_are_present() -> None:
+    required = [
+        PROJECT_ROOT / "original" / "README.md",
+        PROJECT_ROOT / "docs" / "before-vs-after.md",
+        PROJECT_ROOT / "docs" / "original-concept-audit.md",
+        PROJECT_ROOT / "docs" / "model-decisions.md",
+    ]
+
+    for path in required:
+        assert path.exists(), f"missing rebuild-story file: {path.relative_to(PROJECT_ROOT)}"
+
+
+def test_current_docs_do_not_reintroduce_rename_contradictions() -> None:
+    contradiction_phrases = {
+        "formerly called **ReasonedOps**",
+        "formerly called ReasonedOps",
+        "ReasonedOps is the renamed continuation of the completed v1 research/portfolio prototype formerly called **ReasonedOps**",
+        "Treat `reasoned_ops` as temporary legacy compatibility only",
+        "legacy `reasoned_ops` namespace",
+    }
+
+    paths = [PROJECT_ROOT / "README.md", PROJECT_ROOT / "AGENTS.md"]
+    paths.extend((PROJECT_ROOT / "docs").glob("*.md"))
+
+    for path in paths:
+        text = path.read_text(encoding="utf-8")
+        for phrase in contradiction_phrases:
+            assert phrase not in text, f"rename contradiction in {path.relative_to(PROJECT_ROOT)}"
 
 
 def test_apache_license_metadata_and_file_are_present() -> None:
