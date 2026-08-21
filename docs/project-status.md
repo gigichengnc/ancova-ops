@@ -1,4 +1,4 @@
-# Project Status — ReasonedOps v1.4.0
+# Project Status — ReasonedOps v1.4.1
 
 ReasonedOps is a completed local research/software prototype and retrospective rebuild of an **HKMU Hackathon 2026** concierge concept.
 
@@ -17,14 +17,18 @@ package the reusable Python implementation
       ↓
 publish and verify the public PyPI artifact
       ↓
+archive a post-enablement release through Zenodo
+      ↓
 define the next real evidence gate
 ```
 
 **Research/portfolio project:** COMPLETED  
-**Current portfolio/code checkpoint:** v1.4.0  
+**Current GitHub/citation checkpoint:** v1.4.1  
 **Python distribution build:** VERIFIED  
 **PyPI publication:** PUBLISHED — `reasoned-ops==1.4.0`  
 **External package install check:** VERIFIED FROM PUBLIC PYPI ARTIFACT  
+**Zenodo GitHub integration:** ENABLED FOR `gigichengnc/reasoned-ops`  
+**Zenodo DOI:** PENDING INGESTION/VERIFICATION OF THE v1.4.1 RELEASE  
 **Real private-data pilot:** NOT APPROVED  
 **Production deployment:** NOT APPROVED
 
@@ -48,6 +52,7 @@ define the next real evidence gate
 | Python distribution | Builds wheel + source distribution and verifies clean-wheel installation in CI. |
 | PyPI publishing | Published through GitHub OIDC Trusted Publishing with no stored long-lived PyPI token. |
 | Public artifact verification | `reasoned-ops==1.4.0` installed from PyPI in a Windows environment outside the repository checkout; Operate → Audit → Evaluate paths were exercised successfully. |
+| Citation/archive | `CITATION.cff` is aligned to v1.4.1 and the repository is enabled for Zenodo GitHub release archiving. |
 
 ## Portfolio narrative
 
@@ -61,7 +66,8 @@ Start with:
 4. [`model-decisions.md`](model-decisions.md) — why methods/models were selected, rejected or deferred;
 5. [`../README.md`](../README.md) — runnable overview and portfolio story;
 6. [`pypi.md`](pypi.md) — package reuse and Trusted Publishing procedure;
-7. [`publication-verification.md`](publication-verification.md) — public PyPI install and executable workflow verification.
+7. [`publication-verification.md`](publication-verification.md) — public PyPI install and executable workflow verification;
+8. [`citation.md`](citation.md) — citation and Zenodo archive workflow.
 
 ## Canonical codebase
 
@@ -119,6 +125,8 @@ See [`publication-verification.md`](publication-verification.md) for the exact b
 
 This establishes package distribution and executable local behaviour from the public artifact. It is not independent scientific validation.
 
+The v1.4.1 checkpoint is separate: it is a citation/archive-only release prepared after the repository was enabled in Zenodo. It does not imply that `reasoned-ops==1.4.1` has been published on PyPI.
+
 ## Evaluation boundary
 
 ReasonedOps does not assume every operational comparison is valid.
@@ -148,7 +156,7 @@ Current quantitative development evidence is limited to:
 
 The external PyPI verification demonstrates installability and executable software behaviour; it does not add a real-world outcome evidence class.
 
-There is no representative real-company or real-resident/customer pilot dataset in v1.4.0.
+There is no representative real-company or real-resident/customer pilot dataset in v1.4.1.
 
 ## What this project does not prove
 
@@ -163,7 +171,7 @@ The repository does **not** prove that ReasonedOps:
 
 Those claims require a separate real-data pilot, governance approval and a defensible evaluation design.
 
-Publishing and verifying the package on PyPI makes reuse easier; it does not change these evidence boundaries.
+Publishing and verifying the package on PyPI, or archiving a release in Zenodo, does not change these evidence boundaries.
 
 ## Next evidence gate
 

@@ -4,7 +4,7 @@ from pathlib import Path
 import reasoned_ops
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_VERSION = "1.4.0"
+EXPECTED_VERSION = "1.4.1"
 EXPECTED_REPOSITORY = "https://github.com/gigichengnc/reasoned-ops"
 EXPECTED_SCRIPTS = {
     "reasoned-analyze",
@@ -30,7 +30,7 @@ def test_package_version_matches_project_metadata() -> None:
     assert reasoned_ops.__version__ == EXPECTED_VERSION
 
 
-def test_v140_cli_surface_is_registered() -> None:
+def test_v141_cli_surface_is_registered() -> None:
     project = _project_metadata()
 
     assert project["name"] == "reasoned-ops"

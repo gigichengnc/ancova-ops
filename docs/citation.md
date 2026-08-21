@@ -26,32 +26,63 @@ Zenodo supports both `CITATION.cff` and `.zenodo.json` for GitHub software metad
 
 Add `.zenodo.json` later only if a concrete Zenodo-specific requirement justifies maintaining a second metadata source.
 
+## Current Zenodo status
+
+The GitHub account is connected to Zenodo and `gigichengnc/reasoned-ops` has been enabled for automatic preservation of **new** GitHub releases.
+
+v1.4.1 is the first checkpoint intentionally prepared after that enablement. Its purpose is archival/citation synchronization rather than new functionality.
+
+Current sequence:
+
+```text
+Zenodo integration enabled
+      ↓
+release v1.4.1 after successful main CI
+      ↓
+Zenodo ingests the GitHub release
+      ↓
+verify archived metadata + DOI
+      ↓
+add the verified DOI back to CITATION.cff
+```
+
+Do not add a DOI to the repository before the actual Zenodo record is visible and verified.
+
 ## Archiving a release in Zenodo
 
 Repository metadata readiness and Zenodo account integration are separate steps.
 
-To enable automatic archiving for future releases:
+The current process is:
 
-1. Sign in to Zenodo and connect the GitHub account that owns this repository.
-2. Open the Zenodo GitHub integration page.
-3. Sync repositories and enable `gigichengnc/reasoned-ops`.
-4. Create a new GitHub release after the repository is enabled in Zenodo.
-5. Wait for Zenodo to ingest the release and create the software record.
-6. Review the archived metadata and DOI before citing it externally.
+1. GitHub account connected to Zenodo — **complete**.
+2. `gigichengnc/reasoned-ops` enabled in the Zenodo GitHub integration — **complete**.
+3. Create GitHub Release v1.4.1 after successful `main` CI — **pending until the release workflow completes**.
+4. Wait for Zenodo to ingest the release and create the software record.
+5. Review creator, title, version, license and archive metadata.
+6. Record the verified DOI in repository citation metadata.
 
-Do not assume that a release created before repository integration will be ingested retroactively. If necessary, use Zenodo's supported manual software-upload route or create a later release after enabling the integration.
+The earlier v1.4.0 release existed before Zenodo enablement, so v1.4.1 is used as the clean post-enablement archive checkpoint rather than assuming retroactive ingestion.
 
 ## After a DOI exists
 
-Once Zenodo has minted a DOI for a specific ReasonedOps release:
+Once Zenodo has minted a DOI for the v1.4.1 ReasonedOps release:
 
 1. verify the creator, title, version, license and release metadata in Zenodo;
 2. add the verified version DOI to `CITATION.cff` using the `doi` field;
 3. update README citation guidance if a DOI badge or direct citation link is desired;
-4. keep the package version, GitHub release tag and CFF version aligned;
-5. run CI before publishing another release.
+4. distinguish the version DOI from any Zenodo concept DOI if both are shown;
+5. keep the package/checkpoint version, GitHub release tag and CFF version aligned for future archive releases;
+6. run CI before publishing another release.
 
 A Zenodo DOI makes the software release persistently identifiable and citable. It does **not** constitute peer review and does not upgrade synthetic or hand-authored development results into real-world evidence.
+
+## PyPI and Zenodo version note
+
+The currently published and externally verified PyPI artifact is `reasoned-ops==1.4.0`.
+
+v1.4.1 is being created as a GitHub/Zenodo archive checkpoint. Unless it is separately published through the PyPI Trusted Publishing workflow, do not claim that PyPI contains version 1.4.1.
+
+This distinction is intentional because v1.4.1 changes citation/archive metadata, not functional behaviour.
 
 ## Publication boundary
 

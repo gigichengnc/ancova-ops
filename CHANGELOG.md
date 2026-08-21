@@ -2,6 +2,18 @@
 
 All notable project checkpoints are documented here.
 
+## [1.4.1] - 2026-08-21
+
+### Changed
+
+- Created a documentation/citation-only archive checkpoint after `gigichengnc/reasoned-ops` was enabled for Zenodo GitHub release preservation.
+- Bumped package and `CITATION.cff` checkpoint metadata to `1.4.1` so the post-enablement GitHub release has aligned software citation metadata.
+- Updated project, citation and release-readiness documentation to distinguish the Zenodo archive release from the currently published and externally verified PyPI artifact `reasoned-ops==1.4.0`.
+
+### Archive boundary
+
+v1.4.1 does not add or change routing, audit, outcome, statistical, adaptive-policy or longitudinal behaviour. It exists so a new GitHub release can be ingested after Zenodo integration was enabled. A Zenodo DOI makes the release persistently citable; it does not constitute peer review, real-world validation, private-data pilot approval or production readiness.
+
 ## [1.4.0] - 2026-08-21
 
 ### Added
