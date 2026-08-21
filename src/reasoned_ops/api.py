@@ -5,6 +5,7 @@ from typing import Literal
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field, field_validator
 
+from . import __version__
 from .intelligence import INTELLIGENCE_VERSION, BaselineRequestIntelligence
 from .models import RoutingDecision, ServiceCase
 from .persistence import (
@@ -19,11 +20,11 @@ from .persistence import (
 from .routing import ROUTER_VERSION, baseline_route
 
 app = FastAPI(
-    title="ANCOVA Ops API",
-    version="0.4.0",
+    title="ReasonedOps API",
+    version=__version__,
     description=(
-        "Structured service-request intelligence, explainable routing, audit persistence "
-        "and human routing feedback."
+        "Evidence-aware service-request intelligence, explainable routing, audit persistence, "
+        "human routing feedback and outcome capture."
     ),
 )
 
