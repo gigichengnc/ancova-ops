@@ -15,13 +15,16 @@ validate software behaviour with public development evidence
       ↓
 package the reusable Python implementation
       ↓
+publish and verify the public PyPI artifact
+      ↓
 define the next real evidence gate
 ```
 
 **Research/portfolio project:** COMPLETED  
 **Current portfolio/code checkpoint:** v1.4.0  
-**Python distribution build:** READY  
-**PyPI first upload:** ACCOUNT-SIDE PUBLISHER SETUP PENDING  
+**Python distribution build:** VERIFIED  
+**PyPI publication:** PUBLISHED — `reasoned-ops==1.4.0`  
+**External package install check:** VERIFIED FROM PUBLIC PYPI ARTIFACT  
 **Real private-data pilot:** NOT APPROVED  
 **Production deployment:** NOT APPROVED
 
@@ -43,7 +46,8 @@ define the next real evidence gate
 | Governance check | Enforces the repository's synthetic/private-data development policy. |
 | Rebuild record | Preserves the reconstructed original concept, before/after comparison, concept audit and model decisions. |
 | Python distribution | Builds wheel + source distribution and verifies clean-wheel installation in CI. |
-| PyPI publishing | Dedicated manual Trusted Publishing workflow using GitHub OIDC; first account-side registration still required. |
+| PyPI publishing | Published through GitHub OIDC Trusted Publishing with no stored long-lived PyPI token. |
+| Public artifact verification | `reasoned-ops==1.4.0` installed from PyPI in a Windows environment outside the repository checkout; Operate → Audit → Evaluate paths were exercised successfully. |
 
 ## Portfolio narrative
 
@@ -56,7 +60,8 @@ Start with:
 3. [`original-concept-audit.md`](original-concept-audit.md) — assumptions preserved/corrected/deferred;
 4. [`model-decisions.md`](model-decisions.md) — why methods/models were selected, rejected or deferred;
 5. [`../README.md`](../README.md) — runnable overview and portfolio story;
-6. [`pypi.md`](pypi.md) — package reuse and Trusted Publishing procedure.
+6. [`pypi.md`](pypi.md) — package reuse and Trusted Publishing procedure;
+7. [`publication-verification.md`](publication-verification.md) — public PyPI install and executable workflow verification.
 
 ## Canonical codebase
 
@@ -86,26 +91,33 @@ The Python distribution name is:
 reasoned-ops
 ```
 
-The import namespace remains:
+The import namespace is:
 
 ```python
 import reasoned_ops
 ```
 
-## Distribution boundary
+## Distribution and publication status
 
-CI now separately validates the packaged artifact rather than assuming an editable source install proves distribution quality.
+CI separately validates the packaged artifact rather than assuming an editable source install proves distribution quality.
 
-The distribution job builds:
+The distribution job builds a wheel and source distribution, installs the wheel into a clean virtual environment, and checks import, routing behaviour and a packaged CLI entry point.
+
+The public PyPI release `reasoned-ops==1.4.0` was then installed in a Windows environment outside the repository checkout. The verification exercised:
 
 ```text
-wheel
-source distribution
+PyPI install + version import
+      ↓
+Operate: routing + explanation + FastAPI
+      ↓
+Audit: persisted machine decision + human override + outcome
+      ↓
+Evaluate: deterministic synthetic validity benchmark
 ```
 
-then installs the wheel into a clean virtual environment and checks import, routing behaviour and a packaged CLI entry point.
+See [`publication-verification.md`](publication-verification.md) for the exact boundary and observed checks.
 
-PyPI upload is intentionally not claimed as complete until the repository owner registers the matching Trusted Publisher, publishes a release tag and verifies installation from PyPI itself.
+This establishes package distribution and executable local behaviour from the public artifact. It is not independent scientific validation.
 
 ## Evaluation boundary
 
@@ -134,6 +146,8 @@ Current quantitative development evidence is limited to:
 - synthetic logged-policy data;
 - synthetic longitudinal histories.
 
+The external PyPI verification demonstrates installability and executable software behaviour; it does not add a real-world outcome evidence class.
+
 There is no representative real-company or real-resident/customer pilot dataset in v1.4.0.
 
 ## What this project does not prove
@@ -149,7 +163,7 @@ The repository does **not** prove that ReasonedOps:
 
 Those claims require a separate real-data pilot, governance approval and a defensible evaluation design.
 
-Publishing a package to PyPI would make reuse easier; it would not change these evidence boundaries.
+Publishing and verifying the package on PyPI makes reuse easier; it does not change these evidence boundaries.
 
 ## Next evidence gate
 
