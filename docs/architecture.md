@@ -6,7 +6,9 @@ ReasonedOps separates operational decision support from downstream evaluation. T
 
 ANCOVA is an **outcome-analysis layer**, not a per-message scoring algorithm.
 
-## v0.5.0 system map
+For the project story and the differences from the original HKMU Hackathon concept, see [`before-vs-after.md`](before-vs-after.md).
+
+## Current system map
 
 ```text
 Service request
@@ -31,10 +33,14 @@ Auditable historical records
       |
       +------> Routing benchmark
       |
-      +------> ANCOVA / regression + diagnostics
+      +------> comparison-support / applicability gate
       |                |
-      |                v
-      |        Management evidence report
+      |                +--> reject / redirect when unsupported
+      |                |
+      |                +--> regression / ANCOVA + diagnostics when appropriate
+      |                                  |
+      |                                  v
+      |                          Management evidence report
       |
       +------> Offline adaptive-policy research
       |        (time-aware validation, IPS, approval, rollback)
@@ -86,35 +92,51 @@ The fixture is a software-development benchmark, not representative production d
 
 The repository is synthetic-only for model/analytics development. Real private resident/customer records, direct identifiers, unsupported psychological profiling and unapproved longitudinal personalisation are prohibited.
 
-## Layer 6 — Outcome analytics
+## Layer 6 — Comparison support and method applicability
 
-`reasoned-analyze` fits the pre-specified ANCOVA/regression workflow and exposes:
+Before an adjusted department comparison is treated as supportable, ReasonedOps checks department × case-type overlap and design identifiability.
+
+The final applicability layer can return:
+
+```text
+use
+caution
+reject
+recommend_alternative
+```
+
+This prevents a question from being forced through ANCOVA simply because ANCOVA is implemented in the repository.
+
+## Layer 7 — Outcome analytics
+
+`reasoned-analyze` fits the pre-specified regression/ANCOVA workflow when the declared question and design support it. It exposes:
 
 - required-field missingness and complete-case counts;
 - department group sizes;
+- department/case-type identifiability;
 - residual diagnostics;
 - heteroskedasticity screening;
 - VIF multicollinearity diagnostics;
 - influence screening;
 - department-by-covariate interaction checks;
-- adjusted department estimates with uncertainty;
+- adjusted department estimates with uncertainty when supportable;
 - explicit warnings and alternative-model guidance.
 
 Adjusted estimates are model-based associations. They are not causal effects without a separate identification argument and study design.
 
-## Layer 7 — Management reporting
+## Layer 8 — Management reporting
 
-`reasoned-management-report` converts the technical analysis into a self-contained Markdown/JSON evidence report. It keeps raw observed summaries separate from adjusted estimates and carries statistical warnings into the management view.
+`reasoned-management-report` converts the technical analysis into a self-contained Markdown/JSON evidence report. It keeps raw observed summaries separate from adjusted estimates, surfaces the applicability decision, and carries statistical warnings into the management view.
 
 The report is not a staff-performance league table.
 
-## Layer 8 — Offline adaptive-routing research
+## Layer 9 — Offline adaptive-routing research
 
 `reasoned-policy evaluate` uses deterministic synthetic logged-routing history with timestamps and known action propensities. Candidate policies are trained on an earlier window and compared on a later window with support-aware inverse-propensity methods.
 
 The lifecycle registry supports candidate registration, named human approval, activation history and rollback. Registry activation does **not** replace the router behind `/v1/route`; deployment integration is intentionally separate.
 
-## Layer 9 — Longitudinal benchmark
+## Layer 10 — Longitudinal benchmark
 
 `reasoned-longitudinal` generates synthetic entity-level service histories with recurrence and seasonality, creates pre-cutoff feature snapshots, and applies a purged chronological split so training follow-up cannot overlap the validation period.
 
@@ -144,14 +166,16 @@ Request intelligence answers:  "What does this request appear to need?"
 Routing answers:               "Where should it go now?"
 Human review answers:          "Do staff accept or override that recommendation?"
 Outcome capture answers:       "What actually happened?"
-ANCOVA/regression answers:     "How do outcomes compare after case-mix adjustment?"
+Comparison gate asks:          "Can these groups actually be compared?"
+Applicability asks:            "What method family, if any, fits this question?"
+ANCOVA/regression answers:     "How do supportable outcomes compare after measured case-mix adjustment?"
 Adaptive-policy research asks: "Could historical outcomes inform a better policy offline?"
 Longitudinal research asks:    "Can recurrence/timing be predicted without avoidable leakage?"
 Governance answers:            "Which data/use/deployment steps are currently permitted?"
 ```
 
-## v0.5.0 deployment boundary
+## Deployment boundary
 
-The architecture is runnable as a development prototype but is not approved for private-data pilot or production deployment. Production authentication/RBAC, secrets management, real-data validation, monitoring, incident response and policy-to-route integration remain future work.
+The architecture is runnable as a local research/development prototype but is not approved for a real private-data pilot or production deployment. Production authentication/RBAC, secrets management, representative real-data validation, monitoring, incident response and policy-to-route integration remain post-project work.
 
-See `docs/project-status.md` and `docs/release-readiness.md` for the checkpoint boundary.
+See `docs/project-status.md` and `docs/release-readiness.md` for the current boundary.
