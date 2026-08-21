@@ -1,8 +1,10 @@
-# v0.5.0 Checkpoint Summary
+# Historical Checkpoint — v0.5.0
 
-ReasonedOps v0.5.0 is the first repository checkpoint where Phases 0–4 are presented as one coherent research/software system rather than a sequence of isolated implementation phases.
+> **Historical document:** this checkpoint predates the rename to ReasonedOps. At v0.5.0 the project was still named **ANCOVA Ops**. For current status, use [`project-status.md`](project-status.md) and [`release-readiness.md`](release-readiness.md).
 
-## Included at this checkpoint
+v0.5.0 was the first repository checkpoint where Phases 0–4 were presented as one coherent research/software system rather than a sequence of isolated implementation phases.
+
+## Included at that checkpoint
 
 - explainable service-request routing API;
 - immutable routing audit history and human override capture;
@@ -14,12 +16,12 @@ ReasonedOps v0.5.0 is the first repository checkpoint where Phases 0–4 are pre
 - leakage-aware synthetic longitudinal recurrence benchmarking;
 - Python 3.11/3.12 CI coverage across the major workflows.
 
-## Evidence boundary
+## Evidence boundary at v0.5.0
 
-All current quantitative results are synthetic or hand-authored development evidence unless explicitly stated otherwise. v0.5.0 does not contain real resident/customer pilot evidence and does not support production-performance or causal-improvement claims.
+Quantitative results were synthetic or hand-authored development evidence unless explicitly stated otherwise. The checkpoint contained no real resident/customer pilot evidence and did not support production-performance or causal-improvement claims.
 
-## Deployment boundary
+## Deployment boundary at v0.5.0
 
-The repository is suitable as a reproducible development/research portfolio checkpoint. It is not approved for real private-data pilot use or production deployment.
+The checkpoint was suitable as a reproducible development/research portfolio artifact. It was not approved for real private-data pilot use or production deployment.
 
-See `docs/project-status.md`, `docs/release-readiness.md` and `CHANGELOG.md` for the detailed status.
+The current ReasonedOps codebase and readiness boundary have moved on substantially since this historical checkpoint; see the current status documents rather than using this file as a present-day capability summary.
