@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from .intelligence import EMERGENCY_TERMS, SAFETY_TERMS, contains_any
 from .models import RoutingDecision, ServiceCase
 
-ROUTER_VERSION = "baseline-route-v1"
+ROUTER_VERSION = "baseline-route-v2"
 
 ISSUE_KEYWORDS: dict[str, tuple[str, ...]] = {
+    "emergency_response": EMERGENCY_TERMS,
     "maintenance": (
         "leak",
         "water",
@@ -12,16 +14,19 @@ ISSUE_KEYWORDS: dict[str, tuple[str, ...]] = {
         "air-con",
         "air conditioner",
         "electric",
+        "spark",
+        "sparks",
         "lift",
         "repair",
         "broken",
     ),
-    "security": ("noise", "fight", "intruder", "security", "theft", "smoke"),
+    "security": ("noise", "fight", "intruder", "security", "theft"),
     "leasing": ("lease", "tenancy", "contract", "renewal"),
     "accounts": ("rent", "invoice", "payment", "charge", "fee", "deposit"),
 }
 
 CATEGORY_TO_DEPARTMENT = {
+    "emergency": "emergency_response",
     "water_leak": "maintenance",
     "air_conditioning": "maintenance",
     "electrical": "maintenance",
@@ -37,9 +42,9 @@ def _infer_department(case: ServiceCase) -> tuple[str, str]:
         department = CATEGORY_TO_DEPARTMENT[case.issue_category]
         return department, f"issue category maps to {department}"
 
-    normalized = case.message.lower()
+    normalized = " ".join(case.message.lower().split())
     for department, keywords in ISSUE_KEYWORDS.items():
-        if any(keyword in normalized for keyword in keywords):
+        if contains_any(normalized, keywords):
             return department, f"message contains {department}-related terms"
 
     return "community_management", "no specialist category matched the baseline rules"
@@ -54,6 +59,9 @@ def baseline_route(case: ServiceCase) -> RoutingDecision:
 
     department, category_reason = _infer_department(case)
     reasons = [category_reason]
+    normalized = " ".join(case.message.lower().split())
+    safety_context = contains_any(normalized, SAFETY_TERMS)
+    security_incident = case.issue_category == "security"
 
     critical = case.urgency >= 9 or (
         case.vulnerability_flag and case.urgency >= 8 and case.complexity >= 7
@@ -63,6 +71,8 @@ def baseline_route(case: ServiceCase) -> RoutingDecision:
         or case.frustration >= 8
         or case.previous_related_cases >= 2
         or case.vulnerability_flag
+        or safety_context
+        or security_incident
     )
 
     if critical:
@@ -75,23 +85,32 @@ def baseline_route(case: ServiceCase) -> RoutingDecision:
         priority = "normal"
 
     requires_human_review = (
-        priority == "critical"
+        department == "emergency_response"
+        or priority == "critical"
         or case.vulnerability_flag
         or case.previous_related_cases >= 2
         or case.frustration >= 8
+        or safety_context
+        or security_incident
     )
 
+    if department == "emergency_response":
+        reasons.append("emergency terms require immediate human triage")
+    if safety_context and department != "emergency_response":
+        reasons.append("safety context requires human review")
+    if security_incident:
+        reasons.append("explicit security incident requires human review")
     if case.previous_related_cases >= 2:
         reasons.append("multiple related cases indicate recurrence or unresolved history")
     if case.vulnerability_flag:
         reasons.append("vulnerability context requires human attention")
     if case.frustration >= 8:
-        reasons.append("high communication/emotional-need signal")
+        reasons.append("high communication-intensity signal")
 
     secondary_notify = None
-    if department == "maintenance" and requires_human_review:
+    if department in {"maintenance", "emergency_response"} and requires_human_review:
         secondary_notify = "community_management"
-        reasons.append("community management notified for a high-context maintenance case")
+        reasons.append("community management notified for a high-context case")
 
     return RoutingDecision(
         department=department,

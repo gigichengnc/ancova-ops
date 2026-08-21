@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, phase-0-foundation]
+    branches: [main]
   pull_request:
     branches: [main]
 
@@ -41,7 +41,7 @@ jobs:
       - name: Evaluation applicability smoke test
         run: >-
           reasoned-applicability --outcome-type continuous
-          --comparison department_outcome --overlap-status supported --json
+          --comparison department_outcome --json
           > /tmp/reasoned-applicability.json
 
       - name: Adaptive routing policy smoke test

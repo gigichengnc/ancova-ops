@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "name": "ancova-ops-hand-authored-routing",
-    "version": "1",
+    "name": "reasoned-ops-hand-authored-routing",
+    "version": "2",
     "provenance": "hand_authored_fixture",
     "label_status": "design_expectation_not_ground_truth",
     "description": "Small deterministic routing benchmark covering the first property-management use case, department routing and human-review edge cases.",
@@ -54,9 +54,9 @@
     {
       "case_id": "security-smoke-001",
       "message": "There is smoke in the corridor.",
-      "expected_department": "security",
+      "expected_department": "emergency_response",
       "expected_human_review": true,
-      "annotation_note": "Emergency wording with a department route supplied by fallback routing rules."
+      "annotation_note": "Emergency wording must enter the dedicated critical human-triage route."
     },
     {
       "case_id": "leasing-renewal-001",

@@ -294,11 +294,45 @@ def _validate_question(question: EvaluationQuestion) -> None:
         raise ValueError(f"unsupported overlap_status: {question.overlap_status}")
 
 
+def _guard_cli_declared_overlap(
+    decision: ApplicabilityDecision,
+    *,
+    comparison: str,
+    overlap_status: str,
+) -> ApplicabilityDecision:
+    """Prevent a user-declared CLI flag from being treated as observed-data clearance."""
+
+    if (
+        comparison != "department_outcome"
+        or overlap_status != "supported"
+        or decision.disposition != "use"
+    ):
+        return decision
+
+    return ApplicabilityDecision(
+        disposition="caution",
+        method_family=decision.method_family,
+        reasons=(
+            "The CLI overlap status is user-declared rather than computed from an observed frame.",
+            *decision.reasons,
+        ),
+        next_step=(
+            "Derive overlap and interaction status from an actual outcome frame and use "
+            "assess_from_ancova_report() before treating the adjusted comparison as cleared."
+        ),
+        interpretation_boundary=(
+            "A command-line declaration of supported overlap cannot establish identifiability, "
+            "model correctness, absence of unmeasured confounding, or causal identification."
+        ),
+    )
+
+
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
             "Assess which evaluation method family is supportable for a declared ReasonedOps "
-            "question. The gate returns use, caution, reject, or recommend_alternative."
+            "question. The standalone CLI treats overlap as declared metadata, not observed-data "
+            "evidence; it cannot clear a department comparison for use by assertion alone."
         )
     )
     parser.add_argument(
@@ -314,7 +348,11 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--overlap-status",
         choices=["supported", "weak_overlap", "not_identifiable", "not_assessed"],
-        default="supported",
+        default="not_assessed",
+        help=(
+            "Declared overlap status for question triage. 'supported' remains caution in the "
+            "standalone CLI because no data frame was inspected."
+        ),
     )
     parser.add_argument("--censored", action="store_true")
     parser.add_argument("--repeated-or-clustered", action="store_true")
@@ -341,6 +379,11 @@ def main(argv: list[str] | None = None) -> int:
             causal_intent=args.causal_intent,
             interaction_flags=tuple(args.interaction_flag),
         )
+    )
+    decision = _guard_cli_declared_overlap(
+        decision,
+        comparison=args.comparison,
+        overlap_status=args.overlap_status,
     )
 
     if args.json:

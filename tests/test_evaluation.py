@@ -26,6 +26,8 @@ def _perfect_candidate(case: EvaluationCase) -> EvaluationPrediction:
 
 def test_hand_authored_dataset_has_explicit_provenance_and_limitations() -> None:
     dataset = load_dataset(FIXTURE_PATH)
+    assert dataset.name == "reasoned-ops-hand-authored-routing"
+    assert dataset.version == "2"
     assert dataset.provenance == "hand_authored_fixture"
     assert dataset.label_status == "design_expectation_not_ground_truth"
     assert len(dataset.cases) == 11
@@ -37,23 +39,19 @@ def test_baseline_metrics_are_deterministic() -> None:
     report = evaluate_predictor(
         dataset,
         baseline_predict,
-        system_name="transparent-baseline-v1",
+        system_name="transparent-baseline-v2",
     )
 
     assert report.metrics.sample_count == 11
     assert report.metrics.department_correct == 10
     assert report.metrics.department_accuracy == pytest.approx(10 / 11)
     assert report.metrics.high_risk_count == 5
-    assert report.metrics.high_risk_reviewed == 2
-    assert report.metrics.human_review_recall == pytest.approx(2 / 5)
+    assert report.metrics.high_risk_reviewed == 5
+    assert report.metrics.human_review_recall == pytest.approx(1.0)
     assert report.metrics.explained_count == 11
     assert report.metrics.explanation_coverage == 1.0
     assert report.department_errors == ("leasing-ambiguous-001",)
-    assert report.human_review_misses == (
-        "maint-electrical-safety-001",
-        "security-intruder-001",
-        "security-smoke-001",
-    )
+    assert report.human_review_misses == ()
     assert report.unexplained_cases == ()
 
 
@@ -76,7 +74,7 @@ def test_candidate_is_only_called_improved_after_same_dataset_comparison() -> No
     assert comparison.strict_improvement is True
     assert comparison.eligible_for_improvement_claim is True
     assert comparison.department_accuracy_delta == pytest.approx(1 / 11)
-    assert comparison.human_review_recall_delta == pytest.approx(3 / 5)
+    assert comparison.human_review_recall_delta == pytest.approx(0.0)
     assert comparison.explanation_coverage_delta == 0.0
 
 
@@ -95,9 +93,11 @@ def test_cli_emits_machine_readable_baseline_report(capsys) -> None:
     assert exit_code == 0
 
     payload = json.loads(capsys.readouterr().out)
+    assert payload["dataset"]["name"] == "reasoned-ops-hand-authored-routing"
+    assert payload["dataset"]["version"] == "2"
     assert payload["dataset"]["provenance"] == "hand_authored_fixture"
     assert payload["baseline"]["metrics"]["department_correct"] == 10
-    assert payload["baseline"]["metrics"]["high_risk_reviewed"] == 2
+    assert payload["baseline"]["metrics"]["high_risk_reviewed"] == 5
 
 
 def test_cli_can_compare_candidate_with_baseline(capsys) -> None:

@@ -35,9 +35,28 @@ def test_route_endpoint_returns_structured_high_context_decision(tmp_path, monke
     assert payload["priority"] in {"high", "critical"}
     assert payload["requires_human_review"] is True
     assert payload["secondary_notify"] == "community_management"
-    assert payload["intelligence_version"] == "baseline-request-intelligence-v1"
-    assert payload["router_version"] == "baseline-route-v1"
+    assert payload["intelligence_version"] == "baseline-request-intelligence-v2"
+    assert payload["router_version"] == "baseline-route-v2"
     assert payload["reasons"]
+
+
+def test_route_endpoint_sends_fire_to_critical_human_triage(tmp_path, monkeypatch) -> None:
+    monkeypatch.setenv("ANCOVA_OPS_DB_PATH", str(tmp_path / "fire.sqlite3"))
+    response = client.post(
+        "/v1/route",
+        json={
+            "case_id": "api-fire-1",
+            "message": "The kitchen is on fire and there is smoke in the corridor.",
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["issue_category"] == "emergency"
+    assert payload["department"] == "emergency_response"
+    assert payload["priority"] == "critical"
+    assert payload["requires_human_review"] is True
+    assert payload["secondary_notify"] == "community_management"
 
 
 def test_route_endpoint_rejects_blank_message(tmp_path, monkeypatch) -> None:
@@ -80,7 +99,7 @@ def test_routed_case_can_be_retrieved_with_audit_history(tmp_path, monkeypatch) 
     case_payload = case_response.json()
     assert case_payload["message"] == request["message"]
     assert case_payload["latest_decision"]["decision_id"] == routed.json()["decision_id"]
-    assert case_payload["latest_decision"]["router_version"] == "baseline-route-v1"
+    assert case_payload["latest_decision"]["router_version"] == "baseline-route-v2"
     assert case_payload["latest_review"] is None
     assert case_payload["effective_routing"]["source"] == "machine_recommendation"
 

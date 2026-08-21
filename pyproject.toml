@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "reasoned-ops"
-version = "1.4.3"
+version = "1.4.4"
 description = "Evidence-aware service operations with explainable routing, auditable human review and guarded outcome evaluation"
 readme = {file = "PYPI.md", content-type = "text/markdown"}
 license = "Apache-2.0"
