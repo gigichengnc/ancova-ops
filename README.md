@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/gigichengnc/reasoned-ops/actions/workflows/ci.yml/badge.svg)](https://github.com/gigichengnc/reasoned-ops/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/gigichengnc/reasoned-ops?display_name=tag)](https://github.com/gigichengnc/reasoned-ops/releases/latest)
+[![PyPI](https://img.shields.io/pypi/v/reasoned-ops.svg)](https://pypi.org/project/reasoned-ops/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue.svg)](pyproject.toml)
 
@@ -36,11 +37,18 @@ The project was originally developed under the name **ANCOVA Ops**. It was renam
 | Model escalation | LSTM / sequence modelling deferred until it can beat simpler baselines on the same benchmark |
 | Validation | Hand-authored fixtures + deterministic synthetic known-truth scenarios |
 | Python distribution | Wheel + source distribution build and clean-wheel installation validated in CI |
-| PyPI status | Trusted Publishing workflow ready; first account-side publisher registration/upload still pending |
+| PyPI status | **Published:** `reasoned-ops==1.4.0` via GitHub OIDC Trusted Publishing |
+| Public artifact verification | PyPI package installed outside the repository checkout; Operate → Audit → Evaluate paths exercised successfully |
 | Real-world performance claim | **Not made**; representative real-pilot evidence does not exist in this repository |
 | Development data boundary | Synthetic / hand-authored public development evidence only |
 | Production status | **Not approved** |
 | Project identity | **ReasonedOps — Operate → Audit → Evaluate** |
+
+Install the released package:
+
+```bash
+pip install reasoned-ops==1.4.0
+```
 
 For the clearest summary of how the project changed, start with [`docs/before-vs-after.md`](docs/before-vs-after.md).
 
@@ -117,7 +125,14 @@ The air conditioner is leaking again. This is the third time and the wet floor c
 
 ### 1. Operate — structure and route the request
 
-Start the API from a repository checkout:
+From PyPI:
+
+```bash
+pip install reasoned-ops==1.4.0
+uvicorn reasoned_ops.api:app --reload
+```
+
+Or from a repository checkout:
 
 ```bash
 python -m venv .venv
@@ -242,15 +257,15 @@ The results are synthetic / hand-authored development evidence, not production p
 
 ## Reuse it from another Python project
 
-v1.4.0 adds a normal Python distribution path so another project can depend on ReasonedOps instead of copying source files.
+ReasonedOps is published on PyPI, so another Python project can depend on it instead of copying source files.
 
-Once the first PyPI upload is verified, the intended install is:
+Install the current verified release:
 
 ```bash
-pip install reasoned-ops
+pip install reasoned-ops==1.4.0
 ```
 
-and the public Python surface starts with:
+The public Python surface starts with:
 
 ```python
 from reasoned_ops import ServiceCase, baseline_route
@@ -266,19 +281,48 @@ print(decision.department)
 print(decision.reasons)
 ```
 
-Until the first PyPI upload is confirmed, a released Git tag can still be installed directly from GitHub:
-
-```bash
-pip install "reasoned-ops @ git+https://github.com/gigichengnc/reasoned-ops.git@v1.4.0"
-```
-
 For reusable project dependencies, prefer an explicit compatible version range such as:
 
 ```text
 reasoned-ops>=1.4,<2
 ```
 
-See [`docs/pypi.md`](docs/pypi.md) for distribution verification and Trusted Publishing setup.
+Pin an exact version when reproducibility is more important than automatically receiving compatible updates.
+
+See [`docs/pypi.md`](docs/pypi.md) for package reuse and release publishing, and [`docs/publication-verification.md`](docs/publication-verification.md) for the public-artifact verification record.
+
+## Public release verification
+
+After `reasoned-ops==1.4.0` was published, the package was installed from public PyPI in a Windows environment outside the repository checkout.
+
+That verification exercised:
+
+```text
+PyPI install + import version 1.4.0
+        ↓
+Operate
+routing + explanation + FastAPI request
+        ↓
+Audit
+persisted machine route + human override + effective route + outcome
+        ↓
+Evaluate
+known-effect recovery + confounding adjustment + no-overlap refusal + interaction detection
+```
+
+The deterministic validity benchmark reported:
+
+```text
+Overall pass: True
+- known_effect_recovery: PASS
+- measured_confounding: PASS
+- no_overlap: PASS
+- slope_interaction: PASS
+```
+
+This establishes that the public package is **installable and executable as a local research/software prototype**. It does not establish independent scientific effectiveness, causal business impact, private-data approval, or production readiness.
+
+See [`docs/publication-verification.md`](docs/publication-verification.md).
 
 ## Method and model decisions
 
@@ -362,6 +406,12 @@ Offline policy research uses deterministic logged-policy data with known propens
 
 The longitudinal benchmark compares simpler recurrence/time approaches under leakage-aware chronological validation.
 
+### Public artifact execution
+
+The PyPI verification demonstrates that the packaged release can be installed and its current local workflow executed outside the repository checkout.
+
+That is distribution/execution evidence, not a new real-world outcome evidence class.
+
 ## Reproducibility
 
 The GitHub Actions CI matrix runs on Python **3.11** and **3.12** and checks:
@@ -433,6 +483,7 @@ Start here:
 - [`docs/management-report.md`](docs/management-report.md) — management-facing evidence report;
 - [`docs/data-governance.md`](docs/data-governance.md) — development data/privacy boundary;
 - [`docs/pypi.md`](docs/pypi.md) — package reuse and Trusted Publishing procedure;
+- [`docs/publication-verification.md`](docs/publication-verification.md) — verification of the public PyPI artifact;
 - [`docs/project-status.md`](docs/project-status.md) — current completion and deployment status.
 
 ## Current limitations
