@@ -68,7 +68,7 @@ def test_rebuild_story_files_are_present() -> None:
         assert path.exists(), f"missing rebuild-story file: {path.relative_to(PROJECT_ROOT)}"
 
 
-def test_current_docs_do_not_reintroduce_rename_contradictions() -> None:
+def test_current_docs_do_not_reintroduce_identity_contradictions() -> None:
     contradiction_phrases = {
         "formerly called **ReasonedOps**",
         "formerly called ReasonedOps",
@@ -76,14 +76,29 @@ def test_current_docs_do_not_reintroduce_rename_contradictions() -> None:
         "Treat `reasoned_ops` as temporary legacy compatibility only",
         "legacy `reasoned_ops` namespace",
     }
+    external_rebuild_phrases = {
+        "rebuild of an hkmu hackathon",
+        "retrospective rebuild of an hkmu hackathon",
+    }
 
-    paths = [PROJECT_ROOT / "README.md", PROJECT_ROOT / "AGENTS.md"]
+    paths = [
+        PROJECT_ROOT / "README.md",
+        PROJECT_ROOT / "PYPI.md",
+        PROJECT_ROOT / "CITATION.cff",
+        PROJECT_ROOT / "AGENTS.md",
+    ]
     paths.extend((PROJECT_ROOT / "docs").glob("*.md"))
 
     for path in paths:
         text = path.read_text(encoding="utf-8")
         for phrase in contradiction_phrases:
-            assert phrase not in text, f"rename contradiction in {path.relative_to(PROJECT_ROOT)}"
+            assert phrase not in text, f"identity contradiction in {path.relative_to(PROJECT_ROOT)}"
+
+        normalized = text.replace("**", "").lower()
+        for phrase in external_rebuild_phrases:
+            assert phrase not in normalized, (
+                f"external-rebuild framing in {path.relative_to(PROJECT_ROOT)}"
+            )
 
 
 def test_current_identity_describes_project_evolution_not_external_rebuild() -> None:
