@@ -1,15 +1,15 @@
-# Project Status — ReasonedOps v1.4.3 audit close-out
+# Project Status — ReasonedOps v1.4.3 frozen v1 checkpoint
 
-ReasonedOps is a completed local research/software prototype that originated from my participation in **HKMU Hackathon 2026** and evolved into its current evidence-aware service-operations form.
+ReasonedOps is a completed research/software prototype that originated from my participation in **HKMU Hackathon 2026** and evolved into its current evidence-aware service-operations form.
 
-The v1.4.3 checkpoint exists because an external audit identified several close-out issues worth correcting before the project is frozen:
+The v1.4.3 checkpoint exists because an external audit identified several close-out issues worth correcting before the project was frozen:
 
 - residual wording that could still make the project look like a rebuild of somebody else's project;
 - reviewer-facing `request intelligence` language that was broader than the actual deterministic rule/keyword baseline;
 - a validity suite that tested visible failure conditions but did not execute an unmeasured-confounding false-negative case;
 - a provenance mismatch where the preferred citable Zenodo snapshot and the publicly installable PyPI snapshot had different version numbers.
 
-The corrective sequence is:
+The corrective sequence is complete:
 
 ```text
 early Hackathon-stage concept
@@ -34,15 +34,15 @@ PyPI 1.4.3 from the same tag
       ↓
 fresh public-package verification
       ↓
-freeze v1
+FREEZE v1
 ```
 
-**Research/portfolio project:** COMPLETED  
+**Research/portfolio project:** COMPLETED / FROZEN V1  
 **GitHub release/tag:** v1.4.3 — PUBLISHED / VERIFIED  
+**Release commit:** `461b5fc81c2b31fc5fcc51c585004d059bb85586`  
 **Python distribution build:** VERIFIED IN CI  
-**Currently published PyPI artifact:** `reasoned-ops==1.4.0`  
-**Target aligned PyPI artifact:** `reasoned-ops==1.4.3` FROM EXACT `v1.4.3` TAG  
-**External package install check:** VERIFIED FOR 1.4.0; RECHECK 1.4.3 AFTER PUBLICATION  
+**Public PyPI artifact:** `reasoned-ops==1.4.3` — PUBLISHED / EXTERNALLY VERIFIED  
+**External package install check:** VERIFIED FOR 1.4.3 ON WINDOWS  
 **Zenodo GitHub integration:** ENABLED FOR `gigichengnc/reasoned-ops`  
 **Zenodo v1.4.1 DOI:** `10.5281/zenodo.22044222` — PUBLISHED  
 **Zenodo v1.4.2 DOI:** `10.5281/zenodo.22044621` — PUBLISHED  
@@ -72,10 +72,11 @@ freeze v1
 | Python distribution | Builds wheel + source distribution and verifies clean-wheel installation in CI. |
 | PyPI publishing | Uses GitHub OIDC Trusted Publishing with no stored long-lived PyPI token. |
 | Citation/archive | GitHub `v1.4.3` is archived by Zenodo with verified version DOI `10.5281/zenodo.22046490`. |
+| Final public verification | PyPI `reasoned-ops==1.4.3` installs outside the repository; version, five-scenario validity and routing smoke checks were observed successfully. |
 
 ## Validity boundary
 
-The benchmark now contains both supported-behaviour and known-limitation scenarios.
+The benchmark contains both supported-behaviour and known-limitation scenarios.
 
 ```text
 known_effect_recovery               supported behaviour
@@ -137,21 +138,31 @@ PyPI 1.4.0         = installable + externally exercised
 Zenodo v1.4.2      = preferred archived citation snapshot
 ```
 
-The executable core was largely unchanged across those checkpoints, but they were still different artifacts. v1.4.3 closes that provenance gap by using one exact tag as the source for all final public artifacts:
+The executable core was largely unchanged across those checkpoints, but they were still different artifacts. v1.4.3 closes that provenance gap by using one exact tag as the source for the final public software artifacts:
 
 ```text
 v1.4.3 Git tag
       ↓
 GitHub Release v1.4.3
       ↓
+release commit 461b5fc81c2b31fc5fcc51c585004d059bb85586
+      ↓
 Zenodo v1.4.3 archive
+DOI 10.5281/zenodo.22046490
       ↓
 PyPI reasoned-ops==1.4.3
+      ↓
+fresh Windows install / version / validity / routing verification
 ```
 
-The GitHub tag and Zenodo archive are now complete and verified. The exact v1.4.3 version DOI is `10.5281/zenodo.22046490`.
+The immutable tag, GitHub release, Zenodo snapshot and PyPI package are now aligned at version 1.4.3. A later documentation-only DOI-sync commit on `main` records citation metadata without changing the released tag.
 
-A post-release DOI-sync commit on `main` records that identifier in current citation metadata without changing the immutable `v1.4.3` tag. The remaining provenance step is to publish PyPI from the **existing tag**, not from the later DOI-sync commit.
+Published PyPI distribution digests recorded by the exact-tag workflow are:
+
+```text
+wheel SHA-256  677c3c5f853fc692cbecf5afd1689480a291a08bd003a6b18900482e67123bd3
+sdist SHA-256  4cffc44a7dce89366de9e65592c07b78e811fabc038071f990cfa706b1415b08
+```
 
 ## Evidence currently in the repository
 
@@ -184,9 +195,11 @@ The repository does **not** prove that ReasonedOps:
 
 Those claims require a separate real-data pilot, governance approval and a defensible evaluation design.
 
-## Next evidence gate
+## Freeze condition — satisfied
 
-After PyPI 1.4.3 publication and fresh-environment verification, v1 should remain frozen unless a new evidence need justifies reopening development.
+ReasonedOps v1 is now frozen at the completed v1.4.3 software checkpoint.
+
+Further substantive work should require a real partner, representative dataset, competition requirement or a genuinely new evidence question. If that occurs, it should be treated as a separate **Phase 2 — real-world pilot** rather than feature accumulation inside v1.
 
 If ReasonedOps is resumed for a real use case, the next substantive step is not another synthetic model. It is a controlled real-data evidence process with privacy/governance approval, representative cases, predefined evaluation questions and explicit stop criteria.
 
