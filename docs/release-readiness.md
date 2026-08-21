@@ -1,6 +1,6 @@
-# Release Readiness — ReasonedOps v1.3.0
+# Release Readiness — ReasonedOps v1.4.0
 
-ReasonedOps v1.3.0 is a **completed local research/software prototype and portfolio rebuild case study**. That is different from being approved for a real private-data pilot or production deployment.
+ReasonedOps v1.4.0 is a **completed local research/software prototype and portfolio rebuild case study** with a validated Python distribution build. That is different from being approved for a real private-data pilot or production deployment.
 
 ## What is ready now
 
@@ -16,6 +16,7 @@ ReasonedOps v1.3.0 is a **completed local research/software prototype and portfo
 - [x] binary, censored/time-to-event, clustered, routing-policy and causal-intent questions can be redirected instead of being forced through ordinary ANCOVA/regression.
 - [x] known-effect recovery, measured-confounding adjustment, no-overlap refusal and slope-interaction behaviour are tested on synthetic scenarios.
 - [x] Python 3.11 and 3.12 CI covers lint, tests and the main CLI workflows.
+- [x] CI separately builds a wheel and source distribution and smoke-tests installation from the wheel.
 - [x] Apache-2.0 licensing and `CITATION.cff` are present.
 - [x] the original Hackathon concept is reconstructed separately under `original/`.
 - [x] a before/after comparison explains how and why the project changed.
@@ -24,7 +25,7 @@ ReasonedOps v1.3.0 is a **completed local research/software prototype and portfo
 
 ## Portfolio/rebuild readiness
 
-The v1.3.0 reviewer path is intentionally narrative:
+The reviewer path is intentionally narrative:
 
 ```text
 original concept
@@ -43,6 +44,36 @@ next real evidence gate
 ```
 
 This structure makes the project learning history visible instead of presenting the final code as if it appeared fully formed.
+
+## Python distribution readiness
+
+The v1.4.0 distribution path is intentionally separate from the ordinary editable development install.
+
+CI now verifies:
+
+```text
+pyproject metadata
+      ↓
+python -m build
+      ↓
+wheel + source distribution
+      ↓
+clean virtual environment
+      ↓
+install built wheel
+      ↓
+import reasoned_ops
+      ↓
+routing + packaged CLI smoke checks
+```
+
+A dedicated `.github/workflows/publish-pypi.yml` workflow is present for PyPI Trusted Publishing using GitHub OIDC. The first upload is manually dispatched so publication is not attempted before the repository owner configures the matching PyPI Trusted Publisher.
+
+**PyPI code/workflow readiness: READY.**  
+**PyPI account-side publisher registration: PENDING until completed by the repository owner.**  
+**PyPI upload: NOT YET CLAIMED AS COMPLETE until the package page and clean install are verified.**
+
+See `docs/pypi.md` for the exact publisher identity and verification procedure.
 
 ## What is not ready
 
@@ -79,21 +110,25 @@ Reasonable:
 
 > The repository documents how the original concept was audited and technically corrected.
 
+> The Python project can be built as a wheel/source distribution and installed from the built wheel in a clean environment.
+
 Not supported without new evidence:
 
 > ReasonedOps improves real service performance.
 
 > ANCOVA proves that one department performs better than another.
 
-> Passing CI means the software is safe for real private data or production deployment.
+> Passing CI or publishing to PyPI means the software is safe for real private data or production deployment.
 
-## Citation/archive status
+## Citation/archive and package-index status
 
-Repository-side citation metadata is ready. External publication remains optional:
+Repository-side citation and distribution metadata are ready. External publication steps are separate:
 
 - [ ] connect the repository owner account to Zenodo;
 - [ ] archive a release and verify the DOI;
 - [ ] add the verified DOI back to `CITATION.cff`;
-- [ ] optionally add PyPI trusted publishing after package-build/distribution checks exist.
+- [ ] register the `reasoned-ops` PyPI Trusted Publisher using `.github/workflows/publish-pypi.yml` and environment `pypi`;
+- [ ] manually publish a released tag through the trusted workflow;
+- [ ] verify `pip install reasoned-ops==<version>` from a clean environment.
 
-A DOI or package publication improves distribution and citation. It does not create real-world validation.
+A DOI or PyPI publication improves distribution and citation. It does not create real-world validation.
