@@ -14,14 +14,14 @@ The citation metadata records:
 
 - software title: ReasonedOps;
 - author: Gigi Cheng;
-- current software version;
+- current software version: v1.4.2;
 - release date;
 - Apache-2.0 license;
 - repository URL;
-- the stable Zenodo concept DOI for the archived ReasonedOps version collection;
+- the verified Zenodo DOI for the v1.4.2 archive;
 - a short research-software abstract and keywords.
 
-No ORCID, email address, affiliation or version-specific DOI is invented. Those fields should only be added when a verified identifier or public attribution is intentionally supplied.
+No ORCID, email address or affiliation is invented. Those fields should only be added when a verified identifier or public attribution is intentionally supplied.
 
 ## Why there is no `.zenodo.json`
 
@@ -29,71 +29,57 @@ Zenodo supports both `CITATION.cff` and `.zenodo.json` for GitHub software metad
 
 Add `.zenodo.json` later only if a concrete Zenodo-specific requirement justifies maintaining a second metadata source.
 
-## Current Zenodo status
+## Verified Zenodo archive status
 
 The GitHub account is connected to Zenodo and `gigichengnc/reasoned-ops` is enabled for automatic preservation of new GitHub releases.
 
-The Zenodo GitHub integration now displays the DOI:
+The Zenodo GitHub integration shows two published ReasonedOps releases:
+
+```text
+v1.4.1  →  10.5281/zenodo.22044222
+v1.4.2  →  10.5281/zenodo.22044621
+```
+
+The current preferred citation checkpoint is **v1.4.2**, because that release contains the corrected project-origin wording and represents the final v1 publication checkpoint.
+
+The verified v1.4.2 DOI is therefore:
 
 ```text
 10.5281/zenodo.22044621
 ```
 
-This repository records that identifier as the **Zenodo concept DOI** for the collection of archived ReasonedOps versions. A concept DOI is intentionally stable across versions and is therefore appropriate for the README project badge and for identifying the archived project lineage.
+That DOI is recorded in `CITATION.cff` using the top-level `doi` field and is used by the README DOI badge.
 
-v1.4.1 was the first checkpoint created after Zenodo enablement. v1.4.2 is the preferred current citation checkpoint because it corrects project-origin wording so the software is described as one project that evolved from its Hackathon starting point, rather than as a rebuild of another project.
+## Version DOI vs concept DOI
 
-Current sequence:
+Zenodo can distinguish an immutable **version DOI** from a **concept DOI** that represents a collection of versions.
 
-```text
-Zenodo integration enabled
-      ↓
-release v1.4.2 after successful main CI
-      ↓
-Zenodo archive created / linked
-      ↓
-concept DOI visible: 10.5281/zenodo.22044621
-      ↓
-record concept DOI in README + CITATION.cff
-      ↓
-optionally record the exact v1.4.2 version DOI after separately verifying that record
-```
+For ReasonedOps, `10.5281/zenodo.22044621` is verified here as the **v1.4.2 version DOI** because the Zenodo GitHub integration explicitly lists that DOI on the v1.4.2 release row. The repository-level badge shown by that integration currently displays the same DOI as the latest release.
 
-## Concept DOI vs version DOI
+A separate concept DOI is **not recorded in this repository unless it is independently identified and verified**. Do not relabel the verified v1.4.2 DOI as a concept DOI without that evidence.
 
-Zenodo versioning distinguishes two identifiers:
-
-- **Concept DOI** — identifies the collection of all archived versions and remains stable as later versions are added.
-- **Version DOI** — identifies one immutable archived snapshot.
-
-ReasonedOps currently records `10.5281/zenodo.22044621` as the concept DOI because that is the DOI shown for the enabled repository in the Zenodo GitHub integration.
-
-Do not describe this concept DOI as the version-specific DOI for v1.4.2 unless the individual v1.4.2 record is separately opened and verified. If that version DOI is later recorded, `CITATION.cff` can contain both identifiers with explicit descriptions rather than replacing or ambiguously relabelling the concept DOI.
-
-## Archiving a release in Zenodo
-
-Repository metadata readiness and Zenodo account integration are separate steps.
+## Publication close-out
 
 Current status:
 
 1. GitHub account connected to Zenodo — **complete**.
 2. `gigichengnc/reasoned-ops` enabled in the Zenodo GitHub integration — **complete**.
-3. Current archive checkpoint is v1.4.2 — **complete**.
-4. Stable concept DOI is visible in the Zenodo GitHub integration — **complete**.
-5. Concept DOI is recorded in repository citation metadata — **in this publication close-out change**.
-6. Exact v1.4.2 version DOI and record-level metadata can be recorded after separate verification — **optional follow-up for version-specific citation**.
+3. ReasonedOps v1.4.1 archived — **complete**, DOI `10.5281/zenodo.22044222`.
+4. ReasonedOps v1.4.2 archived — **complete**, DOI `10.5281/zenodo.22044621`.
+5. v1.4.2 DOI recorded in README and `CITATION.cff` — **publication close-out change**.
+6. No additional software version is required merely to record this DOI.
 
-The earlier v1.4.0 release existed before Zenodo enablement. v1.4.2 is therefore the preferred current post-enablement citation checkpoint with corrected project-origin wording.
+The earlier v1.4.0 release existed before Zenodo enablement. v1.4.2 is the preferred archived citation checkpoint with corrected project-origin wording.
 
 ## README badge
 
-The README uses the stable concept DOI for the Zenodo badge:
+The README uses the verified v1.4.2 Zenodo DOI:
 
 ```text
 10.5281/zenodo.22044621
 ```
 
-Using the concept DOI avoids needing to replace the project-level badge every time a future archived release receives its own version DOI.
+If a separate concept DOI is later independently verified and a project-level all-versions badge is preferred, the badge can be changed deliberately. That is optional and does not require another functional software release.
 
 ## PyPI and Zenodo version note
 
@@ -105,7 +91,7 @@ This distinction is intentional because v1.4.2 changes citation/presentation met
 
 ## Publication boundary
 
-Citation/archive readiness does not change the operational status of ReasonedOps:
+Citation/archive completion does not change the operational status of ReasonedOps:
 
 - current quantitative evidence remains synthetic or hand-authored development evidence;
 - private-data pilot use remains not approved;
