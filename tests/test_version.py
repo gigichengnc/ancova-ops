@@ -56,7 +56,7 @@ def test_legacy_namespace_is_removed() -> None:
         assert legacy_name not in path.read_text(encoding="utf-8")
 
 
-def test_rebuild_story_files_are_present() -> None:
+def test_project_evolution_files_are_present() -> None:
     required = [
         PROJECT_ROOT / "original" / "README.md",
         PROJECT_ROOT / "docs" / "before-vs-after.md",
@@ -65,7 +65,7 @@ def test_rebuild_story_files_are_present() -> None:
     ]
 
     for path in required:
-        assert path.exists(), f"missing rebuild-story file: {path.relative_to(PROJECT_ROOT)}"
+        assert path.exists(), f"missing project-evolution file: {path.relative_to(PROJECT_ROOT)}"
 
 
 def test_current_docs_do_not_reintroduce_identity_contradictions() -> None:
@@ -112,6 +112,26 @@ def test_current_identity_describes_project_evolution_not_external_rebuild() -> 
     assert "retrospective rebuild of an HKMU Hackathon 2026" not in pypi
     assert "originated from the author's participation in HKMU Hackathon 2026" in citation
     assert "retrospective rebuild of an HKMU Hackathon 2026" not in citation
+
+
+def test_current_presentation_calls_operate_rule_based() -> None:
+    readme = (PROJECT_ROOT / "README.md").read_text(encoding="utf-8")
+    comparison = (PROJECT_ROOT / "docs" / "before-vs-after.md").read_text(encoding="utf-8")
+
+    assert "Rule-based request features + deterministic explainable routing baseline" in readme
+    assert "It does not claim a trained NLP model" in readme
+    assert "Rule-based request features" in comparison
+    assert "Transparent operational request intelligence" not in readme
+    assert "Runnable FastAPI request-intelligence" not in readme
+
+
+def test_current_readme_discloses_unmeasured_confounding_blind_spot() -> None:
+    readme = (PROJECT_ROOT / "README.md").read_text(encoding="utf-8")
+
+    assert "unmeasured_confounding_blind_spot" in readme
+    assert "PASS" in readme
+    assert "does **not** mean ReasonedOps detected hidden confounding" in readme
+    assert "observed-data diagnostics cannot rule out unmeasured confounding" in readme
 
 
 def test_apache_license_metadata_and_file_are_present() -> None:
