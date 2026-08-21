@@ -17,9 +17,11 @@ package the reusable Python implementation
       ↓
 publish and verify the public PyPI artifact
       ↓
-archive a post-enablement release through Zenodo
+archive the final v1 citation checkpoint through Zenodo
       ↓
-define the next real evidence gate
+record the verified v1.4.2 DOI
+      ↓
+freeze v1 unless a real evidence need emerges
 ```
 
 **Research/portfolio project:** COMPLETED  
@@ -28,7 +30,8 @@ define the next real evidence gate
 **PyPI publication:** PUBLISHED — `reasoned-ops==1.4.0`  
 **External package install check:** VERIFIED FROM PUBLIC PYPI ARTIFACT  
 **Zenodo GitHub integration:** ENABLED FOR `gigichengnc/reasoned-ops`  
-**Zenodo DOI:** PENDING INGESTION/VERIFICATION OF THE CURRENT ARCHIVE RELEASE  
+**Zenodo v1.4.1 DOI:** `10.5281/zenodo.22044222` — PUBLISHED  
+**Zenodo v1.4.2 DOI:** `10.5281/zenodo.22044621` — PUBLISHED / VERIFIED IN ZENODO GITHUB INTEGRATION  
 **Real private-data pilot:** NOT APPROVED  
 **Production deployment:** NOT APPROVED
 
@@ -52,7 +55,7 @@ define the next real evidence gate
 | Python distribution | Builds wheel + source distribution and verifies clean-wheel installation in CI. |
 | PyPI publishing | Published through GitHub OIDC Trusted Publishing with no stored long-lived PyPI token. |
 | Public artifact verification | `reasoned-ops==1.4.0` installed from PyPI in a Windows environment outside the repository checkout; Operate → Audit → Evaluate paths were exercised successfully. |
-| Citation/archive | `CITATION.cff` is aligned to v1.4.2 and the repository is enabled for Zenodo GitHub release archiving. |
+| Citation/archive | `CITATION.cff` is aligned to v1.4.2 and records the verified Zenodo v1.4.2 DOI `10.5281/zenodo.22044621`. |
 
 ## Portfolio narrative
 
@@ -125,7 +128,16 @@ See [`publication-verification.md`](publication-verification.md) for the exact b
 
 This establishes package distribution and executable local behaviour from the public artifact. It is not independent scientific validation.
 
-The v1.4.2 checkpoint is separate: it is a citation/wording correction release prepared for the current Zenodo archive path. It does not imply that `reasoned-ops==1.4.2` has been published on PyPI.
+The v1.4.2 checkpoint is separate: it is a citation/wording correction release prepared for the final Zenodo archive path. It does not imply that `reasoned-ops==1.4.2` has been published on PyPI.
+
+Zenodo now shows both post-enablement archive releases as published:
+
+```text
+v1.4.1  →  10.5281/zenodo.22044222
+v1.4.2  →  10.5281/zenodo.22044621
+```
+
+The repository records `10.5281/zenodo.22044621` as the **verified DOI for the v1.4.2 archived snapshot**. The Zenodo GitHub integration's repository badge currently displays the same DOI as the latest release. A separate all-versions concept DOI is not claimed unless independently identified and verified.
 
 ## Evaluation boundary
 
@@ -175,7 +187,9 @@ Publishing and verifying the package on PyPI, or archiving a release in Zenodo, 
 
 ## Next evidence gate
 
-The research/portfolio project is complete. If ReasonedOps is ever resumed for a real use case, the next substantive step is not another synthetic model. It is a controlled real-data evidence process with privacy/governance approval, representative cases, predefined evaluation questions and explicit stop criteria.
+The research/portfolio project is complete. v1 should remain frozen unless a new evidence need justifies reopening development.
+
+If ReasonedOps is resumed for a real use case, the next substantive step is not another synthetic model. It is a controlled real-data evidence process with privacy/governance approval, representative cases, predefined evaluation questions and explicit stop criteria.
 
 ## Project origin
 
