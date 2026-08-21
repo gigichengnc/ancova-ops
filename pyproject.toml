@@ -3,8 +3,8 @@ requires = ["setuptools>=75", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ancova-ops"
-version = "1.0.0"
+name = "reasoned-ops"
+version = "1.1.0"
 description = "Evidence-aware service operations with explainable routing, auditable human review and guarded outcome evaluation"
 readme = "README.md"
 license = "Apache-2.0"
@@ -15,6 +15,7 @@ requires-python = ">=3.11"
 keywords = [
   "service-operations",
   "human-in-the-loop",
+  "evidence-aware",
   "ancova",
   "regression",
   "offline-evaluation",
@@ -33,22 +34,22 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/gigichengnc/ancova-ops"
-Repository = "https://github.com/gigichengnc/ancova-ops"
-Issues = "https://github.com/gigichengnc/ancova-ops/issues"
-Changelog = "https://github.com/gigichengnc/ancova-ops/blob/main/CHANGELOG.md"
-Citation = "https://github.com/gigichengnc/ancova-ops/blob/main/CITATION.cff"
+Homepage = "https://github.com/gigichengnc/reasoned-ops"
+Repository = "https://github.com/gigichengnc/reasoned-ops"
+Issues = "https://github.com/gigichengnc/reasoned-ops/issues"
+Changelog = "https://github.com/gigichengnc/reasoned-ops/blob/main/CHANGELOG.md"
+Citation = "https://github.com/gigichengnc/reasoned-ops/blob/main/CITATION.cff"
 
 [project.scripts]
-ancova-analyze = "ancova_ops.analysis_report:main"
-ancova-applicability = "ancova_ops.applicability:main"
-ancova-evaluate = "ancova_ops.evaluation:main"
-ancova-governance-check = "ancova_ops.governance:main"
-ancova-management-report = "ancova_ops.management_report:main"
-ancova-policy = "ancova_ops.adaptive:main"
-ancova-longitudinal = "ancova_ops.longitudinal:main"
-ancova-showcase = "ancova_ops.showcase:main"
-ancova-validity = "ancova_ops.validity:main"
+reasoned-analyze = "reasoned_ops.analysis_report:main"
+reasoned-applicability = "reasoned_ops.applicability:main"
+reasoned-evaluate = "reasoned_ops.evaluation:main"
+reasoned-governance-check = "reasoned_ops.governance:main"
+reasoned-management-report = "reasoned_ops.management_report:main"
+reasoned-policy = "reasoned_ops.adaptive:main"
+reasoned-longitudinal = "reasoned_ops.longitudinal:main"
+reasoned-showcase = "reasoned_ops.showcase:main"
+reasoned-validity = "reasoned_ops.validity:main"
 
 [project.optional-dependencies]
 dev = [
@@ -70,3 +71,4 @@ target-version = "py311"
 
 [tool.ruff.lint.per-file-ignores]
 "src/ancova_ops/longitudinal.py" = ["F401", "ISC004", "RUF046"]
+"src/reasoned_ops/longitudinal.py" = ["F401", "ISC004", "RUF046"]

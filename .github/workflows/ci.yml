@@ -33,40 +33,40 @@ jobs:
         run: pytest -q
 
       - name: Routing evaluation smoke test
-        run: ancova-evaluate --json > /tmp/ancova-routing-evaluation.json
+        run: reasoned-evaluate --json > /tmp/reasoned-routing-evaluation.json
 
       - name: Evaluation validity smoke test
-        run: ancova-validity --n 1200 --seed 23 --json > /tmp/ancova-validity.json
+        run: reasoned-validity --n 1200 --seed 23 --json > /tmp/reasoned-validity.json
 
       - name: Evaluation applicability smoke test
         run: >-
-          ancova-applicability --outcome-type continuous
+          reasoned-applicability --outcome-type continuous
           --comparison department_outcome --overlap-status supported --json
-          > /tmp/ancova-applicability.json
+          > /tmp/reasoned-applicability.json
 
       - name: Adaptive routing policy smoke test
-        run: ancova-policy evaluate --synthetic-n 1200 --seed 23 > /tmp/ancova-policy.json
+        run: reasoned-policy evaluate --synthetic-n 1200 --seed 23 > /tmp/reasoned-policy.json
 
       - name: Longitudinal benchmark smoke test
         run: >-
-          ancova-longitudinal --entities 100 --days 600 --seed 31 --json
-          > /tmp/ancova-longitudinal.json
+          reasoned-longitudinal --entities 100 --days 600 --seed 31 --json
+          > /tmp/reasoned-longitudinal.json
 
       - name: Outcome analysis smoke test
-        run: ancova-analyze --synthetic-n 120 --seed 41 --json > /tmp/ancova-analysis.json
+        run: reasoned-analyze --synthetic-n 120 --seed 41 --json > /tmp/reasoned-analysis.json
 
       - name: Management report smoke test
         run: >-
-          ancova-management-report --synthetic-n 120 --seed 41
-          --output /tmp/ancova-management-report.md
-          --json-output /tmp/ancova-management-report.json
+          reasoned-management-report --synthetic-n 120 --seed 41
+          --output /tmp/reasoned-management-report.md
+          --json-output /tmp/reasoned-management-report.json
 
       - name: Portfolio showcase smoke test
         run: >-
-          ancova-showcase --outcome-rows 120 --logged-rows 400
+          reasoned-showcase --outcome-rows 120 --logged-rows 400
           --longitudinal-entities 80 --longitudinal-days 540
-          --output /tmp/ancova-showcase.md
-          --json-output /tmp/ancova-showcase.json
+          --output /tmp/reasoned-showcase.md
+          --json-output /tmp/reasoned-showcase.json
 
       - name: Data governance policy check
-        run: ancova-governance-check --json > /tmp/ancova-data-governance.json
+        run: reasoned-governance-check --json > /tmp/reasoned-data-governance.json

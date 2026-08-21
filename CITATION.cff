@@ -1,17 +1,17 @@
 cff-version: 1.2.0
-message: "If you use ANCOVA Ops in research, teaching, demos, or derived work, please cite this software."
-title: "ANCOVA Ops"
+message: "If you use ReasonedOps in research, teaching, demos, or derived work, please cite this software."
+title: "ReasonedOps"
 type: software
 authors:
   - family-names: "Cheng"
     given-names: "Gigi"
-version: "1.0.0"
-date-released: 2026-08-20
+version: "1.1.0"
+date-released: 2026-08-21
 license: Apache-2.0
-repository-code: "https://github.com/gigichengnc/ancova-ops"
-url: "https://github.com/gigichengnc/ancova-ops"
+repository-code: "https://github.com/gigichengnc/reasoned-ops"
+url: "https://github.com/gigichengnc/reasoned-ops"
 abstract: >-
-  ANCOVA Ops is a reproducible evidence-aware service-operations research/software
+  ReasonedOps is a reproducible evidence-aware service-operations research/software
   prototype organised around Operate, Audit, and Evaluate. It converts unstructured
   service requests into explainable routing recommendations, preserves human and
   machine decision history, records outcomes, and applies an evaluation applicability

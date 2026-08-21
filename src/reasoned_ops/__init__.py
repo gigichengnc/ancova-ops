@@ -1,4 +1,4 @@
-"""Legacy compatibility namespace for ReasonedOps (formerly ANCOVA Ops)."""
+"""ReasonedOps: evidence-aware service operations and outcome evaluation."""
 
 from .models import RoutingDecision, ServiceCase
 from .routing import baseline_route

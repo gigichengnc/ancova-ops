@@ -63,7 +63,7 @@ jobs:
               "prototype. It does not authorize real private-data pilot use or production "
               "deployment.\n"
           )
-          Path("/tmp/ancova-release-notes.md").write_text(notes, encoding="utf-8")
+          Path("/tmp/reasoned-release-notes.md").write_text(notes, encoding="utf-8")
           PY
 
       - name: Create GitHub release if missing
@@ -81,5 +81,5 @@ jobs:
 
           gh release create "${tag}" \
             --target "${TARGET_SHA}" \
-            --title "ANCOVA Ops ${tag}" \
-            --notes-file /tmp/ancova-release-notes.md
+            --title "ReasonedOps ${tag}" \
+            --notes-file /tmp/reasoned-release-notes.md
