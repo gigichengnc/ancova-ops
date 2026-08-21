@@ -81,7 +81,7 @@ The v1.4.3 release-candidate `CITATION.cff` intentionally has **no top-level DOI
 - [x] PyPI description tightened to rule-based Operate + hidden-confounding limitation boundaries;
 - [x] README describes the v1.4.3 audit-closeout provenance plan;
 - [x] release/citation/status docs describe exact-tag alignment;
-- [ ] `CHANGELOG.md` includes a `1.4.3` section;
+- [x] `CHANGELOG.md` includes a `1.4.3` section;
 - [ ] PR CI passes Python 3.11, Python 3.12 and distribution jobs.
 
 ### After merge to main
