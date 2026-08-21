@@ -21,7 +21,7 @@ v1.4.4 is a narrow post-audit bugfix release. It does not add a trained NLP mode
 ## Public release checklist
 
 - [ ] merge the v1.4.4 release-prep documentation after CI;
-- [ ] manually create Git tag / GitHub Release `v1.4.4` from the final release-prep commit;
+- [ ] manually dispatch the **Release checkpoint** workflow on the final `main` commit; the workflow creates Git tag / GitHub Release `v1.4.4` targeting that commit;
 - [ ] verify Zenodo ingests exactly `v1.4.4` and record the new immutable version DOI;
 - [ ] sync the verified v1.4.4 DOI to current citation metadata without changing the immutable tag;
 - [ ] manually publish PyPI from input tag exactly `v1.4.4`;
