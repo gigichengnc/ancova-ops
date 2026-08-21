@@ -12,9 +12,10 @@ def test_showcase_preserves_evidence_and_deployment_boundaries() -> None:
     )
 
     assert payload["showcase_version"] == reasoned_ops.__version__
+    assert payload["project_identity"]["name"] == "ReasonedOps"
     assert payload["project_identity"]["architecture"] == ["operate", "audit", "evaluate"]
     assert payload["project_identity"]["research_project_status"] == (
-        "completed_v1_research_prototype"
+        "completed_research_prototype"
     )
     assert payload["evidence_status"]["real_world_performance_claims_allowed"] is False
     assert payload["governance"]["mode"] == "synthetic_only"
@@ -37,9 +38,9 @@ def test_showcase_preserves_evidence_and_deployment_boundaries() -> None:
     )
 
     report = render_showcase_markdown(payload)
-    assert "ReasonedOps v1.0 Portfolio Showcase" in report
-    assert "Operate → Audit → Evaluate" in report
-    assert "Applicability gate" in report
-    assert "COMPLETED / FROZEN AT v1.0" in report
-    assert "Private-data pilot | NOT READY / NOT APPROVED" in report
+    assert "ReasonedOps Portfolio Showcase" in report
+    assert "One service request" in report
+    assert "What gets audited" in report
+    assert "What happens when management wants a comparison" in report
+    assert "Private-data pilot: NOT APPROVED" in report
     assert "does **not** demonstrate real service improvement" in report
