@@ -4,7 +4,7 @@ from pathlib import Path
 import reasoned_ops
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_VERSION = "1.4.1"
+EXPECTED_VERSION = "1.4.2"
 EXPECTED_REPOSITORY = "https://github.com/gigichengnc/reasoned-ops"
 EXPECTED_SCRIPTS = {
     "reasoned-analyze",
@@ -30,7 +30,7 @@ def test_package_version_matches_project_metadata() -> None:
     assert reasoned_ops.__version__ == EXPECTED_VERSION
 
 
-def test_v141_cli_surface_is_registered() -> None:
+def test_v142_cli_surface_is_registered() -> None:
     project = _project_metadata()
 
     assert project["name"] == "reasoned-ops"
@@ -83,6 +83,16 @@ def test_current_docs_do_not_reintroduce_rename_contradictions() -> None:
         text = path.read_text(encoding="utf-8")
         for phrase in contradiction_phrases:
             assert phrase not in text, f"rename contradiction in {path.relative_to(PROJECT_ROOT)}"
+
+
+def test_current_identity_describes_project_evolution_not_external_rebuild() -> None:
+    readme = (PROJECT_ROOT / "README.md").read_text(encoding="utf-8")
+    citation = (PROJECT_ROOT / "CITATION.cff").read_text(encoding="utf-8")
+
+    assert "originated from my participation in **HKMU Hackathon 2026**" in readme
+    assert "A retrospective rebuild of an **HKMU Hackathon 2026**" not in readme
+    assert "originated from the author's participation in HKMU Hackathon 2026" in citation
+    assert "retrospective rebuild of an HKMU Hackathon 2026" not in citation
 
 
 def test_apache_license_metadata_and_file_are_present() -> None:
