@@ -1,15 +1,19 @@
 # PyPI distribution and reuse
 
-ReasonedOps is packaged as the Python distribution **`reasoned-ops`** with the import namespace **`reasoned_ops`**.
+ReasonedOps is published on PyPI as the Python distribution **`reasoned-ops`** with the import namespace **`reasoned_ops`**.
 
-The purpose of PyPI publication is practical reuse: another Python project should be able to depend on a released ReasonedOps version instead of copying source files from this repository.
+The purpose of PyPI publication is practical reuse: another Python project can depend on a released ReasonedOps version instead of copying source files from this repository.
 
-## Intended user experience
-
-After the first PyPI publication succeeds:
+## Install from PyPI
 
 ```bash
 pip install reasoned-ops
+```
+
+For an exact reproducible release:
+
+```bash
+pip install reasoned-ops==1.4.0
 ```
 
 Then:
@@ -60,7 +64,7 @@ The dedicated workflow is:
 .github/workflows/publish-pypi.yml
 ```
 
-It is manually dispatched for the first publication. The build job does not receive OIDC publishing permission. A separate publish job downloads the built distributions and receives only the permissions needed for PyPI Trusted Publishing.
+The build job does not receive OIDC publishing permission. A separate publish job downloads the built distributions and receives only the permissions needed for PyPI Trusted Publishing.
 
 The publishing job uses the GitHub environment:
 
@@ -68,11 +72,7 @@ The publishing job uses the GitHub environment:
 pypi
 ```
 
-## One-time PyPI account setup
-
-Before running the publishing workflow for the first time, register a matching **pending Trusted Publisher** in the PyPI account that will own the project.
-
-Use these exact values:
+The first publication used a matching pending Trusted Publisher with this identity:
 
 ```text
 PyPI project name: reasoned-ops
@@ -82,35 +82,63 @@ Workflow filename:   publish-pypi.yml
 Environment:         pypi
 ```
 
-The PyPI project name must match the distribution metadata exactly. Do not register a slightly different name and then try to publish the current wheel.
+## Publication status
 
-If PyPI reports that `reasoned-ops` cannot be created because the normalized project name is already owned by someone else, stop before publishing and choose a new distribution name deliberately. The import package `reasoned_ops` does not necessarily have to change if only the PyPI distribution name changes.
+`reasoned-ops==1.4.0` was successfully published through the Trusted Publishing workflow.
 
-## First publication
+The public artifact was subsequently installed in a Windows environment outside the repository checkout. The verification confirmed:
 
-After the pending Trusted Publisher is configured and the intended GitHub release tag exists:
+- `import reasoned_ops` reports version `1.4.0`;
+- the reusable routing surface returns a maintenance route, high priority and human-review requirement for a recurring air-conditioning case;
+- `reasoned_ops.api:app` starts through Uvicorn;
+- a routed case can be persisted through the API;
+- a human override is stored without overwriting the original machine recommendation;
+- a case outcome is stored separately;
+- a later case fetch returns the original request, machine decision, human review, effective route and outcome together;
+- `reasoned-validity` reports all four deterministic synthetic validity scenarios as passing.
 
-1. open the repository **Actions** tab;
-2. choose **Publish to PyPI**;
-3. choose **Run workflow**;
-4. enter the release tag, for example `v1.4.0`;
-5. review/approve the `pypi` environment if repository protection rules require it;
-6. wait for the build and publish jobs to complete;
-7. verify the new project/version on PyPI;
-8. install it in a fresh environment and run a minimal import test.
+See [`publication-verification.md`](publication-verification.md) for the detailed verification record and evidence boundary.
 
-The workflow refuses to publish when the requested tag does not match the package version embedded in that tag.
+## Post-publication verification commands
 
-## Post-publication verification
-
-Use a clean environment that does not contain the Git checkout:
+A minimal package check is:
 
 ```bash
-python -m venv /tmp/reasoned-pypi-check
-source /tmp/reasoned-pypi-check/bin/activate
 pip install reasoned-ops==1.4.0
 python -c "import reasoned_ops; print(reasoned_ops.__version__)"
-reasoned-applicability --help
 ```
 
-A successful PyPI upload establishes package distribution and reuse. It does **not** establish real-world service effectiveness, private-data approval, or production readiness.
+A reusable API/import check is:
+
+```python
+from reasoned_ops import ServiceCase, baseline_route
+
+case = ServiceCase(
+    case_id="test-001",
+    message="The air conditioner is leaking again.",
+    previous_related_cases=2,
+)
+
+decision = baseline_route(case)
+assert decision.department == "maintenance"
+```
+
+The deterministic evaluation check is:
+
+```bash
+reasoned-validity
+```
+
+A successful PyPI publication and external install check establish package distribution and executable local behaviour. They do **not** establish real-world service effectiveness, causal impact, private-data approval, or production readiness.
+
+## Future releases
+
+For a future release:
+
+1. update package/citation/release metadata deliberately;
+2. merge only after CI and distribution checks pass;
+3. allow the GitHub release checkpoint to create the matching release tag;
+4. manually dispatch **Publish to PyPI** with that exact tag;
+5. verify the published version from a clean environment.
+
+The publishing workflow refuses to publish when the requested tag does not match the package version embedded in that tag.
