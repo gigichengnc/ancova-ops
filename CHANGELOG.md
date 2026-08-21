@@ -2,6 +2,27 @@
 
 All notable project checkpoints are documented here.
 
+## [1.4.0] - 2026-08-21
+
+### Added
+
+- A dedicated PyPI-facing `PYPI.md` package description with installation and reuse examples.
+- CI distribution validation that builds both wheel and source distributions with `python -m build`.
+- A clean-environment wheel installation smoke test covering package import, version metadata, routing and an installed CLI entry point.
+- `.github/workflows/publish-pypi.yml`, a manually dispatched PyPI Trusted Publishing workflow using GitHub OIDC rather than a long-lived API token.
+- `docs/pypi.md` with the exact pending Trusted Publisher identity, first-publication procedure and post-publication verification steps.
+- PyPI classifiers for supported Python versions, Apache-2.0 licensing and package maturity.
+
+### Changed
+
+- Bumped package and citation metadata to `1.4.0`.
+- Separated the GitHub portfolio README from the PyPI long description so relative repository links do not become the package-index presentation surface.
+- Kept the first PyPI upload manual so no publication is attempted before the repository owner configures the matching PyPI Trusted Publisher.
+
+### Distribution boundary
+
+The v1.4.0 checkpoint validates that ReasonedOps can be built and installed as a normal Python distribution rather than only from an editable Git checkout. A successful wheel build is distribution evidence, not proof of real-world service effectiveness, private-data approval or production readiness.
+
 ## [1.3.0] - 2026-08-21
 
 ### Added
@@ -78,7 +99,7 @@ This is a usability, documentation and branding-consistency patch. It does not a
 
 ### Evidence and deployment status
 
-This is a naming/package migration checkpoint. It does not add a new evidence class or change the project completion boundary. Current quantitative evidence remains synthetic or hand-authored development evidence. Real private-data pilot use and production deployment remain not approved.
+This is a naming/package migration checkpoint. It does not add a new evidence class or change the project completion boundary. Current quantitative evidence is synthetic or hand-authored development evidence. Real private-data pilot use and production deployment remain not approved.
 
 ## [1.0.0] - 2026-08-20
 
