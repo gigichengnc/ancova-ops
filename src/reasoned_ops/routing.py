@@ -1,19 +1,12 @@
 from __future__ import annotations
 
-from .intelligence import contains_any
+from .intelligence import EMERGENCY_TERMS, SAFETY_TERMS, contains_any
 from .models import RoutingDecision, ServiceCase
 
 ROUTER_VERSION = "baseline-route-v2"
 
 ISSUE_KEYWORDS: dict[str, tuple[str, ...]] = {
-    "emergency_response": (
-        "fire",
-        "smoke",
-        "gas leak",
-        "gas smell",
-        "carbon monoxide",
-        "trapped",
-    ),
+    "emergency_response": EMERGENCY_TERMS,
     "maintenance": (
         "leak",
         "water",
@@ -21,6 +14,8 @@ ISSUE_KEYWORDS: dict[str, tuple[str, ...]] = {
         "air-con",
         "air conditioner",
         "electric",
+        "spark",
+        "sparks",
         "lift",
         "repair",
         "broken",
@@ -64,6 +59,9 @@ def baseline_route(case: ServiceCase) -> RoutingDecision:
 
     department, category_reason = _infer_department(case)
     reasons = [category_reason]
+    normalized = " ".join(case.message.lower().split())
+    safety_context = contains_any(normalized, SAFETY_TERMS)
+    security_incident = case.issue_category == "security"
 
     critical = case.urgency >= 9 or (
         case.vulnerability_flag and case.urgency >= 8 and case.complexity >= 7
@@ -73,6 +71,8 @@ def baseline_route(case: ServiceCase) -> RoutingDecision:
         or case.frustration >= 8
         or case.previous_related_cases >= 2
         or case.vulnerability_flag
+        or safety_context
+        or security_incident
     )
 
     if critical:
@@ -90,10 +90,16 @@ def baseline_route(case: ServiceCase) -> RoutingDecision:
         or case.vulnerability_flag
         or case.previous_related_cases >= 2
         or case.frustration >= 8
+        or safety_context
+        or security_incident
     )
 
     if department == "emergency_response":
         reasons.append("emergency terms require immediate human triage")
+    if safety_context and department != "emergency_response":
+        reasons.append("safety context requires human review")
+    if security_incident:
+        reasons.append("explicit security incident requires human review")
     if case.previous_related_cases >= 2:
         reasons.append("multiple related cases indicate recurrence or unresolved history")
     if case.vulnerability_flag:
