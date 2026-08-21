@@ -40,24 +40,25 @@ The project was originally developed under the name **ANCOVA Ops**. It was renam
 | Model escalation | LSTM / sequence modelling deferred until it can beat simpler baselines on the same benchmark |
 | Validation | Hand-authored fixtures + deterministic synthetic known-truth and known-limitation scenarios |
 | Python distribution | Wheel + source distribution build and clean-wheel installation validated in CI |
-| Release candidate | **v1.4.3 audit close-out** — external-audit corrections + artifact-alignment checkpoint |
-| PyPI status | Currently published and externally exercised: `reasoned-ops==1.4.0`; v1.4.3 will be published from the exact release tag after GitHub/Zenodo archiving |
-| Existing Zenodo archives | v1.4.1 → `10.5281/zenodo.22044222`; v1.4.2 → `10.5281/zenodo.22044621` |
-| v1.4.3 Zenodo DOI | **Pending release ingestion**; the old v1.4.2 DOI is intentionally not copied into v1.4.3 citation metadata |
+| Final v1 release | **v1.4.3 audit close-out** — external-audit corrections + artifact-alignment checkpoint |
+| PyPI status | **Published and externally exercised:** `reasoned-ops==1.4.3` |
+| Zenodo archives | v1.4.1 → `10.5281/zenodo.22044222`; v1.4.2 → `10.5281/zenodo.22044621`; v1.4.3 → `10.5281/zenodo.22046490` |
+| v1.4.3 provenance | Git tag / GitHub Release / Zenodo archive / PyPI package aligned to version `1.4.3` |
 | Real-world performance claim | **Not made**; representative real-pilot evidence does not exist in this repository |
 | Development data boundary | Synthetic / hand-authored public development evidence only |
 | Production status | **Not approved** |
+| Project status | **Completed / frozen v1** |
 | Project identity | **ReasonedOps — Operate → Audit → Evaluate** |
 
-Install the currently published package:
+Install the final public v1 package:
 
 ```bash
-pip install reasoned-ops==1.4.0
+pip install reasoned-ops==1.4.3
 ```
 
-The v1.4.3 close-out is designed so the **same Git tag** becomes the source for the GitHub release, Zenodo archive and final PyPI publication. This corrects the earlier situation where the preferred citable checkpoint and the publicly installable checkpoint had different version numbers.
+The v1.4.3 close-out uses the **same Git tag** as the source for the GitHub release, Zenodo archive and PyPI publication. This closes the earlier situation where the preferred citable checkpoint and the publicly installable checkpoint had different version numbers.
 
-`CITATION.cff` in the v1.4.3 release candidate intentionally does not carry the v1.4.2 version DOI. Zenodo assigns a new immutable version DOI only after ingesting the v1.4.3 GitHub release. Once that DOI is verified, repository citation metadata can be synced without creating another software version because the `v1.4.3` release already exists.
+The exact v1.4.3 Zenodo version DOI is `10.5281/zenodo.22046490`. Current `CITATION.cff` records that verified DOI on the default branch without changing the immutable release tag.
 
 For the clearest summary of how the project changed, start with [`docs/before-vs-after.md`](docs/before-vs-after.md).
 
@@ -132,14 +133,14 @@ Imagine this request arrives:
 The air conditioner is leaking again. This is the third time and the wet floor could be dangerous.
 ```
 
-From the currently published package:
+From the final public v1 package:
 
 ```bash
-pip install reasoned-ops==1.4.0
+pip install reasoned-ops==1.4.3
 uvicorn reasoned_ops.api:app --reload
 ```
 
-Or from a repository checkout / v1.4.3 release candidate:
+Or from a repository checkout:
 
 ```bash
 python -m venv .venv
@@ -278,24 +279,42 @@ The generated report walks through one service request and later evidence checks
 
 ## Public release verification
 
-`reasoned-ops==1.4.0` was installed from public PyPI in a Windows environment outside the repository checkout. That verification exercised:
+The final `reasoned-ops==1.4.3` package was published from the exact Git tag `v1.4.3`, after the same release had been archived by Zenodo.
+
+The publishing workflow verified:
 
 ```text
-PyPI install + import version 1.4.0
-        ↓
-Operate
-routing + explanation + FastAPI request
-        ↓
-Audit
-persisted machine route + human override + effective route + outcome
-        ↓
-Evaluate
-known-effect recovery + measured-confounding adjustment + no-overlap refusal + interaction detection
+requested tag: v1.4.3
+release commit: 461b5fc81c2b31fc5fcc51c585004d059bb85586
+package version: 1.4.3
 ```
 
-That public-artifact verification predates the unmeasured-confounding benchmark and audit corrections included in v1.4.3. It establishes installability and execution of the published artifact; it does not establish independent scientific effectiveness, causal business impact, private-data approval, or production readiness.
+Both the wheel and source distribution were accepted by PyPI, with Trusted Publishing / Sigstore attestations generated during publication.
 
-The final close-out step is to publish `reasoned-ops==1.4.3` from the exact GitHub tag after Zenodo archives that same tag, then repeat the external install/version smoke check against the aligned artifact.
+The public package was then installed in a Windows environment outside the repository checkout. Observed results included:
+
+```text
+reasoned_ops.__version__ = 1.4.3
+
+reasoned-validity --n 1200 --seed 23
+Overall pass: True
+- known_effect_recovery: PASS
+- measured_confounding: PASS
+- no_overlap: PASS
+- slope_interaction: PASS
+- unmeasured_confounding_blind_spot: PASS
+```
+
+A routing smoke check on the recurring leaking-air-conditioner request returned:
+
+```text
+department = maintenance
+priority = high
+requires_human_review = True
+secondary_notify = community_management
+```
+
+This establishes installability, exact-version provenance and executable local behaviour for the final public v1 artifact. It does **not** establish independent scientific effectiveness, causal business impact, private-data approval, or production readiness.
 
 See [`docs/publication-verification.md`](docs/publication-verification.md).
 
@@ -362,7 +381,7 @@ The repository separates several evidence classes:
 - **Synthetic known-limitation scenario:** hidden confounding deliberately omitted from the observed frame to demonstrate a false-negative mode the implemented checks cannot identify.
 - **Synthetic adaptive-policy logs:** deterministic logged-policy data with known propensities, chronological validation, support diagnostics and deployment locks.
 - **Synthetic longitudinal histories:** simpler recurrence/time approaches compared under leakage-aware chronological validation.
-- **Public artifact execution:** the published PyPI artifact installed and exercised outside the repository checkout.
+- **Public artifact execution:** the final PyPI 1.4.3 artifact installed and exercised outside the repository checkout.
 
 None of these evidence classes establishes real service improvement or causal effectiveness.
 
@@ -453,7 +472,7 @@ Important limitations remain:
 
 The next meaningful step is **not another model**.
 
-If the project is ever resumed for a real use case, the next gate is:
+ReasonedOps v1 is now frozen. If the project is ever resumed for a real use case, the next gate is:
 
 ```text
 specific organisation / service process
