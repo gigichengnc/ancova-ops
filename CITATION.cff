@@ -5,21 +5,22 @@ type: software
 authors:
   - family-names: "Cheng"
     given-names: "Gigi"
-version: "1.2.0"
+version: "1.3.0"
 date-released: 2026-08-21
 license: Apache-2.0
 repository-code: "https://github.com/gigichengnc/reasoned-ops"
 url: "https://github.com/gigichengnc/reasoned-ops"
 abstract: >-
-  ReasonedOps is a reproducible evidence-aware service-operations research/software
-  prototype organised around Operate, Audit, and Evaluate. It converts unstructured
-  service requests into explainable routing recommendations, preserves human and
-  machine decision history, records outcomes, and applies an evaluation applicability
-  gate before downstream regression/ANCOVA or alternative-method recommendations.
-  The evaluation layer can withhold unsupported department comparisons when overlap
-  or identifiability is insufficient. Current quantitative evidence is synthetic or
-  hand-authored development evidence and does not establish real-world service
-  improvement, causal effects, private-data pilot approval, or production readiness.
+  ReasonedOps is a retrospective rebuild of an HKMU Hackathon 2026 concierge concept
+  into a reproducible evidence-aware service-operations research/software prototype.
+  It is organised around Operate, Audit, and Evaluate: unstructured service requests
+  become explainable routing recommendations; machine and human decision history is
+  preserved separately from observed outcomes; and downstream evaluation first checks
+  whether a comparison and method are supportable before reporting adjusted evidence.
+  Regression/ANCOVA is one method inside the Evaluate layer rather than the product
+  identity. Current quantitative evidence is synthetic or hand-authored development
+  evidence and does not establish real-world service improvement, causal effects,
+  private-data pilot approval, or production readiness.
 keywords:
   - "service operations"
   - "human-in-the-loop"
