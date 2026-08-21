@@ -1,90 +1,93 @@
-# Project Status — ReasonedOps v1.1.0
+# Project Status — ReasonedOps v1.2.0
 
-ReasonedOps is the renamed continuation of the completed v1 research/portfolio prototype formerly called **ReasonedOps**.
+ReasonedOps is a completed local research/software prototype for following a service case through **request → routing → human review → outcome → evaluation**.
 
-> **Operate → Audit → Evaluate**
+**Research/portfolio project:** COMPLETED  
+**Current codebase checkpoint:** v1.2.0  
+**Real private-data pilot:** NOT APPROVED  
+**Production deployment:** NOT APPROVED
 
-Its purpose is not to make management decisions automatically. Its purpose is to make unsupported management conclusions harder to reach by preserving decision history, separating descriptive from adjusted evidence, checking whether comparisons are supportable, and refusing or redirecting inappropriate analytical methods.
+## What is implemented
 
-**Research-project status: COMPLETED.**  
-**Current naming/package checkpoint: v1.1.0.**  
-**Real private-data pilot: NOT APPROVED.**  
-**Production deployment: NOT APPROVED.**
-
-## Canonical identity
-
-| Surface | Canonical v1.1 name |
+| Area | Working behaviour |
 | --- | --- |
-| Project | `ReasonedOps` |
-| Repository | `gigichengnc/reasoned-ops` |
-| Python distribution | `reasoned-ops` |
-| Python package | `reasoned_ops` |
-| CLI prefix | `reasoned-` |
-| Legacy compatibility namespace | `reasoned_ops` |
+| Request intake | Accepts a text service request through the FastAPI `/v1/route` endpoint. |
+| Request intelligence | Extracts transparent development-stage issue, urgency, frustration and complexity signals. |
+| Routing | Returns a department, priority, human-review flag and reasons. |
+| Human review | Staff can confirm or override a routing decision. |
+| Audit history | Original machine/rule decisions remain stored after a human override. |
+| Outcome capture | Response time, resolution time, reassignment, escalation and satisfaction can be stored separately. |
+| Management report | Produces raw summaries, adjusted estimates when supportable, diagnostics and interpretation warnings. |
+| Comparison gate | Can withhold a department comparison when department and case type are not separately identifiable. |
+| Method gate | Returns `use`, `caution`, `reject` or `recommend_alternative`. |
+| Offline policy research | Evaluates candidate routing policies on synthetic logged-policy data. |
+| Longitudinal research | Benchmarks recurrence/time-to-next-case models on synthetic histories. |
+| Governance check | Enforces the repository's synthetic/private-data development policy. |
 
-Historical release notes before v1.1.0 intentionally retain the former name and old command names.
+## Canonical codebase
 
-## Capability map
+From v1.2.0 onward there is one application namespace:
 
-| Layer / area | Status | Primary command / interface | Evidence class |
-| --- | --- | --- | --- |
-| Operate — request intelligence and routing | Complete research workflow | `uvicorn reasoned_ops.api:app --reload` | Transparent development rules |
-| Operate — routing benchmark | Complete | `reasoned-evaluate` | Hand-authored fixture |
-| Audit — immutable case/routing history | Complete | case/history API | Local development persistence |
-| Audit — human confirmation / override | Complete | routing-review API | Human feedback, not automatic ground truth |
-| Audit — outcome capture | Complete | outcome API | Local development records |
-| Evaluate — raw outcome summaries | Complete | `reasoned-management-report` | Synthetic outcomes |
-| Evaluate — overlap / identifiability gate | Complete | `reasoned-analyze` | Synthetic outcomes |
-| Evaluate — known-truth validity benchmark | Complete | `reasoned-validity` | Synthetic validity scenarios |
-| Evaluate — method applicability gate | Complete | `reasoned-applicability` | Deterministic decision rules |
-| Evaluate — regression / ANCOVA | Complete | `reasoned-analyze` | Synthetic outcomes |
-| Evaluate — offline adaptive-policy study | Complete research workflow | `reasoned-policy evaluate` | Synthetic logged-policy data |
-| Evaluate — longitudinal recurrence benchmark | Complete research workflow | `reasoned-longitudinal` | Synthetic histories |
-| Governance validation | Complete | `reasoned-governance-check` | Machine-readable development policy |
-| End-to-end showcase | Complete | `reasoned-showcase` | Aggregates existing development evidence |
-| Apache-2.0 licensing | Complete | `LICENSE` | Repository licensing |
-| Citation metadata | Complete | `CITATION.cff` | CFF 1.2.0; no unverified DOI |
-| Sequence/LSTM model | Deferred by design | none | Not justified by current benchmark |
-| Real private-data pilot | Post-v1 / blocked | none | Separate governance approval required |
-| Production deployment | Post-v1 / blocked | none | Real-data, security and operational evidence required |
+```text
+src/reasoned_ops/
+```
 
-## Evaluation architecture
+The temporary legacy `ancova_ops` package used during the v1.1 rename migration has been removed. Public commands use the `reasoned-` prefix.
 
-ReasonedOps separates two questions:
+```text
+reasoned-showcase
+reasoned-evaluate
+reasoned-validity
+reasoned-applicability
+reasoned-analyze
+reasoned-management-report
+reasoned-policy
+reasoned-longitudinal
+reasoned-governance-check
+```
 
-1. **Can this comparison be supported?** Department × case-type overlap and design-identifiability checks return `supported`, `weak_overlap`, or `not_identifiable`. A `not_identifiable` comparison withholds adjusted estimates and ranking language.
-2. **Is this the right method family?** `reasoned-applicability` returns `use`, `caution`, `reject`, or `recommend_alternative` based on the declared outcome, censoring, clustering, causal intent, routing-policy question, overlap and interaction warnings.
+## Evaluation boundary
 
-ANCOVA/regression is therefore one method inside the Evaluate layer. It is not the product identity and is not forced onto incompatible questions.
+ReasonedOps does not assume every operational comparison is valid.
 
-## Evidence boundary
+For a question such as:
 
-Current evidence remains deliberately limited to:
+```text
+Is Department A slower than Department B?
+```
 
-1. hand-authored routing fixtures;
-2. synthetic outcome data;
-3. synthetic known-truth validity scenarios;
-4. deterministic applicability rules;
-5. synthetic logged-policy data;
-6. synthetic longitudinal histories.
+it first asks whether the observed case mix allows those departments to be compared. If department and case type cannot be separated, adjusted department estimates and ranking language are withheld.
 
-There is **no representative real-pilot evidence** in v1.1.0.
+When the comparison is supportable, the current continuous-outcome workflow can use regression/ANCOVA-style adjustment with diagnostics and uncertainty reporting. ANCOVA is one method inside Evaluate, not the product itself.
 
-## What the project demonstrates
+Other question types can be redirected to a more appropriate method family rather than forced through the same model.
 
-ReasonedOps demonstrates a reproducible architecture that can:
+## Evidence currently in the repository
 
-- structure and route service requests transparently;
-- preserve machine and human decision history;
-- capture observed outcomes separately;
-- distinguish raw summaries from adjusted evidence;
-- refuse unsupported comparisons;
-- redirect questions to more appropriate method families;
-- keep offline policy and longitudinal research separate from live operational routing;
-- keep evidence provenance and deployment boundaries explicit.
+Current quantitative development evidence is limited to:
 
-It does **not** demonstrate real-world service improvement, causal staff/department effects, production security/reliability, or approval to process real private resident/customer histories.
+- a small hand-authored routing fixture;
+- synthetic outcome data;
+- synthetic known-truth validity scenarios;
+- deterministic applicability rules;
+- synthetic logged-policy data;
+- synthetic longitudinal histories.
 
-## Project freeze
+There is no representative real-company or real-resident/customer pilot dataset in v1.2.0.
 
-Further modelling is post-v1 work and should require a concrete user, competition requirement, research question, reuse request, or pilot opportunity. More code by itself is not evidence that the project is more useful.
+## What this project does not prove
+
+The repository does **not** prove that ReasonedOps:
+
+- improves real service resolution time;
+- improves real routing accuracy;
+- causes better staff or department performance;
+- is safe to process private resident/customer data;
+- is production-ready;
+- delivers a measured commercial return on investment.
+
+Those claims would require a separate real-data pilot, governance approval and a defensible evaluation design.
+
+## Project origin
+
+The project originated from my participation in the **HKMU Hackathon 2026** and was originally developed under the name **ANCOVA Ops**. It was renamed **ReasonedOps** in v1.1.0 because ANCOVA/regression is only one method inside the Evaluate layer, not the product itself.
