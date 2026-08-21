@@ -2,7 +2,9 @@
 
 **Evidence-aware service operations: Operate → Audit → Evaluate.**
 
-ReasonedOps is a reusable Python package extracted from a retrospective rebuild of an HKMU Hackathon 2026 concierge concept. It provides transparent service-request routing, auditable machine/human decision history, outcome capture, and guarded evaluation workflows that can refuse unsupported management comparisons.
+ReasonedOps is a reusable Python package that originated from the author's participation in HKMU Hackathon 2026 and evolved into an evidence-aware service-operations research/software prototype. It provides transparent service-request routing, auditable machine/human decision history, outcome capture, and guarded evaluation workflows that can refuse unsupported management comparisons.
+
+HKMU Hackathon 2026 is referenced only to describe the project's origin. ReasonedOps is independently developed and is not presented as an official HKMU product or endorsement.
 
 ## Install
 
@@ -80,8 +82,8 @@ Current quantitative evidence in the public repository is synthetic or hand-auth
 
 ## Project links
 
-- Source and full portfolio case study: https://github.com/gigichengnc/reasoned-ops
-- Before/after rebuild: https://github.com/gigichengnc/reasoned-ops/blob/main/docs/before-vs-after.md
+- Source and full project-evolution case study: https://github.com/gigichengnc/reasoned-ops
+- Early-vs-current comparison: https://github.com/gigichengnc/reasoned-ops/blob/main/docs/before-vs-after.md
 - Method decisions: https://github.com/gigichengnc/reasoned-ops/blob/main/docs/model-decisions.md
 - Release readiness: https://github.com/gigichengnc/reasoned-ops/blob/main/docs/release-readiness.md
 - License: Apache-2.0
