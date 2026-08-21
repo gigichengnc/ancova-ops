@@ -2,9 +2,26 @@
 
 **Evidence-aware service operations: Operate → Audit → Evaluate.**
 
-ReasonedOps is a reusable Python package that originated from the author's participation in HKMU Hackathon 2026 and evolved into an evidence-aware service-operations research/software prototype. It provides transparent service-request routing, auditable machine/human decision history, outcome capture, and guarded evaluation workflows that can refuse unsupported management comparisons.
+ReasonedOps is a reusable Python package that originated from the author's participation in HKMU Hackathon 2026 and evolved into an evidence-aware service-operations research/software prototype.
 
-HKMU Hackathon 2026 is referenced only to describe the project's origin. ReasonedOps is independently developed and is not presented as an official HKMU product or endorsement.
+It separates three responsibilities:
+
+```text
+OPERATE
+service request → rule-based operational features → deterministic explainable routing baseline
+
+AUDIT
+original request → machine/rule decision → human review → effective route → outcome
+
+EVALUATE
+raw outcomes → comparison-support check → method applicability → guarded evidence
+```
+
+The current Operate baseline is intentionally transparent and deterministic. It does **not** claim a trained NLP model or production routing accuracy.
+
+The Evaluate layer can withhold a department comparison when the observed case mix cannot support it, and it can redirect questions that should not be forced through ordinary continuous-outcome ANCOVA/regression.
+
+The synthetic validity benchmark also includes an explicit **unmeasured-confounding blind spot**: a latent case-burden variable is deliberately removed before evaluation, allowing observed-data checks to look supportable while the adjusted department contrast becomes badly wrong. That scenario documents a limitation; it does not claim that ReasonedOps can detect an unrecorded confounder.
 
 ## Install
 
@@ -35,7 +52,7 @@ print(decision.requires_human_review)
 print(decision.reasons)
 ```
 
-The routing baseline is intentionally transparent and deterministic. It is a reference implementation for development and evaluation, not a claim of production routing accuracy.
+The routing baseline is a reference implementation for development and evaluation. It is not a claim of external routing accuracy.
 
 ## Command-line tools
 
@@ -59,26 +76,9 @@ For a one-command development demonstration:
 reasoned-showcase
 ```
 
-## What the project is for
-
-ReasonedOps separates three responsibilities:
-
-```text
-OPERATE
-service request → structured signals → explainable routing recommendation
-
-AUDIT
-original request → machine decision → human review → effective route → outcome
-
-EVALUATE
-raw outcomes → comparison-support check → method applicability → guarded evidence
-```
-
-A central design rule is that the evaluation layer is allowed to return **REJECT** when the observed data cannot support a requested comparison. Regression/ANCOVA is one possible method inside Evaluate rather than the product identity.
-
 ## Evidence boundary
 
-Current quantitative evidence in the public repository is synthetic or hand-authored development evidence. The package does not establish real-world service improvement, causal effects, private-data pilot approval, or production readiness.
+Current quantitative evidence in the public repository is synthetic or hand-authored development evidence. The package does not establish real-world service improvement, causal effects, absence of unmeasured confounding, private-data pilot approval, or production readiness.
 
 ## Project links
 
