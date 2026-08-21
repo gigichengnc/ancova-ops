@@ -3,6 +3,7 @@
 [![CI](https://github.com/gigichengnc/reasoned-ops/actions/workflows/ci.yml/badge.svg)](https://github.com/gigichengnc/reasoned-ops/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/gigichengnc/reasoned-ops?display_name=tag)](https://github.com/gigichengnc/reasoned-ops/releases/latest)
 [![PyPI](https://img.shields.io/pypi/v/reasoned-ops.svg)](https://pypi.org/project/reasoned-ops/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22044621.svg)](https://doi.org/10.5281/zenodo.22044621)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue.svg)](pyproject.toml)
 
@@ -40,6 +41,7 @@ The project was originally developed under the name **ANCOVA Ops**. It was renam
 | Validation | Hand-authored fixtures + deterministic synthetic known-truth scenarios |
 | Python distribution | Wheel + source distribution build and clean-wheel installation validated in CI |
 | PyPI status | **Published:** `reasoned-ops==1.4.0` via GitHub OIDC Trusted Publishing |
+| Zenodo archive | **Concept DOI:** `10.5281/zenodo.22044621` |
 | Public artifact verification | PyPI package installed outside the repository checkout; Operate → Audit → Evaluate paths exercised successfully |
 | Real-world performance claim | **Not made**; representative real-pilot evidence does not exist in this repository |
 | Development data boundary | Synthetic / hand-authored public development evidence only |
@@ -486,6 +488,7 @@ Start here:
 - [`docs/data-governance.md`](docs/data-governance.md) — development data/privacy boundary;
 - [`docs/pypi.md`](docs/pypi.md) — package reuse and Trusted Publishing procedure;
 - [`docs/publication-verification.md`](docs/publication-verification.md) — verification of the public PyPI artifact;
+- [`docs/citation.md`](docs/citation.md) — Zenodo DOI and citation/archive guidance;
 - [`docs/project-status.md`](docs/project-status.md) — current completion and deployment status.
 
 ## Current limitations
