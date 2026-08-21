@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 
-INTELLIGENCE_VERSION = "baseline-request-intelligence-v1"
+INTELLIGENCE_VERSION = "baseline-request-intelligence-v2"
 
 
 @dataclass(slots=True, frozen=True)
@@ -18,6 +19,10 @@ class RequestFeatures:
 
 CATEGORY_RULES: tuple[tuple[str, tuple[str, ...]], ...] = (
     (
+        "emergency",
+        ("fire", "smoke", "gas leak", "gas smell", "carbon monoxide", "trapped"),
+    ),
+    (
         "air_conditioning",
         ("air con", "air-con", "air conditioner", "a/c", "ac broken", "ac not working"),
     ),
@@ -30,6 +35,7 @@ CATEGORY_RULES: tuple[tuple[str, tuple[str, ...]], ...] = (
 )
 
 CATEGORY_COMPLEXITY = {
+    "emergency": 9.0,
     "air_conditioning": 5.0,
     "water_leak": 6.0,
     "electrical": 6.0,
@@ -40,7 +46,17 @@ CATEGORY_COMPLEXITY = {
     "general_request": 5.0,
 }
 
-EMERGENCY_TERMS = ("fire", "smoke", "gas leak", "flooding", "injured", "injury")
+EMERGENCY_TERMS = (
+    "fire",
+    "smoke",
+    "gas leak",
+    "gas smell",
+    "carbon monoxide",
+    "flooding",
+    "injured",
+    "injury",
+    "trapped",
+)
 SAFETY_TERMS = ("danger", "unsafe", "slip", "fall", "sparks", "trapped")
 TIME_PRESSURE_TERMS = ("urgent", "immediately", "right now", "as soon as possible", "asap")
 RECURRENCE_TERMS = ("again", "still not", "third time", "second time", "keeps happening")
@@ -48,8 +64,17 @@ STRONG_COMPLAINT_TERMS = ("unacceptable", "angry", "furious", "ridiculous", "no 
 VULNERABILITY_TERMS = ("elderly", "wheelchair", "disabled", "small child", "baby")
 
 
-def _contains_any(text: str, terms: tuple[str, ...]) -> bool:
-    return any(term in text for term in terms)
+def contains_term(text: str, term: str) -> bool:
+    """Match a declared word/phrase without accepting substrings inside larger words."""
+
+    escaped = re.escape(term)
+    prefix = r"(?<!\w)" if term and term[0].isalnum() else ""
+    suffix = r"(?!\w)" if term and term[-1].isalnum() else ""
+    return re.search(prefix + escaped + suffix, text) is not None
+
+
+def contains_any(text: str, terms: tuple[str, ...]) -> bool:
+    return any(contains_term(text, term) for term in terms)
 
 
 def _cap(value: float) -> float:
@@ -58,7 +83,7 @@ def _cap(value: float) -> float:
 
 def _classify_issue(text: str) -> tuple[str, str]:
     for category, terms in CATEGORY_RULES:
-        if _contains_any(text, terms):
+        if contains_any(text, terms):
             return category, f"matched baseline issue taxonomy: {category}"
     return "general_request", "no baseline issue category matched"
 
@@ -90,18 +115,18 @@ class BaselineRequestIntelligence:
         frustration = 3.0
         complexity = CATEGORY_COMPLEXITY[category]
 
-        if _contains_any(text, EMERGENCY_TERMS):
-            urgency += 5.0
-            reasons.append("emergency/safety term detected")
-        if _contains_any(text, SAFETY_TERMS):
+        if contains_any(text, EMERGENCY_TERMS):
+            urgency += 7.0
+            reasons.append("emergency/safety term detected; immediate human triage required")
+        if contains_any(text, SAFETY_TERMS):
             urgency += 2.0
             complexity += 1.0
             reasons.append("safety context detected")
-        if _contains_any(text, TIME_PRESSURE_TERMS):
+        if contains_any(text, TIME_PRESSURE_TERMS):
             urgency += 1.5
             reasons.append("time-pressure language detected")
 
-        if _contains_any(text, RECURRENCE_TERMS):
+        if contains_any(text, RECURRENCE_TERMS):
             frustration += 2.0
             complexity += 0.5
             reasons.append("recurrence language detected")
@@ -110,14 +135,14 @@ class BaselineRequestIntelligence:
             complexity += min(1.5, previous_related_cases * 0.4)
             reasons.append("known related-case history included")
 
-        if _contains_any(text, STRONG_COMPLAINT_TERMS):
+        if contains_any(text, STRONG_COMPLAINT_TERMS):
             frustration += 3.0
             reasons.append("strong complaint language detected")
         if "!" in message:
             frustration += min(1.0, message.count("!") * 0.25)
             reasons.append("message emphasis contributes to communication-intensity score")
 
-        vulnerability_mentioned = _contains_any(text, VULNERABILITY_TERMS)
+        vulnerability_mentioned = contains_any(text, VULNERABILITY_TERMS)
         if vulnerability_flag or vulnerability_mentioned:
             urgency += 1.0
             complexity += 1.0
