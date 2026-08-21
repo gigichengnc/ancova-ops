@@ -2,6 +2,33 @@
 
 All notable project checkpoints are documented here.
 
+## [1.4.4] - 2026-08-21
+
+### Fixed
+
+- Replaced raw substring request matching with word/phrase-boundary matching so unrelated words such as `current` and `feedback` no longer trigger `rent` / `fee` routing terms.
+- Added an explicit emergency human-triage path for fire, smoke, gas-leak, flooding, injury and trapped-person wording.
+- Made non-emergency safety context and explicit security incidents require human review instead of depending on complaint intensity or prior-case history.
+- Prevented the standalone `reasoned-applicability` CLI from returning `use` solely because a caller declares `--overlap-status supported`; observed-data clearance remains derived from an actual analysis report.
+- Restricted VIF diagnostics to the declared numeric covariates rather than categorical dummy columns.
+
+### Changed
+
+- Advanced the transparent request-intelligence and routing rule identifiers to v2 so audit history distinguishes the hardened behaviour.
+- Advanced the hand-authored routing fixture to version 2 and added adversarial safety / substring regression coverage.
+- Made release creation manual-only instead of running after every successful `main` CI workflow.
+- Removed the historical `phase-0-foundation` CI branch trigger and the legacy `.ancova_ops/` workspace ignore.
+- Bumped package, runtime and citation checkpoint metadata to `1.4.4`.
+- Removed the v1.4.3 DOI from the v1.4.4 release-candidate `CITATION.cff`; a v1.4.4 version DOI must only be recorded after Zenodo actually mints it.
+
+### Evidence boundary
+
+The routing fixture remains a small hand-authored design benchmark, not an estimate of production routing accuracy. The safety changes are explicit deterministic rules, not a trained NLP model. Evaluate retains the same synthetic known-truth and known-limitation evidence boundary, including the unmeasured-confounding false-negative benchmark.
+
+### Publication boundary
+
+`reasoned-ops==1.4.3` remains the previously published and externally verified public artifact while v1.4.4 is prepared. The final v1.4.4 GitHub release, Zenodo archive and PyPI package must derive from the same immutable `v1.4.4` tag before v1 is frozen again.
+
 ## [1.4.3] - 2026-08-21
 
 ### Added
