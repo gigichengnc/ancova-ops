@@ -3,8 +3,12 @@ from __future__ import annotations
 import argparse
 import json
 
-from ancova_ops.applicability import ApplicabilityDecision, EvaluationQuestion
-from ancova_ops.applicability import assess_evaluation_question, assess_from_ancova_report
+from ancova_ops.applicability import (
+    ApplicabilityDecision,
+    EvaluationQuestion,
+    assess_evaluation_question,
+    assess_from_ancova_report,
+)
 
 __all__ = [
     "ApplicabilityDecision",
