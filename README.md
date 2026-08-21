@@ -40,9 +40,10 @@ The project was originally developed under the name **ANCOVA Ops**. It was renam
 | Model escalation | LSTM / sequence modelling deferred until it can beat simpler baselines on the same benchmark |
 | Validation | Hand-authored fixtures + deterministic synthetic known-truth and known-limitation scenarios |
 | Python distribution | Wheel + source distribution build and clean-wheel installation validated in CI |
-| PyPI status | **Published and externally exercised:** `reasoned-ops==1.4.0` |
-| Zenodo archive | **v1.4.2 version DOI:** `10.5281/zenodo.22044621` |
-| Main-branch status | Post-v1.4.2 audit corrections are present on `main`; a final aligned release is pending |
+| Release candidate | **v1.4.3 audit close-out** — external-audit corrections + artifact-alignment checkpoint |
+| PyPI status | Currently published and externally exercised: `reasoned-ops==1.4.0`; v1.4.3 will be published from the exact release tag after GitHub/Zenodo archiving |
+| Existing Zenodo archives | v1.4.1 → `10.5281/zenodo.22044222`; v1.4.2 → `10.5281/zenodo.22044621` |
+| v1.4.3 Zenodo DOI | **Pending release ingestion**; the old v1.4.2 DOI is intentionally not copied into v1.4.3 citation metadata |
 | Real-world performance claim | **Not made**; representative real-pilot evidence does not exist in this repository |
 | Development data boundary | Synthetic / hand-authored public development evidence only |
 | Production status | **Not approved** |
@@ -53,6 +54,10 @@ Install the currently published package:
 ```bash
 pip install reasoned-ops==1.4.0
 ```
+
+The v1.4.3 close-out is designed so the **same Git tag** becomes the source for the GitHub release, Zenodo archive and final PyPI publication. This corrects the earlier situation where the preferred citable checkpoint and the publicly installable checkpoint had different version numbers.
+
+`CITATION.cff` in the v1.4.3 release candidate intentionally does not carry the v1.4.2 version DOI. Zenodo assigns a new immutable version DOI only after ingesting the v1.4.3 GitHub release. Once that DOI is verified, repository citation metadata can be synced without creating another software version because the `v1.4.3` release already exists.
 
 For the clearest summary of how the project changed, start with [`docs/before-vs-after.md`](docs/before-vs-after.md).
 
@@ -134,7 +139,7 @@ pip install reasoned-ops==1.4.0
 uvicorn reasoned_ops.api:app --reload
 ```
 
-Or from a repository checkout:
+Or from a repository checkout / v1.4.3 release candidate:
 
 ```bash
 python -m venv .venv
@@ -288,7 +293,9 @@ Evaluate
 known-effect recovery + measured-confounding adjustment + no-overlap refusal + interaction detection
 ```
 
-That public-artifact verification predates the post-v1.4.2 unmeasured-confounding benchmark now present on `main`. It establishes installability and execution of the published artifact; it does not establish independent scientific effectiveness, causal business impact, private-data approval, or production readiness.
+That public-artifact verification predates the unmeasured-confounding benchmark and audit corrections included in v1.4.3. It establishes installability and execution of the published artifact; it does not establish independent scientific effectiveness, causal business impact, private-data approval, or production readiness.
+
+The final close-out step is to publish `reasoned-ops==1.4.3` from the exact GitHub tag after Zenodo archives that same tag, then repeat the external install/version smoke check against the aligned artifact.
 
 See [`docs/publication-verification.md`](docs/publication-verification.md).
 
