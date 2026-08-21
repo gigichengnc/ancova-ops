@@ -41,7 +41,7 @@ The project was originally developed under the name **ANCOVA Ops**. It was renam
 | Validation | Hand-authored fixtures + deterministic synthetic known-truth scenarios |
 | Python distribution | Wheel + source distribution build and clean-wheel installation validated in CI |
 | PyPI status | **Published:** `reasoned-ops==1.4.0` via GitHub OIDC Trusted Publishing |
-| Zenodo archive | **Concept DOI:** `10.5281/zenodo.22044621` |
+| Zenodo archive | **v1.4.2 DOI:** `10.5281/zenodo.22044621` |
 | Public artifact verification | PyPI package installed outside the repository checkout; Operate → Audit → Evaluate paths exercised successfully |
 | Real-world performance claim | **Not made**; representative real-pilot evidence does not exist in this repository |
 | Development data boundary | Synthetic / hand-authored public development evidence only |
@@ -178,7 +178,6 @@ The important point is not only that a department is returned. The system also r
 ### 2. Audit — preserve what the machine and human each decided
 
 The machine recommendation is not final authority.
-
 A staff member can confirm or override the route. ReasonedOps preserves the original machine decision rather than replacing it.
 
 Conceptually:
