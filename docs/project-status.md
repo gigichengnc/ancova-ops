@@ -28,17 +28,17 @@ explicit hidden-confounding blind-spot benchmark
       ↓
 v1.4.3 exact-tag release
       ↓
-Zenodo v1.4.3 archive
+Zenodo v1.4.3 archive + verified DOI
       ↓
 PyPI 1.4.3 from the same tag
       ↓
-post-release DOI verification / sync
+fresh public-package verification
       ↓
 freeze v1
 ```
 
 **Research/portfolio project:** COMPLETED  
-**Release candidate:** v1.4.3 — AUDIT CLOSE-OUT  
+**GitHub release/tag:** v1.4.3 — PUBLISHED / VERIFIED  
 **Python distribution build:** VERIFIED IN CI  
 **Currently published PyPI artifact:** `reasoned-ops==1.4.0`  
 **Target aligned PyPI artifact:** `reasoned-ops==1.4.3` FROM EXACT `v1.4.3` TAG  
@@ -46,7 +46,8 @@ freeze v1
 **Zenodo GitHub integration:** ENABLED FOR `gigichengnc/reasoned-ops`  
 **Zenodo v1.4.1 DOI:** `10.5281/zenodo.22044222` — PUBLISHED  
 **Zenodo v1.4.2 DOI:** `10.5281/zenodo.22044621` — PUBLISHED  
-**Zenodo v1.4.3 DOI:** PENDING RELEASE INGESTION  
+**Zenodo v1.4.3 DOI:** `10.5281/zenodo.22046490` — PUBLISHED / VERIFIED  
+**Concept DOI:** NOT CLAIMED WITHOUT A DISTINCT VERIFIED `Cite all versions` IDENTIFIER  
 **Real private-data pilot:** NOT APPROVED  
 **Production deployment:** NOT APPROVED
 
@@ -70,6 +71,7 @@ freeze v1
 | Development-history record | Preserves the reconstructed early concept, before/after comparison, concept audit and model decisions for the same project. |
 | Python distribution | Builds wheel + source distribution and verifies clean-wheel installation in CI. |
 | PyPI publishing | Uses GitHub OIDC Trusted Publishing with no stored long-lived PyPI token. |
+| Citation/archive | GitHub `v1.4.3` is archived by Zenodo with verified version DOI `10.5281/zenodo.22046490`. |
 
 ## Validity boundary
 
@@ -147,9 +149,9 @@ Zenodo v1.4.3 archive
 PyPI reasoned-ops==1.4.3
 ```
 
-The v1.4.3 release-candidate `CITATION.cff` intentionally omits a top-level DOI until Zenodo has actually minted the v1.4.3 version DOI. The historical v1.4.2 DOI is not copied forward.
+The GitHub tag and Zenodo archive are now complete and verified. The exact v1.4.3 version DOI is `10.5281/zenodo.22046490`.
 
-After Zenodo ingestion, verify the v1.4.3 DOI and any all-versions concept DOI, then sync the verified identifiers to the default branch without creating a new software version.
+A post-release DOI-sync commit on `main` records that identifier in current citation metadata without changing the immutable `v1.4.3` tag. The remaining provenance step is to publish PyPI from the **existing tag**, not from the later DOI-sync commit.
 
 ## Evidence currently in the repository
 
@@ -184,7 +186,7 @@ Those claims require a separate real-data pilot, governance approval and a defen
 
 ## Next evidence gate
 
-After v1.4.3 publication alignment and DOI sync, v1 should remain frozen unless a new evidence need justifies reopening development.
+After PyPI 1.4.3 publication and fresh-environment verification, v1 should remain frozen unless a new evidence need justifies reopening development.
 
 If ReasonedOps is resumed for a real use case, the next substantive step is not another synthetic model. It is a controlled real-data evidence process with privacy/governance approval, representative cases, predefined evaluation questions and explicit stop criteria.
 
