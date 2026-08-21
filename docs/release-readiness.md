@@ -1,61 +1,29 @@
-# Release Readiness — ReasonedOps v1.1.0
+# Release Readiness — ReasonedOps v1.2.0
 
-ReasonedOps distinguishes four different meanings of "ready":
+ReasonedOps v1.2.0 is a **completed local research/software prototype**. That is different from being approved for a real private-data pilot or production deployment.
 
-1. **research-project ready** — the finite Operate → Audit → Evaluate prototype is complete, reproducible, and reviewable;
-2. **citation/archive ready** — machine-readable software metadata exists for GitHub/archive tooling;
-3. **pilot ready** — approved to process real private service data in a controlled study;
-4. **production ready** — approved to operate as a real service-routing system.
+## What is ready now
 
-The research project was completed at v1.0.0. v1.1.0 is a naming/package migration from **ReasonedOps** to **ReasonedOps** and does not increase the empirical evidence class.
+- [x] `reasoned_ops` is the single canonical Python package.
+- [x] the temporary `ancova_ops` compatibility package has been removed.
+- [x] public CLI commands use the `reasoned-` prefix.
+- [x] FastAPI routing can accept and persist a service request.
+- [x] human routing reviews can confirm or override a recommendation without erasing the original decision.
+- [x] outcomes are stored separately from routing decisions.
+- [x] management reports separate raw summaries from adjusted evidence.
+- [x] department × case-type overlap and identifiability are checked before adjusted ranking.
+- [x] unsupported comparisons can be withheld instead of converted into a league table.
+- [x] the applicability gate returns `use`, `caution`, `reject` or `recommend_alternative`.
+- [x] binary, censored/time-to-event, clustered, routing-policy and causal-intent questions can be redirected instead of being forced through ordinary ANCOVA/regression.
+- [x] known-effect recovery, measured-confounding adjustment, no-overlap refusal and slope-interaction behaviour are tested on synthetic scenarios.
+- [x] Python 3.11 and 3.12 CI covers lint, tests and the main CLI workflows.
+- [x] Apache-2.0 licensing and `CITATION.cff` are present.
 
-## Research-project readiness
+## What is not ready
 
-- [x] Operate → Audit → Evaluate architecture is explicit;
-- [x] explainable request routing is implemented;
-- [x] human confirmation/override does not erase original machine history;
-- [x] outcomes are stored separately from routing decisions;
-- [x] raw and adjusted outcome summaries are separated;
-- [x] department/case-type overlap and design identifiability are checked before adjusted ranking;
-- [x] unsupported comparisons can be withheld;
-- [x] known-effect recovery, measured-confounding adjustment, no-overlap refusal, and slope-interaction behaviour are tested on synthetic scenarios;
-- [x] method applicability returns `use`, `caution`, `reject`, or `recommend_alternative`;
-- [x] incompatible outcomes/questions are redirected instead of being forced through ANCOVA;
-- [x] management reports surface applicability and interpretation boundaries;
-- [x] the one-command showcase presents Operate → Audit → Evaluate;
-- [x] Python 3.11 and 3.12 CI coverage exists;
-- [x] synthetic/private-data governance boundary remains executable;
-- [x] adaptive-policy research remains separate from live routing;
-- [x] sequence/LSTM work remains deferred until justified;
-- [x] Apache-2.0 licensing and CFF citation metadata are present.
+### Real private-data pilot
 
-## v1.1 naming/package readiness
-
-- [x] canonical project name: `ReasonedOps`;
-- [x] repository: `gigichengnc/reasoned-ops`;
-- [x] distribution: `reasoned-ops`;
-- [x] canonical package: `reasoned_ops`;
-- [x] public CLI prefix: `reasoned-`;
-- [x] README and `CITATION.cff` use ReasonedOps;
-- [x] package URLs point to the renamed repository;
-- [x] CI smoke commands use the new CLI surface;
-- [x] legacy `reasoned_ops` namespace is explicitly treated as temporary compatibility, not the canonical API;
-- [x] historical changelog entries preserve the former name intentionally.
-
-## Citation/archive readiness
-
-Repository-side citation readiness is complete. External publication steps remain optional:
-
-- [ ] connect the repository owner account to Zenodo;
-- [ ] archive a release and verify the DOI;
-- [ ] add the verified DOI back to `CITATION.cff`;
-- [ ] optionally add PyPI trusted publishing after package-build/distribution checks exist.
-
-A DOI or PyPI package would improve distribution/citation, not empirical validation.
-
-## Pilot readiness
-
-A real private-data pilot still requires, at minimum:
+A real pilot still requires, at minimum:
 
 - jurisdiction-specific privacy/legal review;
 - documented purpose and data-use basis;
@@ -72,22 +40,33 @@ A real private-data pilot still requires, at minimum:
 
 **Pilot status: NOT READY / NOT APPROVED.**
 
-## Production readiness
+### Production deployment
 
-Production additionally requires representative real-data validation, deployment architecture, authenticated APIs, observability, backups/recovery, security testing, change control, rollback/fallback procedures, and operational acceptance criteria.
+Production additionally requires representative real-data validation, deployment architecture, authenticated APIs, observability, backups/recovery, security testing, change control, rollback/fallback procedures and operational acceptance criteria.
 
 **Production status: NOT READY / NOT APPROVED.**
 
-## Claims allowed at v1.1.0
+## Claims supported by the current repository
 
-Acceptable:
+Reasonable:
 
-> ReasonedOps is a completed evidence-aware service-operations research prototype built around Operate → Audit → Evaluate. It supports explainable routing, auditable human review, guarded outcome evaluation, and explicit refusal or redirection when a comparison/method is not supportable.
+> ReasonedOps is a runnable evidence-aware service-operations research prototype. It can route requests, preserve machine and human decision history, record outcomes, and refuse or redirect unsupported analytical comparisons.
 
-Not acceptable without new evidence:
+Not supported without new evidence:
 
-> ReasonedOps improves real service resolution time, routing accuracy, satisfaction, or staff performance.
+> ReasonedOps improves real service performance.
 
-> ANCOVA proves a department performs better.
+> ANCOVA proves that one department performs better than another.
 
-> Green CI, Apache-2.0 licensing, or a future DOI makes the software pilot- or production-ready.
+> Passing CI means the software is safe for real private data or production deployment.
+
+## Citation/archive status
+
+Repository-side citation metadata is ready. External publication remains optional:
+
+- [ ] connect the repository owner account to Zenodo;
+- [ ] archive a release and verify the DOI;
+- [ ] add the verified DOI back to `CITATION.cff`;
+- [ ] optionally add PyPI trusted publishing after package-build/distribution checks exist.
+
+A DOI or package publication improves distribution and citation. It does not create real-world validation.
