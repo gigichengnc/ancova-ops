@@ -108,10 +108,12 @@ jobs:
         shell: bash
         run: |
           /tmp/reasoned-wheel-venv/bin/python - <<'PY'
+          from importlib.metadata import version
+
           import reasoned_ops
           from reasoned_ops import ServiceCase, baseline_route
 
-          assert reasoned_ops.__version__ == "1.4.0"
+          assert reasoned_ops.__version__ == version("reasoned-ops")
           decision = baseline_route(
               ServiceCase(
                   case_id="wheel-smoke",
