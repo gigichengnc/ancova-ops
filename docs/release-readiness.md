@@ -1,6 +1,6 @@
-# Release Readiness — ReasonedOps v1.4.0
+# Release Readiness — ReasonedOps v1.4.1
 
-ReasonedOps v1.4.0 is a **completed local research/software prototype and portfolio rebuild case study** with a validated and publicly published Python distribution. That is different from being approved for a real private-data pilot or production deployment.
+ReasonedOps v1.4.1 is a **completed local research/software prototype and portfolio rebuild case study** with a validated, publicly published Python distribution and a post-enablement Zenodo archive checkpoint. That is different from being approved for a real private-data pilot or production deployment.
 
 ## What is ready now
 
@@ -20,6 +20,8 @@ ReasonedOps v1.4.0 is a **completed local research/software prototype and portfo
 - [x] `reasoned-ops==1.4.0` is published on PyPI through GitHub OIDC Trusted Publishing.
 - [x] the public PyPI artifact has been installed and exercised outside the repository checkout.
 - [x] Apache-2.0 licensing and `CITATION.cff` are present.
+- [x] `CITATION.cff` is aligned to the v1.4.1 archive checkpoint.
+- [x] the GitHub repository is enabled for Zenodo release archiving.
 - [x] the original Hackathon concept is reconstructed separately under `original/`.
 - [x] a before/after comparison explains how and why the project changed.
 - [x] the original concept audit distinguishes useful ideas from corrected or unsupported assumptions.
@@ -42,6 +44,8 @@ runnable current implementation
       ↓
 public package verification
       ↓
+citation/archive checkpoint
+      ↓
 evidence boundary
       ↓
 next real evidence gate
@@ -51,7 +55,7 @@ This structure makes the project learning history visible instead of presenting 
 
 ## Python distribution and PyPI status
 
-The v1.4.0 distribution path is intentionally separate from the ordinary editable development install.
+The distribution path is intentionally separate from the ordinary editable development install.
 
 CI verifies:
 
@@ -88,11 +92,38 @@ known-truth validity benchmark
 
 **PyPI code/workflow readiness: COMPLETE.**  
 **PyPI publication: COMPLETE for v1.4.0.**  
-**Public artifact install/execution check: COMPLETE.**
+**Public artifact install/execution check: COMPLETE.**  
+**PyPI v1.4.1 publication: NOT CLAIMED; v1.4.1 is an archive/citation checkpoint unless separately published.**
 
 See `docs/pypi.md` for reuse and publishing details and `docs/publication-verification.md` for the verification record.
 
 The verification demonstrates package distribution and executable local behaviour. It is not independent scientific validation.
+
+## Zenodo archive readiness
+
+The repository owner has connected GitHub to Zenodo and enabled `gigichengnc/reasoned-ops` for automatic preservation of new GitHub releases.
+
+v1.4.1 is intentionally created **after** that enablement so Zenodo can ingest a new release rather than relying on retroactive capture of v1.4.0.
+
+The archive sequence is:
+
+```text
+Zenodo GitHub integration enabled
+      ↓
+GitHub Release v1.4.1 after successful main CI
+      ↓
+Zenodo ingestion
+      ↓
+verify creator/title/version/license
+      ↓
+verify minted DOI
+      ↓
+add the verified DOI back to repository citation metadata
+```
+
+**Zenodo integration: ENABLED.**  
+**Post-enablement release: PENDING UNTIL v1.4.1 IS CREATED.**  
+**DOI: PENDING UNTIL ZENODO INGESTION IS VERIFIED.**
 
 ## What is not ready
 
@@ -131,25 +162,28 @@ Reasonable:
 
 > ReasonedOps is publicly distributed on PyPI as `reasoned-ops==1.4.0`; the released artifact has been installed and its local Operate → Audit → Evaluate workflow exercised outside the repository checkout.
 
+> The v1.4.1 checkpoint is prepared for post-enablement Zenodo release archiving with aligned citation metadata.
+
 Not supported without new evidence:
 
 > ReasonedOps improves real service performance.
 
 > ANCOVA proves that one department performs better than another.
 
-> Passing CI or publishing to PyPI means the software is safe for real private data or production deployment.
+> Passing CI, publishing to PyPI, or receiving a DOI means the software is safe for real private data or production deployment.
 
 ## Citation/archive and package-index status
 
-Package-index publication is complete for v1.4.0. Repository-side citation metadata is ready; archival publication remains separate:
+Package-index publication is complete for v1.4.0. Zenodo integration is enabled and v1.4.1 is the archive checkpoint:
 
 - [x] register the `reasoned-ops` PyPI Trusted Publisher;
 - [x] publish `reasoned-ops==1.4.0` through the trusted workflow;
 - [x] verify the public package in an environment outside the repository checkout;
-- [ ] connect the repository owner account to Zenodo;
-- [ ] enable `reasoned-ops` for GitHub release archiving;
-- [ ] create a new post-enablement release for Zenodo ingestion;
-- [ ] verify the Zenodo DOI;
+- [x] connect the repository owner account to Zenodo;
+- [x] enable `reasoned-ops` for GitHub release archiving;
+- [ ] create GitHub Release v1.4.1 after successful main CI;
+- [ ] verify that Zenodo ingests v1.4.1;
+- [ ] verify the Zenodo DOI and archived metadata;
 - [ ] add the verified DOI back to `CITATION.cff`.
 
 A DOI or PyPI publication improves distribution and citation. It does not create real-world validation.
