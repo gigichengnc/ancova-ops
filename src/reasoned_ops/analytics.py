@@ -253,12 +253,13 @@ def heteroskedasticity_diagnostics(result: AncovaResult) -> dict[str, float]:
 
 
 def multicollinearity_diagnostics(result: AncovaResult) -> dict[str, float]:
-    exog = np.asarray(result.model.model.exog, dtype=float)
-    names = list(result.model.model.exog_names)
+    """Compute VIF for declared numeric covariates, excluding categorical dummy columns."""
+
+    frame = result.model.model.data.frame
+    numeric = frame.loc[:, list(COVARIATES)].astype(float)
+    exog = np.asarray(sm.add_constant(numeric, has_constant="add"), dtype=float)
     values: dict[str, float] = {}
-    for index, name in enumerate(names):
-        if name.lower() == "intercept":
-            continue
+    for index, name in enumerate(COVARIATES, start=1):
         try:
             vif = float(variance_inflation_factor(exog, index))
         except (FloatingPointError, ValueError, np.linalg.LinAlgError):
@@ -476,8 +477,9 @@ def _analysis_warnings(
     max_vif = max(finite_vifs, default=0.0)
     if any(not isfinite(value) for value in vif.values()) or max_vif > 5.0:
         warnings.append(
-            "High multicollinearity is present in the fitted design matrix; coefficient-level "
-            "interpretation may be unstable. Review redundant predictors or re-specify the model."
+            "High multicollinearity is present among the declared numeric covariates; "
+            "coefficient-level interpretation may be unstable. Review redundant numeric "
+            "predictors or re-specify the model."
         )
 
     if residuals["jarque_bera_pvalue"] < alpha:
