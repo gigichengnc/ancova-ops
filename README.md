@@ -5,100 +5,40 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue.svg)](pyproject.toml)
 
-**Evidence-aware service operations: Operate → Audit → Evaluate.**
+**A runnable service-operations prototype that follows a case from request → routing → human review → outcome → evidence check.**
 
-ReasonedOps is a runnable research/software prototype that turns unstructured service requests into explainable operational recommendations, preserves human and machine decision history, records outcomes, and checks whether management conclusions are actually supported by the available data.
+ReasonedOps does three practical things:
+
+1. **Operate:** read a service request and recommend where it should go, with reasons.
+2. **Audit:** keep the original request, machine recommendation, human override and final outcome as separate records.
+3. **Evaluate:** later check whether a management claim such as “Team A is slower” or “the new routing policy improved performance” is actually supported by comparable data.
 
 > **It is not designed to make management decisions. It is designed to make unsupported management conclusions harder to reach.**
 
-The project originated from my participation in the **HKMU Hackathon 2026** and was originally developed under the name **ANCOVA Ops**. It was renamed **ReasonedOps** in v1.1.0 because ANCOVA/regression is only one method inside the Evaluate layer, not the product itself.
+## What does that look like in practice?
 
-Property management is the first use case, not the product boundary.
-
-## Is it actually runnable?
-
-**Yes — as a local research prototype.** The repository contains executable Python code, a FastAPI service, local SQLite persistence, tests, command-line workflows, and a one-command end-to-end showcase. CI runs the project on Python 3.11 and 3.12.
-
-| What you can run now | Status | What happens |
-| --- | --- | --- |
-| Service-request routing API | ✅ Working prototype | Accepts a request and returns issue signals, recommended department, priority, review flag and reasons. |
-| Audit trail | ✅ Working prototype | Stores the original case, machine routing decision, human review/override and observed outcome as separate records. |
-| Human override | ✅ Working prototype | A reviewer can confirm or override routing without deleting the original machine decision. |
-| Outcome capture | ✅ Working prototype | Records response/resolution time, reassignment, escalation and satisfaction fields. |
-| Management outcome report | ✅ Working prototype | Produces raw and adjusted summaries, diagnostics, applicability status and explicit interpretation limits. |
-| Validity/applicability checks | ✅ Working prototype | Can return `use`, `caution`, `reject`, or `recommend_alternative`, including refusing unsupported department comparisons. |
-| Synthetic benchmarks | ✅ Working prototype | Runs deterministic routing, validity, policy and longitudinal research workflows. |
-| Real private-data deployment | ❌ Not approved | Requires separate privacy, security, governance and real-data validation work. |
-| Production system | ❌ Not claimed | This repository is a research/portfolio prototype, not an enterprise deployment. |
-
-### 60-second proof
-
-After cloning the repository:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -e ".[dev]"
-pytest
-reasoned-showcase
-```
-
-`reasoned-showcase` executes the existing development workflows and writes a reviewer-facing report to:
+Imagine a resident submits this request:
 
 ```text
-.reasoned_ops/showcase/showcase.md
+The air conditioner is leaking again. This is the third time and the wet floor could be dangerous.
 ```
 
-The report shows, in one run:
+### 1. ReasonedOps routes the case
 
-```text
-Operate   → request understanding + explainable routing
-Audit     → decision-history and governance boundary
-Evaluate  → comparison support + method applicability + guarded outcome analysis
-```
-
-For structured output too:
-
-```bash
-reasoned-showcase \
-  --output .reasoned_ops/showcase/showcase.md \
-  --json-output .reasoned_ops/showcase/showcase.json
-```
-
-### Try the API directly
-
-Start the local service:
-
-```bash
-uvicorn reasoned_ops.api:app --reload
-```
-
-Check that it is alive:
-
-```bash
-curl http://127.0.0.1:8000/health
-```
-
-Expected response:
-
-```json
-{"status":"ok"}
-```
-
-Send a service request:
+Send the request to the local API:
 
 ```bash
 curl -X POST http://127.0.0.1:8000/v1/route \
   -H "Content-Type: application/json" \
   -d '{
     "case_id": "demo-001",
-    "message": "The air conditioner is leaking again and the wet floor could be dangerous.",
+    "message": "The air conditioner is leaking again. This is the third time and the wet floor could be dangerous.",
     "previous_related_cases": 2,
     "vulnerability_flag": false
   }'
 ```
 
-The API returns structured JSON containing fields such as:
+The response contains operational fields such as:
 
 ```text
 issue_category
@@ -113,138 +53,143 @@ intelligence_version
 router_version
 ```
 
-The routed case and decision are also persisted locally so later review and outcome records can be attached to the same case.
+So the software does not only return a department name. It also records **why** the route was recommended and which logic/version produced it.
 
-## Operate → Audit → Evaluate
+### 2. A human can confirm or override it
 
-| Layer | What ReasonedOps does |
-| --- | --- |
-| **Operate** | Structure service requests, extract transparent operational signals, and recommend an explainable route. |
-| **Audit** | Preserve the original request, machine/rule decision, human confirmation or override, implementation version, and observed outcome. |
-| **Evaluate** | Ask whether a comparison is supportable, choose or recommend an analysis family, separate raw from adjusted evidence, surface uncertainty, and withhold unsupported conclusions. |
+The machine recommendation is not final authority.
 
-```text
-Service request
-      |
-      v
-Request intelligence
-      |
-      v
-Explainable routing recommendation
-      |
-      +--> Human confirmation / override
-      |
-      v
-Observed outcome
-      |
-      v
-Auditable decision history
-      |
-      v
-Descriptive summaries
-      |
-      v
-Comparison support / identifiability
-      |
-      v
-Evaluation applicability gate
-      |
-      +--> USE
-      +--> CAUTION
-      +--> REJECT
-      +--> RECOMMEND_ALTERNATIVE
-```
+A staff member can confirm it or submit a different final route through the routing-review endpoint. The original machine recommendation is still kept.
 
-## What makes the Evaluate layer different?
-
-ReasonedOps does not assume that every KPI comparison is meaningful.
-
-For the current continuous resolution-time development example, it can model:
+The stored history therefore looks conceptually like this:
 
 ```text
-resolution_hours
-~ C(department)
-+ C(issue_category)
-+ urgency
-+ frustration
-+ complexity
-+ previous_related_cases
+Original request
+      ↓
+Machine recommendation
+      ↓
+Human confirmation / override
+      ↓
+Effective route
 ```
 
-Before adjusted department estimates are reported, the system checks whether department and case type can actually be separated from the observed routing design.
-
-Possible support states are:
+This matters when someone later asks:
 
 ```text
-supported
-weak_overlap
-not_identifiable
+Why was this case sent there?
+Did the staff member change the recommendation?
+Which system version made the original recommendation?
 ```
 
-If the design is `not_identifiable`:
+### 3. The outcome is recorded separately
 
-```text
-adjusted department estimates = withheld
-ANOVA department results      = withheld
-management ranking            = blocked
-```
-
-The separate applicability gate then asks whether the declared question should use the current regression/ANCOVA-style method at all.
+When the case is completed, an outcome can be attached:
 
 ```bash
-reasoned-applicability \
-  --outcome-type continuous \
-  --comparison department_outcome \
-  --overlap-status supported \
-  --json
+curl -X PUT http://127.0.0.1:8000/v1/cases/demo-001/outcome \
+  -H "Content-Type: application/json" \
+  -d '{
+    "response_time_minutes": 20,
+    "resolution_time_minutes": 180,
+    "reassigned": false,
+    "escalated": false,
+    "satisfaction": 8
+  }'
 ```
 
-It returns one of:
+ReasonedOps keeps that outcome separate from the routing decision instead of rewriting history after the result is known.
 
-| Disposition | Meaning |
-| --- | --- |
-| `use` | The declared method family is plausible, subject to diagnostics and interpretation limits. |
-| `caution` | The method may be usable, but support or assumptions need attention. |
-| `reject` | The requested adjusted comparison is not supported by the declared design. |
-| `recommend_alternative` | The question should use a different analysis family. |
+### 4. Later, management asks a question
 
-Examples include redirecting binary outcomes toward logistic-type analysis, censored time-to-event questions toward survival analysis, repeated observations toward clustered/hierarchical methods, and routing-policy counterfactuals toward offline policy evaluation.
+For example:
 
-ANCOVA/regression is therefore **one method inside Evaluate**, not the product itself.
+```text
+“Maintenance takes 18 hours on average while Security takes 7.
+Is Maintenance performing worse?”
+```
 
-## Main runnable interfaces
+A normal dashboard might immediately rank Maintenance below Security.
+
+ReasonedOps first checks whether the comparison is meaningful.
+
+If Maintenance mostly receives complex repair cases while Security receives simpler complaints, the two groups may not have enough comparable cases. In that situation ReasonedOps can return:
+
+```text
+REJECT
+Do not produce an adjusted department ranking from this design.
+```
+
+If there is enough overlap between comparable cases, the evaluation workflow can continue with case-mix adjustment, diagnostics and uncertainty reporting.
+
+That is the core idea of the project: **do the operational work, preserve the evidence trail, then check whether the data really supports the conclusion.**
+
+---
+
+## Run it locally
+
+### Install
 
 ```bash
-# End-to-end reviewer demo
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -e ".[dev]"
+pytest
+```
+
+### Start the API
+
+```bash
+uvicorn reasoned_ops.api:app --reload
+```
+
+Health check:
+
+```bash
+curl http://127.0.0.1:8000/health
+```
+
+Expected response:
+
+```json
+{"status":"ok"}
+```
+
+### Generate the one-command showcase
+
+```bash
 reasoned-showcase
-
-# Routing development benchmark
-reasoned-evaluate
-
-# Known-truth synthetic validity benchmark
-reasoned-validity
-
-# Evaluation-method gate
-reasoned-applicability --json
-
-# Outcome analysis and management report
-reasoned-analyze
-reasoned-management-report
-
-# Governance checks
-reasoned-governance-check --json
-
-# Offline routing-policy research
-reasoned-policy evaluate
-
-# Longitudinal benchmark
-reasoned-longitudinal --json
 ```
 
-FastAPI endpoints:
+It writes:
 
 ```text
-GET  /health
+.reasoned_ops/showcase/showcase.md
+```
+
+The showcase runs the existing development workflows and summarises the current routing, audit, evaluation, policy-research, longitudinal and governance evidence in one file.
+
+---
+
+## What works now?
+
+| Capability | What it actually does | Status |
+| --- | --- | --- |
+| Request routing API | Turns a text request into operational signals and an explainable route recommendation | Working local prototype |
+| Human routing review | Confirms or overrides a recommendation without deleting the original decision | Working local prototype |
+| Audit history | Stores request, routing decisions, reviews, versions and outcome records separately | Working local prototype |
+| Outcome capture | Stores response time, resolution time, reassignment, escalation and satisfaction | Working local prototype |
+| Management report | Separates raw summaries from adjusted estimates and shows interpretation warnings | Working local prototype |
+| Comparison-support check | Detects weak/no department × case-type overlap and can withhold a ranking | Working local prototype |
+| Method applicability | Returns `use`, `caution`, `reject` or `recommend_alternative` | Working local prototype |
+| Routing benchmark | Runs a small hand-authored development fixture | Working development benchmark |
+| Policy evaluation | Runs offline evaluation on synthetic logged-policy data | Research workflow |
+| Longitudinal benchmark | Tests recurrence/time-to-next-case models on synthetic histories | Research workflow |
+| Real private-data operation | Process real resident/customer records | **Not approved** |
+| Production deployment | Enterprise authentication, security, monitoring and live operations | **Not claimed** |
+
+## Main API endpoints
+
+```text
 POST /v1/route
 GET  /v1/cases/{case_id}
 GET  /v1/cases/{case_id}/routing-decisions
@@ -253,66 +198,67 @@ GET  /v1/cases/{case_id}/routing-reviews
 PUT  /v1/cases/{case_id}/outcome
 ```
 
-## Evidence and deployment boundary
+## Main commands
 
-The repository is deliberately synthetic-first. Current quantitative results come from synthetic data or a small hand-authored fixture unless explicitly stated otherwise.
+```bash
+reasoned-showcase
+reasoned-evaluate
+reasoned-validity
+reasoned-applicability --json
+reasoned-analyze
+reasoned-management-report
+reasoned-policy evaluate
+reasoned-longitudinal
+reasoned-governance-check
+```
 
-Do **not** report current outputs as:
+## Where does ANCOVA fit?
 
-- real service improvements;
-- causal department or staff effects;
+ANCOVA is **one evaluation method**, not the product.
+
+For the current continuous resolution-time example, the evaluation model can adjust for measured case mix such as issue category, urgency, frustration, complexity and previous related cases. Before doing that comparison, ReasonedOps checks whether departments and case types can actually be separated from the observed data.
+
+If the question should use another method family, the applicability gate redirects it instead of forcing ANCOVA onto the problem. Examples include binary outcomes, censored time-to-event outcomes, repeated/clustered observations, routing-policy counterfactuals and causal questions.
+
+See [`docs/statistical-methodology.md`](docs/statistical-methodology.md) and [`docs/evaluation-applicability.md`](docs/evaluation-applicability.md) for the technical details.
+
+## Repository structure
+
+```text
+src/reasoned_ops/     application and research code
+tests/                regression and workflow tests
+data/evaluation/      small hand-authored development fixture
+config/               machine-readable development governance policy
+docs/                 architecture, methodology and research notes
+```
+
+There is no separate legacy application package in the v1.2 codebase; `reasoned_ops` is the single canonical Python namespace.
+
+## Project origin
+
+The project originated from my participation in the **HKMU Hackathon 2026** and was originally developed under the name **ANCOVA Ops**. It was renamed **ReasonedOps** in v1.1.0 because ANCOVA/regression is only one method inside the Evaluate layer, not the product itself.
+
+Property management remains the first worked use case, not the product boundary.
+
+## Evidence boundary
+
+The repository currently uses synthetic data and a small hand-authored routing fixture for quantitative development evidence.
+
+Current outputs should **not** be presented as proof of:
+
+- real service improvement;
+- causal department or staff performance;
 - production routing accuracy;
 - validated psychological measurement;
-- evidence that a routing policy should be deployed;
-- evidence that private resident/customer histories are safe to process.
+- real-world return on investment;
+- approval to process private resident/customer histories.
 
-A real-data pilot remains blocked until privacy/legal review, access control, retention/deletion, identity linkage, incident handling and real-data quality protocols are approved.
+A real pilot would require separate privacy/legal review, access control, retention/deletion design, secure storage, real-data quality checks and a defensible evaluation plan.
 
-This distinction is intentional:
-
-```text
-Working local research prototype   ✅
-Real private-data pilot            ❌ not approved
-Production deployment              ❌ not approved
-```
-
-## Rename and compatibility
-
-**ReasonedOps** is the canonical project name from v1.1.0 onward.
-
-```text
-Repository:          gigichengnc/reasoned-ops
-Distribution:        reasoned-ops
-Python package:      reasoned_ops
-CLI prefix:          reasoned-
-```
-
-The `ancova_ops` namespace is retained temporarily as a compatibility surface for historical development references. New code and documentation should use `reasoned_ops` and `reasoned-*` commands.
-
-Historical release notes before v1.1.0 intentionally retain the former name **ANCOVA Ops**.
-
-## Project principles
-
-- **Operate, Audit, Evaluate:** operational support and evidence review are separate responsibilities.
-- **Human-in-the-loop:** recommendations support staff rather than silently replacing them.
-- **Evidence before claims:** synthetic and hand-authored results are labelled as such.
-- **Refuse unsupported comparisons:** a missing identification basis is a result, not something to hide.
-- **Method follows the question:** ANCOVA is one tool, not a mandatory product feature.
-- **Interpretable first:** transparent baselines precede complex ML.
-- **Auditability:** original decisions, human reviews, versions, and outcomes remain separable.
-- **Non-causal reporting:** adjusted associations are not presented as causal rankings.
-
-## License, citation and deeper documentation
+## License and citation
 
 ReasonedOps is licensed under the **Apache License 2.0**. See [`LICENSE`](LICENSE).
 
-Software citation metadata is stored in [`CITATION.cff`](CITATION.cff). A DOI is not claimed until a real archival record is verified.
+Software citation metadata is in [`CITATION.cff`](CITATION.cff). No DOI is claimed until an archival record is independently verified.
 
-For deeper detail, see:
-
-- [`docs/project-status.md`](docs/project-status.md)
-- [`docs/release-readiness.md`](docs/release-readiness.md)
-- [`docs/statistical-methodology.md`](docs/statistical-methodology.md)
-- [`docs/evaluation-applicability.md`](docs/evaluation-applicability.md)
-- [`docs/portfolio-showcase.md`](docs/portfolio-showcase.md)
-- [`CHANGELOG.md`](CHANGELOG.md)
+For deeper technical material, see [`docs/architecture.md`](docs/architecture.md), [`docs/data-model.md`](docs/data-model.md), [`docs/project-status.md`](docs/project-status.md), [`docs/release-readiness.md`](docs/release-readiness.md), and [`CHANGELOG.md`](CHANGELOG.md).
