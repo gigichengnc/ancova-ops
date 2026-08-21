@@ -6,7 +6,7 @@ ReasonedOps separates operational decision support from downstream evaluation. T
 
 ANCOVA is an **outcome-analysis layer**, not a per-message scoring algorithm.
 
-## v0.5.0 system map
+## Current system map
 
 ```text
 Service request
@@ -150,8 +150,8 @@ Longitudinal research asks:    "Can recurrence/timing be predicted without avoid
 Governance answers:            "Which data/use/deployment steps are currently permitted?"
 ```
 
-## v0.5.0 deployment boundary
+## Deployment boundary
 
-The architecture is runnable as a development prototype but is not approved for private-data pilot or production deployment. Production authentication/RBAC, secrets management, real-data validation, monitoring, incident response and policy-to-route integration remain future work.
+The architecture is runnable as a local research/development prototype but is not approved for private-data pilot or production deployment. Production authentication/RBAC, secrets management, real-data validation, monitoring, incident response and policy-to-route integration remain future work.
 
-See `docs/project-status.md` and `docs/release-readiness.md` for the checkpoint boundary.
+See `docs/project-status.md` and `docs/release-readiness.md` for the current boundary.
