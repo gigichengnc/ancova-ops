@@ -10,6 +10,7 @@ date-released: 2026-08-21
 license: Apache-2.0
 repository-code: "https://github.com/gigichengnc/reasoned-ops"
 url: "https://github.com/gigichengnc/reasoned-ops"
+doi: "10.5281/zenodo.22046490"
 abstract: >-
   ReasonedOps originated from the author's participation in HKMU Hackathon 2026 and
   evolved into an evidence-aware service-operations research/software prototype organised
