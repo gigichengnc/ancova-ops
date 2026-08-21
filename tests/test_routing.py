@@ -1,3 +1,6 @@
+import pytest
+
+from reasoned_ops.intelligence import BaselineRequestIntelligence
 from reasoned_ops.models import ServiceCase
 from reasoned_ops.routing import baseline_route
 
@@ -38,3 +41,47 @@ def test_low_context_payment_question_stays_normal_priority() -> None:
     assert decision.department == "accounts"
     assert decision.priority == "normal"
     assert decision.requires_human_review is False
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "The kitchen is on fire.",
+        "There is smoke in the corridor.",
+        "There is a gas leak near the lift.",
+    ],
+)
+def test_emergency_requests_use_dedicated_human_triage_path(message: str) -> None:
+    intelligence = BaselineRequestIntelligence()
+    features = intelligence.analyze(message)
+    case = ServiceCase(
+        case_id="emergency-case",
+        message=message,
+        issue_category=features.issue_category,
+        urgency=features.urgency,
+        frustration=features.frustration,
+        complexity=features.complexity,
+    )
+
+    decision = baseline_route(case)
+
+    assert decision.department == "emergency_response"
+    assert decision.priority == "critical"
+    assert decision.requires_human_review is True
+    assert decision.secondary_notify == "community_management"
+    assert any("immediate human triage" in reason for reason in decision.reasons)
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "I need the current status of my request.",
+        "I have feedback on the lobby renovation.",
+    ],
+)
+def test_unrelated_substrings_do_not_trigger_specialist_fallback_routes(message: str) -> None:
+    case = ServiceCase(case_id="negative-control", message=message)
+
+    decision = baseline_route(case)
+
+    assert decision.department == "community_management"
