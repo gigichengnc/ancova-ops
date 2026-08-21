@@ -35,6 +35,8 @@ The project was originally developed under the name **ANCOVA Ops**. It was renam
 | Other research | Offline adaptive-policy evaluation + leakage-aware longitudinal benchmark |
 | Model escalation | LSTM / sequence modelling deferred until it can beat simpler baselines on the same benchmark |
 | Validation | Hand-authored fixtures + deterministic synthetic known-truth scenarios |
+| Python distribution | Wheel + source distribution build and clean-wheel installation validated in CI |
+| PyPI status | Trusted Publishing workflow ready; first account-side publisher registration/upload still pending |
 | Real-world performance claim | **Not made**; representative real-pilot evidence does not exist in this repository |
 | Development data boundary | Synthetic / hand-authored public development evidence only |
 | Production status | **Not approved** |
@@ -115,7 +117,7 @@ The air conditioner is leaking again. This is the third time and the wet floor c
 
 ### 1. Operate — structure and route the request
 
-Start the API:
+Start the API from a repository checkout:
 
 ```bash
 python -m venv .venv
@@ -238,6 +240,46 @@ The generated report walks through one service request and then shows how the la
 
 The results are synthetic / hand-authored development evidence, not production performance estimates.
 
+## Reuse it from another Python project
+
+v1.4.0 adds a normal Python distribution path so another project can depend on ReasonedOps instead of copying source files.
+
+Once the first PyPI upload is verified, the intended install is:
+
+```bash
+pip install reasoned-ops
+```
+
+and the public Python surface starts with:
+
+```python
+from reasoned_ops import ServiceCase, baseline_route
+
+case = ServiceCase(
+    case_id="example-001",
+    message="The air conditioner is leaking again.",
+    previous_related_cases=2,
+)
+
+decision = baseline_route(case)
+print(decision.department)
+print(decision.reasons)
+```
+
+Until the first PyPI upload is confirmed, a released Git tag can still be installed directly from GitHub:
+
+```bash
+pip install "reasoned-ops @ git+https://github.com/gigichengnc/reasoned-ops.git@v1.4.0"
+```
+
+For reusable project dependencies, prefer an explicit compatible version range such as:
+
+```text
+reasoned-ops>=1.4,<2
+```
+
+See [`docs/pypi.md`](docs/pypi.md) for distribution verification and Trusted Publishing setup.
+
 ## Method and model decisions
 
 The project deliberately records several decisions **not** to escalate complexity or claims.
@@ -324,7 +366,7 @@ The longitudinal benchmark compares simpler recurrence/time approaches under lea
 
 The GitHub Actions CI matrix runs on Python **3.11** and **3.12** and checks:
 
-- package installation;
+- editable package installation;
 - Ruff linting;
 - unit/regression tests;
 - routing evaluation;
@@ -336,6 +378,15 @@ The GitHub Actions CI matrix runs on Python **3.11** and **3.12** and checks:
 - management report;
 - portfolio showcase;
 - data-governance policy.
+
+A separate distribution job also checks:
+
+- `python -m build`;
+- one wheel + one source distribution;
+- installation of the built wheel into a clean virtual environment;
+- import/version consistency from that installed wheel;
+- a routing smoke check;
+- an installed CLI entry point.
 
 Main command-line entry points are:
 
@@ -360,9 +411,10 @@ reasoned-governance-check
 ├── data/
 │   └── evaluation/            # hand-authored public development fixture
 ├── config/                    # machine-readable data-governance boundary
-├── docs/                      # audits, comparisons, methodology and decisions
+├── docs/                      # audits, comparisons, methodology, decisions, publishing guides
 ├── tests/                     # unit / regression tests
-└── .github/workflows/         # CI + release checkpoint workflow
+├── PYPI.md                    # package-index description
+└── .github/workflows/         # CI, GitHub release and PyPI publishing workflows
 ```
 
 The repository intentionally keeps **historical project lineage** separate from the current implementation.
@@ -380,6 +432,7 @@ Start here:
 - [`docs/evaluation-applicability.md`](docs/evaluation-applicability.md) — `use` / `caution` / `reject` / alternative-method gate;
 - [`docs/management-report.md`](docs/management-report.md) — management-facing evidence report;
 - [`docs/data-governance.md`](docs/data-governance.md) — development data/privacy boundary;
+- [`docs/pypi.md`](docs/pypi.md) — package reuse and Trusted Publishing procedure;
 - [`docs/project-status.md`](docs/project-status.md) — current completion and deployment status.
 
 ## Current limitations
