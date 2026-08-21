@@ -76,7 +76,16 @@ def test_heteroskedasticity_screen_detects_known_variance_pattern() -> None:
     assert diagnostics["breusch_pagan_f_pvalue"] < 0.01
 
 
-def test_vif_detects_known_collinearity() -> None:
+def test_vif_only_reports_declared_numeric_covariates() -> None:
+    data = generate_outcomes(n=240, seed=29)
+
+    diagnostics = multicollinearity_diagnostics(fit_ancova(data))
+
+    assert set(diagnostics) == set(COVARIATES)
+    assert all(not name.startswith("C(") for name in diagnostics)
+
+
+def test_vif_detects_known_numeric_collinearity() -> None:
     data = generate_outcomes(n=240, seed=29)
     data["complexity"] = data["urgency"]
 
