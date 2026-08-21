@@ -57,6 +57,24 @@ def test_rebuild_story_files_are_present() -> None:
         assert path.exists(), f"missing rebuild-story file: {path.relative_to(PROJECT_ROOT)}"
 
 
+def test_current_docs_do_not_reintroduce_rename_contradictions() -> None:
+    contradiction_phrases = {
+        "formerly called **ReasonedOps**",
+        "formerly called ReasonedOps",
+        "ReasonedOps is the renamed continuation of the completed v1 research/portfolio prototype formerly called **ReasonedOps**",
+        "Treat `reasoned_ops` as temporary legacy compatibility only",
+        "legacy `reasoned_ops` namespace",
+    }
+
+    paths = [PROJECT_ROOT / "README.md", PROJECT_ROOT / "AGENTS.md"]
+    paths.extend((PROJECT_ROOT / "docs").glob("*.md"))
+
+    for path in paths:
+        text = path.read_text(encoding="utf-8")
+        for phrase in contradiction_phrases:
+            assert phrase not in text, f"rename contradiction in {path.relative_to(PROJECT_ROOT)}"
+
+
 def test_apache_license_metadata_and_file_are_present() -> None:
     project = _project_metadata()
     license_text = (PROJECT_ROOT / "LICENSE").read_text(encoding="utf-8")
