@@ -32,6 +32,8 @@ def test_showcase_preserves_evidence_and_deployment_boundaries() -> None:
         "weak_overlap",
     }
     assert payload["readiness"]["research_project_complete"] is True
+    assert payload["readiness"]["private_data_pilot_ready"] is False
+    assert payload["readiness"]["production_ready"] is False
     assert (
         payload["longitudinal_benchmark"]["sequence_model_status"]
         == "deferred_not_justified_by_current_benchmark"
@@ -42,5 +44,5 @@ def test_showcase_preserves_evidence_and_deployment_boundaries() -> None:
     assert "One service request" in report
     assert "What gets audited" in report
     assert "What happens when management wants a comparison" in report
-    assert "Private-data pilot: NOT APPROVED" in report
+    assert "NOT APPROVED" in report
     assert "does **not** demonstrate real service improvement" in report
