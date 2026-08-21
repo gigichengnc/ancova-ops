@@ -1,11 +1,10 @@
-# Release Readiness — ReasonedOps v1.2.0
+# Release Readiness — ReasonedOps v1.3.0
 
-ReasonedOps v1.2.0 is a **completed local research/software prototype**. That is different from being approved for a real private-data pilot or production deployment.
+ReasonedOps v1.3.0 is a **completed local research/software prototype and portfolio rebuild case study**. That is different from being approved for a real private-data pilot or production deployment.
 
 ## What is ready now
 
 - [x] `reasoned_ops` is the single canonical Python package.
-- [x] the temporary `ancova_ops` compatibility package has been removed.
 - [x] public CLI commands use the `reasoned-` prefix.
 - [x] FastAPI routing can accept and persist a service request.
 - [x] human routing reviews can confirm or override a recommendation without erasing the original decision.
@@ -18,6 +17,32 @@ ReasonedOps v1.2.0 is a **completed local research/software prototype**. That is
 - [x] known-effect recovery, measured-confounding adjustment, no-overlap refusal and slope-interaction behaviour are tested on synthetic scenarios.
 - [x] Python 3.11 and 3.12 CI covers lint, tests and the main CLI workflows.
 - [x] Apache-2.0 licensing and `CITATION.cff` are present.
+- [x] the original Hackathon concept is reconstructed separately under `original/`.
+- [x] a before/after comparison explains how and why the project changed.
+- [x] the original concept audit distinguishes useful ideas from corrected or unsupported assumptions.
+- [x] major model/method decisions are recorded, including explicit decisions not to escalate complexity.
+
+## Portfolio/rebuild readiness
+
+The v1.3.0 reviewer path is intentionally narrative:
+
+```text
+original concept
+      ↓
+before / after
+      ↓
+concept audit
+      ↓
+model decisions
+      ↓
+runnable current implementation
+      ↓
+evidence boundary
+      ↓
+next real evidence gate
+```
+
+This structure makes the project learning history visible instead of presenting the final code as if it appeared fully formed.
 
 ## What is not ready
 
@@ -50,7 +75,9 @@ Production additionally requires representative real-data validation, deployment
 
 Reasonable:
 
-> ReasonedOps is a runnable evidence-aware service-operations research prototype. It can route requests, preserve machine and human decision history, record outcomes, and refuse or redirect unsupported analytical comparisons.
+> ReasonedOps is a runnable evidence-aware service-operations research prototype rebuilt from an HKMU Hackathon concierge concept. It can route requests, preserve machine and human decision history, record outcomes, and refuse or redirect unsupported analytical comparisons.
+
+> The repository documents how the original concept was audited and technically corrected.
 
 Not supported without new evidence:
 
