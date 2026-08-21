@@ -1,6 +1,6 @@
 # Release Readiness — ReasonedOps v1.4.0
 
-ReasonedOps v1.4.0 is a **completed local research/software prototype and portfolio rebuild case study** with a validated Python distribution build. That is different from being approved for a real private-data pilot or production deployment.
+ReasonedOps v1.4.0 is a **completed local research/software prototype and portfolio rebuild case study** with a validated and publicly published Python distribution. That is different from being approved for a real private-data pilot or production deployment.
 
 ## What is ready now
 
@@ -17,6 +17,8 @@ ReasonedOps v1.4.0 is a **completed local research/software prototype and portfo
 - [x] known-effect recovery, measured-confounding adjustment, no-overlap refusal and slope-interaction behaviour are tested on synthetic scenarios.
 - [x] Python 3.11 and 3.12 CI covers lint, tests and the main CLI workflows.
 - [x] CI separately builds a wheel and source distribution and smoke-tests installation from the wheel.
+- [x] `reasoned-ops==1.4.0` is published on PyPI through GitHub OIDC Trusted Publishing.
+- [x] the public PyPI artifact has been installed and exercised outside the repository checkout.
 - [x] Apache-2.0 licensing and `CITATION.cff` are present.
 - [x] the original Hackathon concept is reconstructed separately under `original/`.
 - [x] a before/after comparison explains how and why the project changed.
@@ -38,6 +40,8 @@ model decisions
       ↓
 runnable current implementation
       ↓
+public package verification
+      ↓
 evidence boundary
       ↓
 next real evidence gate
@@ -45,11 +49,11 @@ next real evidence gate
 
 This structure makes the project learning history visible instead of presenting the final code as if it appeared fully formed.
 
-## Python distribution readiness
+## Python distribution and PyPI status
 
 The v1.4.0 distribution path is intentionally separate from the ordinary editable development install.
 
-CI now verifies:
+CI verifies:
 
 ```text
 pyproject metadata
@@ -67,13 +71,28 @@ import reasoned_ops
 routing + packaged CLI smoke checks
 ```
 
-A dedicated `.github/workflows/publish-pypi.yml` workflow is present for PyPI Trusted Publishing using GitHub OIDC. The first upload is manually dispatched so publication is not attempted before the repository owner configures the matching PyPI Trusted Publisher.
+A dedicated `.github/workflows/publish-pypi.yml` workflow publishes through PyPI Trusted Publishing using GitHub OIDC rather than a stored long-lived API token.
 
-**PyPI code/workflow readiness: READY.**  
-**PyPI account-side publisher registration: PENDING until completed by the repository owner.**  
-**PyPI upload: NOT YET CLAIMED AS COMPLETE until the package page and clean install are verified.**
+`reasoned-ops==1.4.0` was successfully published through that workflow. The public artifact was then installed in a Windows environment outside the repository checkout and used to exercise:
 
-See `docs/pypi.md` for the exact publisher identity and verification procedure.
+```text
+Operate
+routing + FastAPI
+      ↓
+Audit
+machine decision + human override + outcome persistence
+      ↓
+Evaluate
+known-truth validity benchmark
+```
+
+**PyPI code/workflow readiness: COMPLETE.**  
+**PyPI publication: COMPLETE for v1.4.0.**  
+**Public artifact install/execution check: COMPLETE.**
+
+See `docs/pypi.md` for reuse and publishing details and `docs/publication-verification.md` for the verification record.
+
+The verification demonstrates package distribution and executable local behaviour. It is not independent scientific validation.
 
 ## What is not ready
 
@@ -110,7 +129,7 @@ Reasonable:
 
 > The repository documents how the original concept was audited and technically corrected.
 
-> The Python project can be built as a wheel/source distribution and installed from the built wheel in a clean environment.
+> ReasonedOps is publicly distributed on PyPI as `reasoned-ops==1.4.0`; the released artifact has been installed and its local Operate → Audit → Evaluate workflow exercised outside the repository checkout.
 
 Not supported without new evidence:
 
@@ -122,13 +141,15 @@ Not supported without new evidence:
 
 ## Citation/archive and package-index status
 
-Repository-side citation and distribution metadata are ready. External publication steps are separate:
+Package-index publication is complete for v1.4.0. Repository-side citation metadata is ready; archival publication remains separate:
 
+- [x] register the `reasoned-ops` PyPI Trusted Publisher;
+- [x] publish `reasoned-ops==1.4.0` through the trusted workflow;
+- [x] verify the public package in an environment outside the repository checkout;
 - [ ] connect the repository owner account to Zenodo;
-- [ ] archive a release and verify the DOI;
-- [ ] add the verified DOI back to `CITATION.cff`;
-- [ ] register the `reasoned-ops` PyPI Trusted Publisher using `.github/workflows/publish-pypi.yml` and environment `pypi`;
-- [ ] manually publish a released tag through the trusted workflow;
-- [ ] verify `pip install reasoned-ops==<version>` from a clean environment.
+- [ ] enable `reasoned-ops` for GitHub release archiving;
+- [ ] create a new post-enablement release for Zenodo ingestion;
+- [ ] verify the Zenodo DOI;
+- [ ] add the verified DOI back to `CITATION.cff`.
 
 A DOI or PyPI publication improves distribution and citation. It does not create real-world validation.
