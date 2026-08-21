@@ -23,8 +23,8 @@ app = FastAPI(
     title="ReasonedOps API",
     version=__version__,
     description=(
-        "Evidence-aware service-request intelligence, explainable routing, audit persistence, "
-        "human routing feedback and outcome capture."
+        "Evidence-aware rule-based service-request features, explainable routing, audit "
+        "persistence, human routing feedback and outcome capture."
     ),
 )
 

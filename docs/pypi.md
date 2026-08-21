@@ -1,58 +1,46 @@
 # PyPI distribution and reuse
 
-ReasonedOps is published on PyPI as the Python distribution **`reasoned-ops`** with the import namespace **`reasoned_ops`**.
+ReasonedOps is published on PyPI as **`reasoned-ops`** with import namespace **`reasoned_ops`**.
 
-The purpose of PyPI publication is practical reuse: another Python project can depend on a released ReasonedOps version instead of copying source files from this repository.
+The final v1 audit-closeout target is to make the publicly installable artifact match the exact GitHub/Zenodo release snapshot.
 
-## Install from PyPI
+## Current and target publication state
 
-```bash
-pip install reasoned-ops
+Current public PyPI artifact:
+
+```text
+reasoned-ops==1.4.0
 ```
 
-For an exact reproducible release:
+Final aligned artifact to publish after the `v1.4.3` GitHub release is archived:
+
+```text
+reasoned-ops==1.4.3
+```
+
+The v1.4.3 package must be built from the exact existing Git tag `v1.4.3`. Do not rebuild it from a later moving `main` commit and call it the same release.
+
+## Install
+
+Until v1.4.3 is published, the historically verified exact install remains:
 
 ```bash
 pip install reasoned-ops==1.4.0
 ```
 
-Then:
+After final publication and verification, the preferred exact install becomes:
 
-```python
-from reasoned_ops import ServiceCase, baseline_route
-
-case = ServiceCase(
-    case_id="example-001",
-    message="The air conditioner is leaking again.",
-    previous_related_cases=2,
-)
-
-decision = baseline_route(case)
-print(decision.department)
-print(decision.reasons)
+```bash
+pip install reasoned-ops==1.4.3
 ```
 
-For another project, prefer a version constraint rather than an unbounded dependency, for example:
+For another project that intentionally accepts compatible v1 updates:
 
 ```text
 reasoned-ops>=1.4,<2
 ```
 
-Pin an exact version when reproducibility is more important than automatically receiving compatible updates.
-
-## What CI verifies before publication
-
-The repository CI has a separate distribution job that:
-
-1. builds a wheel and source distribution with `python -m build`;
-2. checks that both artifacts exist;
-3. creates a clean virtual environment;
-4. installs the built wheel rather than the editable source tree;
-5. imports `reasoned_ops` from that installed wheel;
-6. executes a routing smoke check;
-7. verifies that a packaged CLI entry point is installed.
-
-This is deliberately separate from the ordinary editable-install test matrix.
+Pin an exact version when artifact reproducibility matters.
 
 ## Trusted Publishing
 
@@ -64,15 +52,7 @@ The dedicated workflow is:
 .github/workflows/publish-pypi.yml
 ```
 
-The build job does not receive OIDC publishing permission. A separate publish job downloads the built distributions and receives only the permissions needed for PyPI Trusted Publishing.
-
-The publishing job uses the GitHub environment:
-
-```text
-pypi
-```
-
-The first publication used a matching pending Trusted Publisher with this identity:
+Trusted Publisher identity:
 
 ```text
 PyPI project name: reasoned-ops
@@ -82,63 +62,86 @@ Workflow filename:   publish-pypi.yml
 Environment:         pypi
 ```
 
-## Publication status
+The workflow is manually dispatched with an existing release tag. It checks out that tag, reads the embedded package version, and refuses publication when the requested tag does not match the package metadata.
 
-`reasoned-ops==1.4.0` was successfully published through the Trusted Publishing workflow.
+For the final close-out, dispatch it with exactly:
 
-The public artifact was subsequently installed in a Windows environment outside the repository checkout. The verification confirmed:
+```text
+v1.4.3
+```
 
-- `import reasoned_ops` reports version `1.4.0`;
-- the reusable routing surface returns a maintenance route, high priority and human-review requirement for a recurring air-conditioning case;
-- `reasoned_ops.api:app` starts through Uvicorn;
-- a routed case can be persisted through the API;
-- a human override is stored without overwriting the original machine recommendation;
-- a case outcome is stored separately;
-- a later case fetch returns the original request, machine decision, human review, effective route and outcome together;
-- `reasoned-validity` reports all four deterministic synthetic validity scenarios as passing.
+## What CI verifies before publication
 
-See [`publication-verification.md`](publication-verification.md) for the detailed verification record and evidence boundary.
+The distribution job:
 
-## Post-publication verification commands
+1. builds a wheel and source distribution with `python -m build`;
+2. checks that both artifacts exist;
+3. creates a clean virtual environment;
+4. installs the built wheel rather than the editable source tree;
+5. imports `reasoned_ops` from that installed wheel;
+6. executes a routing smoke check;
+7. verifies a packaged CLI entry point.
 
-A minimal package check is:
+The Python 3.11 / 3.12 matrix separately runs lint, tests and the major command-line workflows, including the current `reasoned-validity-v2` benchmark.
+
+## Historical public verification
+
+`reasoned-ops==1.4.0` was successfully published and then installed in a Windows environment outside the repository checkout. That check exercised Operate → Audit → Evaluate and established that the public package was installable and executable.
+
+That historical record remains valid for 1.4.0; it should not be silently relabelled as a 1.4.3 verification.
+
+See [`publication-verification.md`](publication-verification.md).
+
+## Required 1.4.3 post-publication check
+
+After PyPI reports `reasoned-ops==1.4.3`, use a fresh environment and run at minimum:
 
 ```bash
-pip install reasoned-ops==1.4.0
+pip install reasoned-ops==1.4.3
 python -c "import reasoned_ops; print(reasoned_ops.__version__)"
+reasoned-validity --n 1200 --seed 23 --json
 ```
 
-A reusable API/import check is:
+Expected version:
 
-```python
-from reasoned_ops import ServiceCase, baseline_route
-
-case = ServiceCase(
-    case_id="test-001",
-    message="The air conditioner is leaking again.",
-    previous_related_cases=2,
-)
-
-decision = baseline_route(case)
-assert decision.department == "maintenance"
+```text
+1.4.3
 ```
 
-The deterministic evaluation check is:
+The validity JSON should include all five scenarios:
 
-```bash
-reasoned-validity
+```text
+known_effect_recovery
+measured_confounding
+no_overlap
+slope_interaction
+unmeasured_confounding_blind_spot
 ```
 
-A successful PyPI publication and external install check establish package distribution and executable local behaviour. They do **not** establish real-world service effectiveness, causal impact, private-data approval, or production readiness.
+For `unmeasured_confounding_blind_spot`, PASS means the benchmark reproduced the known false-negative mode. It does **not** mean hidden confounding was detected.
 
-## Future releases
+A small routing/import smoke check should also confirm the public API surface still works.
 
-For a future release:
+## Evidence boundary
 
-1. update package/citation/release metadata deliberately;
-2. merge only after CI and distribution checks pass;
-3. allow the GitHub release checkpoint to create the matching release tag;
-4. manually dispatch **Publish to PyPI** with that exact tag;
-5. verify the published version from a clean environment.
+Successful publication and external installation establish artifact distribution and executable local behaviour. They do **not** establish:
 
-The publishing workflow refuses to publish when the requested tag does not match the package version embedded in that tag.
+- real-world routing accuracy;
+- real service improvement;
+- absence of unmeasured confounding;
+- causal effects;
+- private-data approval;
+- production readiness.
+
+## Final provenance target
+
+The close-out is complete only when these refer to the same release checkpoint:
+
+```text
+Git tag v1.4.3
+      = GitHub Release v1.4.3
+      = Zenodo v1.4.3 archived snapshot
+      = PyPI reasoned-ops==1.4.3
+```
+
+The Zenodo **version DOI** identifies the archived v1.4.3 snapshot. If Zenodo separately exposes a verified all-versions / concept DOI, that identifier can be used for a stable project-level README badge.

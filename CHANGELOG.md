@@ -2,6 +2,31 @@
 
 All notable project checkpoints are documented here.
 
+## [1.4.3] - 2026-08-21
+
+### Added
+
+- Added deterministic `unmeasured_confounding_blind_spot` coverage to `reasoned-validity`, where a true latent case-burden variable is removed before the ordinary Evaluate pipeline sees the frame.
+- Added regression coverage that treats PASS for the hidden-confounding scenario as successful reproduction and disclosure of a known false-negative mode, not successful hidden-confounder detection.
+- Added reviewer-facing regression coverage that keeps Operate described as a rule-based deterministic baseline rather than implying a trained NLP model.
+
+### Changed
+
+- Replaced the remaining current-facing storefront wording that could make ReasonedOps look like a rebuild of somebody else's project with same-project origin/evolution language.
+- Reframed broad `request intelligence` presentation language as **rule-based request features + deterministic explainable routing baseline** while preserving the historical AI-concierge idea as project context.
+- Bumped the validity benchmark schema to `reasoned-validity-v2` and explicitly separated supported behaviour from a known limitation scenario.
+- Bumped package, runtime and citation metadata to `1.4.3` for the final audit-closeout checkpoint.
+- Removed the historical v1.4.2 DOI from the v1.4.3 release-candidate `CITATION.cff`; the v1.4.3 DOI will only be recorded after Zenodo actually mints and verifies it.
+- Prepared final artifact alignment so the GitHub release, Zenodo archive and PyPI package can all derive from the exact `v1.4.3` tag.
+
+### Evidence boundary
+
+v1.4.3 strengthens the evidence record by publishing a known failure mode. It does not add hidden-confounder detection, causal identification, NLP/ML routing, private-data approval or production readiness.
+
+### Publication boundary
+
+The release candidate intentionally omits a top-level Zenodo DOI because the immutable v1.4.3 version DOI does not exist until Zenodo ingests the release. After DOI verification, current-branch citation documentation can be synced without creating another software version. PyPI publication should use the exact existing `v1.4.3` tag so the installable artifact matches the archived release snapshot.
+
 ## [1.4.2] - 2026-08-21
 
 ### Changed
@@ -204,7 +229,7 @@ ANCOVA Ops remains a synthetic/hand-authored research prototype. The evaluation 
 
 ### Citation and Zenodo note
 
-Zenodo supports both `CITATION.cff` and `.zenodo.json`, but gives `.zenodo.json` precedence when both files are present. ANCOVA Ops does not currently require Zenodo-specific grant/community metadata, so duplicate metadata is intentionally avoided. No DOI, ORCID, email address or affiliation is fabricated at this checkpoint.
+Zenodo supports both `CITATION.cff` and `.zenodo.json` for GitHub software metadata, but gives `.zenodo.json` precedence when both files are present. ANCOVA Ops does not currently require Zenodo-specific grant/community metadata, so duplicate metadata is intentionally avoided. No DOI, ORCID, email address or affiliation is fabricated at this checkpoint.
 
 ### Evidence and deployment status
 

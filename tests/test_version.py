@@ -4,9 +4,8 @@ from pathlib import Path
 import reasoned_ops
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_VERSION = "1.4.2"
+EXPECTED_VERSION = "1.4.3"
 EXPECTED_REPOSITORY = "https://github.com/gigichengnc/reasoned-ops"
-EXPECTED_ZENODO_DOI = "10.5281/zenodo.22044621"
 EXPECTED_SCRIPTS = {
     "reasoned-analyze",
     "reasoned-applicability",
@@ -31,7 +30,7 @@ def test_package_version_matches_project_metadata() -> None:
     assert reasoned_ops.__version__ == EXPECTED_VERSION
 
 
-def test_v142_cli_surface_is_registered() -> None:
+def test_v143_cli_surface_is_registered() -> None:
     project = _project_metadata()
 
     assert project["name"] == "reasoned-ops"
@@ -156,5 +155,5 @@ def test_citation_metadata_matches_release_metadata() -> None:
     assert 'given-names: "Gigi"' in citation
     assert 'family-names: "Cheng"' in citation
     assert f'repository-code: "{EXPECTED_REPOSITORY}"' in citation
-    assert f'doi: "{EXPECTED_ZENODO_DOI}"' in citation
+    assert "\ndoi:" not in citation
     assert "orcid:" not in citation

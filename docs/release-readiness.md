@@ -1,189 +1,167 @@
-# Release Readiness — ReasonedOps v1.4.2
+# Release Readiness — ReasonedOps v1.4.3 audit close-out
 
-ReasonedOps v1.4.2 is a **completed local research/software prototype and project-evolution case study** with a validated, publicly published Python distribution and a Zenodo archive path. That is different from being approved for a real private-data pilot or production deployment.
+ReasonedOps v1.4.3 is the final v1 **audit-correction and artifact-alignment checkpoint**. It does not add production capability; it closes issues found after the earlier publication checkpoint.
 
-## What is ready now
+## Why v1.4.3 exists
 
-- [x] `reasoned_ops` is the single canonical Python package.
+An external review identified four issues worth correcting before freezing v1:
+
+1. one current-facing storefront document still used external-rebuild wording;
+2. reviewer-facing `request intelligence` wording could imply more NLP/ML sophistication than the deterministic rule/keyword Operate baseline actually uses;
+3. the validity suite did not execute an unmeasured-confounding false-negative scenario;
+4. the preferred citable Zenodo snapshot and the publicly installable PyPI snapshot had different version numbers.
+
+The first three are now corrected on the v1.4.3 release candidate. The fourth is closed by publishing the exact same `v1.4.3` tag across GitHub, Zenodo and PyPI.
+
+## Software / evidence readiness
+
+- [x] `reasoned_ops` is the single canonical package namespace.
 - [x] public CLI commands use the `reasoned-` prefix.
-- [x] FastAPI routing can accept and persist a service request.
-- [x] human routing reviews can confirm or override a recommendation without erasing the original decision.
+- [x] FastAPI request intake and deterministic explainable routing work locally.
+- [x] Operate is explicitly documented as a **rule-based deterministic baseline**, not a trained NLP model.
+- [x] human confirm / override history preserves the original machine/rule decision.
 - [x] outcomes are stored separately from routing decisions.
-- [x] management reports separate raw summaries from adjusted evidence.
 - [x] department × case-type overlap and identifiability are checked before adjusted ranking.
-- [x] unsupported comparisons can be withheld instead of converted into a league table.
-- [x] the applicability gate returns `use`, `caution`, `reject` or `recommend_alternative`.
-- [x] binary, censored/time-to-event, clustered, routing-policy and causal-intent questions can be redirected instead of being forced through ordinary ANCOVA/regression.
-- [x] known-effect recovery, measured-confounding adjustment, no-overlap refusal and slope-interaction behaviour are tested on synthetic scenarios.
-- [x] Python 3.11 and 3.12 CI covers lint, tests and the main CLI workflows.
-- [x] CI separately builds a wheel and source distribution and smoke-tests installation from the wheel.
-- [x] `reasoned-ops==1.4.0` is published on PyPI through GitHub OIDC Trusted Publishing.
-- [x] the public PyPI artifact has been installed and exercised outside the repository checkout.
+- [x] unsupported observed comparisons can be withheld.
+- [x] method applicability returns `use`, `caution`, `reject` or `recommend_alternative`.
+- [x] `reasoned-validity-v2` covers known-effect recovery, measured confounding, no-overlap refusal and slope-interaction detection.
+- [x] `reasoned-validity-v2` also includes `unmeasured_confounding_blind_spot` as a **known limitation** scenario.
+- [x] Python 3.11 / 3.12 CI covers lint, tests and major CLI workflows.
+- [x] distribution CI builds wheel + sdist and installs the wheel in a clean environment.
 - [x] Apache-2.0 licensing and `CITATION.cff` are present.
-- [x] `CITATION.cff` is aligned to the v1.4.2 citation checkpoint.
-- [x] the GitHub repository is enabled for Zenodo release archiving.
-- [x] the project's early Hackathon-stage concept is reconstructed separately under `original/`.
-- [x] a before/after comparison explains how and why the same project changed.
-- [x] the original concept audit distinguishes useful ideas from corrected or unsupported assumptions.
-- [x] major model/method decisions are recorded, including explicit decisions not to escalate complexity.
+- [x] current-facing project-origin wording describes one project evolving from the author's HKMU Hackathon 2026 participation.
+- [x] Zenodo GitHub integration is enabled.
 
-## Portfolio/evolution readiness
+## Hidden-confounding benchmark boundary
 
-The reviewer path is intentionally narrative:
+The new limitation scenario deliberately generates a true latent case-burden variable, lets it affect both routing and outcome, then removes it before the ordinary Evaluate pipeline sees the data.
+
+Expected behaviour:
 
 ```text
-early concept
+observed overlap = supported
       ↓
-before / after
+gate disposition = use
       ↓
-concept audit
+adjusted contrast = badly biased / sign reversed
       ↓
-model decisions
-      ↓
-runnable current implementation
-      ↓
-public package verification
-      ↓
-citation/archive checkpoint
-      ↓
-evidence boundary
-      ↓
-next real evidence gate
+interpretation boundary still says unmeasured confounding is not ruled out
 ```
 
-This structure makes the project's own learning history visible instead of presenting the final code as if it appeared fully formed.
+`PASS` means the benchmark successfully reproduces and discloses this false-negative mode. It does **not** mean ReasonedOps can detect an unrecorded confounder.
 
-## Python distribution and PyPI status
+## Publication / provenance readiness
 
-The distribution path is intentionally separate from the ordinary editable development install.
-
-CI verifies:
+Historical state:
 
 ```text
-pyproject metadata
-      ↓
-python -m build
-      ↓
-wheel + source distribution
-      ↓
-clean virtual environment
-      ↓
-install built wheel
-      ↓
-import reasoned_ops
-      ↓
-routing + packaged CLI smoke checks
+PyPI reasoned-ops==1.4.0     published + externally exercised
+Zenodo v1.4.1                10.5281/zenodo.22044222
+Zenodo v1.4.2                10.5281/zenodo.22044621
 ```
 
-A dedicated `.github/workflows/publish-pypi.yml` workflow publishes through PyPI Trusted Publishing using GitHub OIDC rather than a stored long-lived API token.
-
-`reasoned-ops==1.4.0` was successfully published through that workflow. The public artifact was then installed in a Windows environment outside the repository checkout and used to exercise:
+Final target:
 
 ```text
-Operate
-routing + FastAPI
-      ↓
-Audit
-machine decision + human override + outcome persistence
-      ↓
-Evaluate
-known-truth validity benchmark
+Git tag v1.4.3
+      = GitHub Release v1.4.3
+      = Zenodo v1.4.3 archived snapshot
+      = PyPI reasoned-ops==1.4.3
 ```
 
-**PyPI code/workflow readiness: COMPLETE.**  
-**PyPI publication: COMPLETE for v1.4.0.**  
-**Public artifact install/execution check: COMPLETE.**  
-**PyPI v1.4.2 publication: NOT CLAIMED; v1.4.2 is a citation/wording checkpoint unless separately published.**
+The v1.4.3 release-candidate `CITATION.cff` intentionally has **no top-level DOI**. The old v1.4.2 DOI must not be copied into a new snapshot. Zenodo can only mint the immutable v1.4.3 version DOI after ingesting the GitHub release.
 
-See `docs/pypi.md` for reuse and publishing details and `docs/publication-verification.md` for the verification record.
+## Final release checklist
 
-The verification demonstrates package distribution and executable local behaviour. It is not independent scientific validation.
+### Before merge
 
-## Zenodo archive readiness
+- [x] package metadata set to `1.4.3`;
+- [x] runtime `__version__` set to `1.4.3`;
+- [x] `CITATION.cff` set to `1.4.3` without a speculative DOI;
+- [x] PyPI description tightened to rule-based Operate + hidden-confounding limitation boundaries;
+- [x] README describes the v1.4.3 audit-closeout provenance plan;
+- [x] release/citation/status docs describe exact-tag alignment;
+- [x] `CHANGELOG.md` includes a `1.4.3` section;
+- [x] PR CI passes Python 3.11, Python 3.12 and distribution jobs.
 
-The repository owner has connected GitHub to Zenodo and enabled `gigichengnc/reasoned-ops` for automatic preservation of new GitHub releases.
+### After merge to main
 
-v1.4.2 is the preferred current citation checkpoint because it corrects the project-origin wording before the DOI is treated as the canonical public citation.
+- [ ] main CI passes;
+- [ ] release workflow creates **GitHub Release v1.4.3** from the exact successful main commit;
+- [ ] confirm the release tag points to the intended v1.4.3 commit.
 
-The archive sequence is:
+### Zenodo
 
-```text
-Zenodo GitHub integration enabled
-      ↓
-GitHub Release v1.4.2 after successful main CI
-      ↓
-Zenodo ingestion
-      ↓
-verify creator/title/version/license
-      ↓
-verify minted DOI
-      ↓
-add the verified DOI back to repository citation metadata
-```
+- [ ] verify Zenodo ingests **v1.4.3**;
+- [ ] verify title = ReasonedOps;
+- [ ] verify creator = Gigi Cheng;
+- [ ] verify version = v1.4.3;
+- [ ] verify license = Apache-2.0;
+- [ ] record the exact immutable **v1.4.3 version DOI**;
+- [ ] if Zenodo separately displays **Cite all versions / concept DOI**, record it independently rather than inferring it from a version DOI.
 
-**Zenodo integration: ENABLED.**  
-**Preferred archive release: v1.4.2 after successful main CI.**  
-**DOI: PENDING UNTIL ZENODO INGESTION IS VERIFIED.**
+### Post-release DOI sync
+
+- [ ] add the verified v1.4.3 version DOI to current citation documentation / `CITATION.cff` on `main`;
+- [ ] use a verified concept DOI for a stable README project badge only if it is actually observed;
+- [ ] do **not** bump the software version merely to sync an already minted DOI.
+
+The release workflow is idempotent when `v1.4.3` already exists, so a later documentation-only DOI sync should not create another release.
+
+### PyPI exact-tag publication
+
+- [ ] manually run **Publish to PyPI** with input tag exactly `v1.4.3`;
+- [ ] verify PyPI shows `reasoned-ops==1.4.3`;
+- [ ] install `reasoned-ops==1.4.3` in a fresh environment;
+- [ ] verify `reasoned_ops.__version__ == "1.4.3"`;
+- [ ] run `reasoned-validity --n 1200 --seed 23 --json` and confirm all five scenario names are present;
+- [ ] repeat a small routing/API smoke check;
+- [ ] update `publication-verification.md` with observed v1.4.3 results.
 
 ## What is not ready
 
 ### Real private-data pilot
 
-A real pilot still requires, at minimum:
-
-- jurisdiction-specific privacy/legal review;
-- documented purpose and data-use basis;
-- notice/consent design where required;
-- retention and deletion schedule;
-- pseudonymisation/identity-linkage design;
-- authenticated staff identities and RBAC;
-- secure storage and secrets management;
-- correction/deletion procedures;
-- incident/breach response;
-- external model/provider data-processing review where relevant;
-- real-data annotation and outcome-quality protocol;
-- pilot monitoring and stop criteria.
+A real pilot still requires jurisdiction-specific privacy/legal review, purpose/data-use documentation, secure authenticated access, retention/deletion procedures, incident handling, representative data quality checks and predefined pilot stop criteria.
 
 **Pilot status: NOT READY / NOT APPROVED.**
 
 ### Production deployment
 
-Production additionally requires representative real-data validation, deployment architecture, authenticated APIs, observability, backups/recovery, security testing, change control, rollback/fallback procedures and operational acceptance criteria.
+Production additionally requires deployment architecture, authentication/RBAC, monitoring, backup/recovery, security testing, operational change control and representative real-world validation.
 
 **Production status: NOT READY / NOT APPROVED.**
 
-## Claims supported by the current repository
+## Claims supported after this release candidate
 
-Reasonable:
+Supported:
 
-> ReasonedOps is a runnable evidence-aware service-operations research prototype that originated from the author's participation in HKMU Hackathon 2026 and evolved into its current Operate → Audit → Evaluate form. It can route requests, preserve machine and human decision history, record outcomes, and refuse or redirect unsupported analytical comparisons.
+> ReasonedOps is a runnable research/software prototype that originated from the author's participation in HKMU Hackathon 2026 and evolved into Operate → Audit → Evaluate.
 
-> The repository documents how the project's early concept was audited and technically corrected over time.
+> Operate currently uses a transparent deterministic rule-based baseline, not a trained NLP model.
 
-> ReasonedOps is publicly distributed on PyPI as `reasoned-ops==1.4.0`; the released artifact has been installed and its local Operate → Audit → Evaluate workflow exercised outside the repository checkout.
+> Evaluate can refuse some unsupported comparisons visible in the observed design, and its validity benchmark also demonstrates a known unmeasured-confounding failure mode that ordinary observed-data checks cannot detect.
 
-> The v1.4.2 checkpoint is prepared for Zenodo release archiving with corrected project-origin wording and aligned citation metadata.
+Not supported:
 
-Not supported without new evidence:
+> ReasonedOps has ruled out hidden confounding.
 
-> ReasonedOps improves real service performance.
+> ReasonedOps improves real service outcomes.
 
-> ANCOVA proves that one department performs better than another.
+> ReasonedOps is approved for real private data or production use.
 
-> Passing CI, publishing to PyPI, or receiving a DOI means the software is safe for real private data or production deployment.
+## Freeze condition
 
-## Citation/archive and package-index status
+ReasonedOps v1 should be considered fully frozen when:
 
-Package-index publication is complete for v1.4.0. Zenodo integration is enabled and v1.4.2 is the preferred citation/archive checkpoint:
+```text
+v1.4.3 GitHub release archived by Zenodo
+      +
+verified DOI metadata synced
+      +
+PyPI 1.4.3 published from exact tag
+      +
+fresh-environment 1.4.3 verification completed
+```
 
-- [x] register the `reasoned-ops` PyPI Trusted Publisher;
-- [x] publish `reasoned-ops==1.4.0` through the trusted workflow;
-- [x] verify the public package in an environment outside the repository checkout;
-- [x] connect the repository owner account to Zenodo;
-- [x] enable `reasoned-ops` for GitHub release archiving;
-- [ ] create GitHub Release v1.4.2 after successful main CI;
-- [ ] verify that Zenodo ingests v1.4.2;
-- [ ] verify the Zenodo DOI and archived metadata;
-- [ ] add the verified DOI back to `CITATION.cff`.
-
-A DOI or PyPI publication improves distribution and citation. It does not create real-world validation.
+Further substantive work should require a real partner, representative dataset, competition requirement or new evidence question.
