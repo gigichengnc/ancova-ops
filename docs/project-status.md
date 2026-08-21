@@ -1,186 +1,90 @@
-# Project Status — v1.0.0
+# Project Status — ReasonedOps v1.1.0
 
-ANCOVA Ops v1.0.0 is the **completed research/portfolio prototype** for an evidence-aware service-operations architecture:
+ReasonedOps is the renamed continuation of the completed v1 research/portfolio prototype formerly called **ANCOVA Ops**.
 
 > **Operate → Audit → Evaluate**
 
-Its purpose is not to make management decisions automatically. Its purpose is to make unsupported management conclusions harder to reach by preserving decision history, separating descriptive from adjusted evidence, checking whether comparisons are identifiable, and refusing or redirecting inappropriate analytical methods.
+Its purpose is not to make management decisions automatically. Its purpose is to make unsupported management conclusions harder to reach by preserving decision history, separating descriptive from adjusted evidence, checking whether comparisons are supportable, and refusing or redirecting inappropriate analytical methods.
 
-**Research-project status: COMPLETED / FROZEN AT v1.0.0.**
+**Research-project status: COMPLETED.**  
+**Current naming/package checkpoint: v1.1.0.**  
+**Real private-data pilot: NOT APPROVED.**  
+**Production deployment: NOT APPROVED.**
 
-It is still **not approved for real private resident/customer data** and is **not a production deployment**. Those are separate post-v1 stages.
+## Canonical identity
+
+| Surface | Canonical v1.1 name |
+| --- | --- |
+| Project | `ReasonedOps` |
+| Repository | `gigichengnc/reasoned-ops` |
+| Python distribution | `reasoned-ops` |
+| Python package | `reasoned_ops` |
+| CLI prefix | `reasoned-` |
+| Legacy compatibility namespace | `ancova_ops` |
+
+Historical release notes before v1.1.0 intentionally retain the former name and old command names.
 
 ## Capability map
 
-| Layer / area | v1.0 status | Primary command / interface | Evidence class |
+| Layer / area | Status | Primary command / interface | Evidence class |
 | --- | --- | --- | --- |
-| Operate — request intelligence and routing | Complete | `uvicorn ancova_ops.api:app --reload` | Transparent development rules |
-| Operate — routing benchmark | Complete | `ancova-evaluate` | Hand-authored fixture |
+| Operate — request intelligence and routing | Complete research workflow | `uvicorn reasoned_ops.api:app --reload` | Transparent development rules |
+| Operate — routing benchmark | Complete | `reasoned-evaluate` | Hand-authored fixture |
 | Audit — immutable case/routing history | Complete | case/history API | Local development persistence |
 | Audit — human confirmation / override | Complete | routing-review API | Human feedback, not automatic ground truth |
 | Audit — outcome capture | Complete | outcome API | Local development records |
-| Evaluate — raw outcome summaries | Complete | `ancova-management-report` | Synthetic outcomes |
-| Evaluate — overlap / identifiability gate | Complete | `ancova-analyze` | Synthetic outcomes |
-| Evaluate — known-truth validity benchmark | Complete | `ancova-validity` | Synthetic validity scenarios |
-| Evaluate — method applicability gate | Complete | `ancova-applicability` | Deterministic decision rules |
-| Evaluate — regression / ANCOVA | Complete | `ancova-analyze` | Synthetic outcomes |
-| Evaluate — management report with use/caution/reject/alternative | Complete | `ancova-management-report` | Synthetic outcomes + decision rules |
-| Evaluate — offline adaptive-policy study | Complete research workflow | `ancova-policy evaluate` | Synthetic logged-policy data |
-| Evaluate — longitudinal recurrence benchmark | Complete research workflow | `ancova-longitudinal` | Synthetic histories |
-| Data-governance validation | Complete | `ancova-governance-check` | Machine-readable development policy |
-| End-to-end v1 showcase | Complete | `ancova-showcase` | Aggregates existing development evidence |
+| Evaluate — raw outcome summaries | Complete | `reasoned-management-report` | Synthetic outcomes |
+| Evaluate — overlap / identifiability gate | Complete | `reasoned-analyze` | Synthetic outcomes |
+| Evaluate — known-truth validity benchmark | Complete | `reasoned-validity` | Synthetic validity scenarios |
+| Evaluate — method applicability gate | Complete | `reasoned-applicability` | Deterministic decision rules |
+| Evaluate — regression / ANCOVA | Complete | `reasoned-analyze` | Synthetic outcomes |
+| Evaluate — offline adaptive-policy study | Complete research workflow | `reasoned-policy evaluate` | Synthetic logged-policy data |
+| Evaluate — longitudinal recurrence benchmark | Complete research workflow | `reasoned-longitudinal` | Synthetic histories |
+| Governance validation | Complete | `reasoned-governance-check` | Machine-readable development policy |
+| End-to-end showcase | Complete | `reasoned-showcase` | Aggregates existing development evidence |
 | Apache-2.0 licensing | Complete | `LICENSE` | Repository licensing |
 | Citation metadata | Complete | `CITATION.cff` | CFF 1.2.0; no unverified DOI |
 | Sequence/LSTM model | Deferred by design | none | Not justified by current benchmark |
 | Real private-data pilot | Post-v1 / blocked | none | Separate governance approval required |
 | Production deployment | Post-v1 / blocked | none | Real-data, security and operational evidence required |
 
-## Final evaluation architecture
+## Evaluation architecture
 
-The evaluation layer uses two different gates.
+ReasonedOps separates two questions:
 
-### 1. Can the comparison be supported?
+1. **Can this comparison be supported?** Department × case-type overlap and design-identifiability checks return `supported`, `weak_overlap`, or `not_identifiable`. A `not_identifiable` comparison withholds adjusted estimates and ranking language.
+2. **Is this the right method family?** `reasoned-applicability` returns `use`, `caution`, `reject`, or `recommend_alternative` based on the declared outcome, censoring, clustering, causal intent, routing-policy question, overlap and interaction warnings.
 
-For department outcome comparisons, v0.6 introduced department × issue-category overlap and design-identifiability checks.
+ANCOVA/regression is therefore one method inside the Evaluate layer. It is not the product identity and is not forced onto incompatible questions.
 
-Statuses:
+## Evidence boundary
 
-- `supported`;
-- `weak_overlap`;
-- `not_identifiable`.
+Current evidence remains deliberately limited to:
 
-When department and case type cannot be separated from the observed routing design:
+1. hand-authored routing fixtures;
+2. synthetic outcome data;
+3. synthetic known-truth validity scenarios;
+4. deterministic applicability rules;
+5. synthetic logged-policy data;
+6. synthetic longitudinal histories.
 
-```text
-adjusted estimates       = withheld
-ANOVA department results = withheld
-management ranking       = blocked
-```
+There is **no representative real-pilot evidence** in v1.1.0.
 
-### 2. Is this the right method family?
+## What the project demonstrates
 
-v1.0 adds `ancova-applicability`, which returns exactly one disposition:
+ReasonedOps demonstrates a reproducible architecture that can:
 
-- `use`;
-- `caution`;
-- `reject`;
-- `recommend_alternative`.
+- structure and route service requests transparently;
+- preserve machine and human decision history;
+- capture observed outcomes separately;
+- distinguish raw summaries from adjusted evidence;
+- refuse unsupported comparisons;
+- redirect questions to more appropriate method families;
+- keep offline policy and longitudinal research separate from live operational routing;
+- keep evidence provenance and deployment boundaries explicit.
 
-The gate handles declared continuous, binary and time-to-event outcomes; censoring; repeated/clustered observations; causal intent; routing-policy questions; weak/no overlap; and department-specific slope warnings.
-
-Examples:
-
-```text
-continuous + supported overlap
-→ use regression_ancova_style
-
-weak overlap
-→ caution
-
-no overlap
-→ reject no_adjusted_department_comparison
-
-binary
-→ recommend_alternative logistic_type_model
-
-censored/time-to-event
-→ recommend_alternative survival_time_to_event_model
-
-repeated/clustered
-→ recommend_alternative clustered_or_hierarchical_model
-
-routing-policy question
-→ recommend_alternative offline_policy_evaluation
-
-causal intent
-→ recommend_alternative causal_design_and_identification
-```
-
-The gate intentionally recommends rather than implements every alternative model family.
-
-## Validity evidence
-
-`ancova-validity` tests four known synthetic scenarios:
-
-1. known-effect recovery under overlapping case mix;
-2. measured-confounding adjustment versus a deliberately naive model;
-3. no-overlap refusal;
-4. detection of a deliberately violated common-slope assumption.
-
-This demonstrates software behaviour on synthetic known-truth scenarios. It does **not** demonstrate real operational effectiveness or causality.
-
-## What v1.0 demonstrates
-
-- unstructured requests can be converted into explainable routing recommendations;
-- later human review can change effective routing without erasing machine history;
-- outcomes can be captured separately from predictions and reviews;
-- raw averages and adjusted evidence can be kept separate;
-- issue type can be treated as measured case mix rather than silently conflated with department performance;
-- unsupported department comparisons can be withheld;
-- inappropriate method families can be rejected or redirected;
-- synthetic known-truth scenarios can test recovery, confounding adjustment and refusal behaviour;
-- offline policy and longitudinal research can remain separated from live operational routing;
-- evidence provenance and deployment boundaries can remain explicit in code, CI and reports.
-
-## What v1.0 does not demonstrate
-
-- real-world routing accuracy or service improvement;
-- causal department/staff performance differences;
-- absence of unmeasured confounding;
-- production reliability, availability or security;
-- approval to process real private resident/customer histories;
-- that an alternative method recommendation has been fully implemented;
-- that the offline adaptive policy should be deployed;
-- that a sequence/LSTM model is necessary;
-- peer review merely because the repository is citable or may later receive a DOI.
-
-## Command surface
-
-```bash
-ancova-evaluate
-ancova-governance-check
-ancova-analyze
-ancova-management-report
-ancova-validity
-ancova-applicability
-ancova-policy
-ancova-longitudinal
-ancova-showcase
-```
-
-## Evidence hierarchy
-
-1. Hand-authored routing fixture — software regression evidence, not population performance.
-2. Synthetic outcome data — analysis/reporting workflow evidence.
-3. Synthetic validity scenarios — known-truth evaluation behaviour.
-4. Deterministic applicability rules — method-selection/refusal behaviour.
-5. Synthetic logged-policy data — offline policy research mechanics.
-6. Synthetic longitudinal histories — leakage-aware model-comparison mechanics.
-7. Showcase output — aggregation of existing evidence, not a new evidence class.
-8. Real pilot evidence — **not present in v1.0.0**.
+It does **not** demonstrate real-world service improvement, causal staff/department effects, production security/reliability, or approval to process real private resident/customer histories.
 
 ## Project freeze
 
-The following are now **post-v1 opportunities, not unfinished research-project work**:
-
-- real-organisation pilot work;
-- privacy/legal and private-data approval;
-- production authentication/RBAC/security/monitoring;
-- new statistical model families;
-- deeper LLM request intelligence;
-- PyPI distribution;
-- Zenodo DOI archiving;
-- software-paper submission;
-- competition-specific extensions.
-
-Further modelling should require a concrete user, competition requirement, research question or pilot opportunity rather than being added simply because additional complexity is possible.
-
-## Pilot and production boundary
-
-A real-data pilot remains blocked until privacy/legal review, notice/consent where applicable, access control, retention/deletion, pseudonymisation/linkage, incident handling, external-provider review and real-data quality protocols are approved.
-
-Production additionally requires real-world validation, authenticated identities, authorization, secure deployment, secrets management, monitoring, recovery, security testing, change control, rollback/fallback procedures and operational acceptance.
-
-## Version
-
-Project metadata, package `__version__`, `CITATION.cff`, showcase version and registered CLI surface target `1.0.0`. CI contains regression checks to prevent version and command-surface drift.
+Further modelling is post-v1 work and should require a concrete user, competition requirement, research question, reuse request, or pilot opportunity. More code by itself is not evidence that the project is more useful.
