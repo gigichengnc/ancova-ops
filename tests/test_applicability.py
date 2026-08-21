@@ -148,7 +148,16 @@ def test_gate_rejects_from_no_overlap_ancova_report() -> None:
     assert decision.disposition == "reject"
 
 
-def test_applicability_cli_emits_json(capsys) -> None:
+def test_applicability_cli_defaults_to_not_assessed(capsys) -> None:
+    exit_code = main(["--json"])
+    captured = capsys.readouterr()
+
+    assert exit_code == 0
+    assert '"disposition": "caution"' in captured.out
+    assert "overlap has not been assessed" in captured.out
+
+
+def test_applicability_cli_cannot_clear_use_from_declared_supported_overlap(capsys) -> None:
     exit_code = main(
         [
             "--outcome-type",
@@ -163,4 +172,5 @@ def test_applicability_cli_emits_json(capsys) -> None:
     captured = capsys.readouterr()
 
     assert exit_code == 0
-    assert '"disposition": "use"' in captured.out
+    assert '"disposition": "caution"' in captured.out
+    assert "user-declared rather than computed from an observed frame" in captured.out
