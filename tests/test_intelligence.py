@@ -1,4 +1,4 @@
-from ancova_ops.intelligence import BaselineRequestIntelligence
+from reasoned_ops.intelligence import BaselineRequestIntelligence
 
 
 def test_air_conditioning_request_is_classified_before_generic_leak() -> None:

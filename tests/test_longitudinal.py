@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from ancova_ops.longitudinal import (
+from reasoned_ops.longitudinal import (
     LONGITUDINAL_PROVENANCE,
     DiscreteTimeHazardModel,
     build_longitudinal_snapshots,

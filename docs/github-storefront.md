@@ -1,23 +1,23 @@
 # GitHub Storefront Recommendations
 
-This page records repository-level presentation settings for ANCOVA Ops. These settings improve discoverability and reviewer comprehension; they do not change the evidence class, modelling scope or deployment readiness of the project.
+This page records repository-level presentation settings for ReasonedOps. These settings improve discoverability and reviewer comprehension; they do not change the evidence class or deployment readiness of the project.
 
 ## Recommended About description
 
-> Human-centred service intelligence prototype for explainable routing, auditable human review, ANCOVA/regression outcome analytics, offline policy evaluation and leakage-aware longitudinal benchmarking.
+> Routes service requests, preserves machine/human decision history, records outcomes, and blocks unsupported management comparisons.
 
 ## Recommended topics
 
 Use a focused set rather than filling every available topic slot:
 
-- `ancova`
 - `service-operations`
 - `human-in-the-loop`
+- `audit-trail`
 - `explainable-ai`
 - `operations-research`
 - `regression`
+- `ancova`
 - `offline-evaluation`
-- `longitudinal-analysis`
 - `data-governance`
 - `responsible-ai`
 - `fastapi`
@@ -29,17 +29,17 @@ Use a focused set rather than filling every available topic slot:
 
 Primary text:
 
-> ANCOVA Ops
+> ReasonedOps
 
 Secondary text:
 
-> Explainable routing → human review → outcome analytics → adaptive research
+> Request → Route → Human Review → Outcome → Evidence Check
 
 Boundary line:
 
-> Synthetic research prototype · Apache-2.0
+> Local research prototype · Apache-2.0
 
-A social-preview image should avoid performance percentages, production claims or language implying that the current adaptive or longitudinal models have been validated on real resident/customer data.
+A social-preview image should avoid performance percentages, production claims or language implying that the current research workflows have been validated on real resident/customer data.
 
 ## Repository website field
 
@@ -49,18 +49,18 @@ Leave the repository website field blank until there is a stable public demo or 
 
 The README should expose information in this order:
 
-1. Project name and CI/release/license/runtime badges.
-2. One-sentence product/research positioning.
-3. Current maturity and evidence boundary.
-4. `ancova-showcase` as the fastest reviewer path.
-5. Architecture and capability map.
-6. API, modelling and governance details.
+1. What the software does to one real-looking service case.
+2. How to run that case locally.
+3. What records are preserved when a human overrides the recommendation.
+4. How the later evaluation layer can refuse a misleading comparison.
+5. What currently works and what is still research-only.
+6. Technical architecture and statistical details only after the concrete workflow is clear.
 
 ## Claim boundary
 
 Acceptable storefront language:
 
-> Reproducible research/software prototype for explainable service routing, downstream outcome analytics and offline adaptive-policy research.
+> Runnable research/software prototype for explainable service routing, auditable human review, outcome capture and guarded evaluation.
 
 Avoid language such as:
 

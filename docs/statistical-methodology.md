@@ -2,7 +2,7 @@
 
 ## Role of the evaluation layer
 
-ANCOVA Ops is organised around **Operate → Audit → Evaluate**. The evaluation layer exists to reduce the risk that operational dashboards or raw averages are interpreted as evidence they cannot support.
+ReasonedOps is organised around **Operate → Audit → Evaluate**. The evaluation layer exists to reduce the risk that operational dashboards or raw averages are interpreted as evidence they cannot support.
 
 ANCOVA/regression is one possible evaluation method. It is not the real-time request classifier, it is not an automatic staff-ranking engine, and it is not forced onto every analytical question.
 
@@ -71,13 +71,13 @@ Raw descriptive summaries can remain visible, but a different model cannot manuf
 
 When the comparison is estimable, adjusted department means are standardised over the **observed complete-case case-mix distribution**.
 
-Conceptually, ANCOVA Ops predicts the same observed case mix under each department label using the fitted model and averages those predictions over the observed case mix. This avoids choosing one arbitrary categorical issue reference.
+Conceptually, ReasonedOps predicts the same observed case mix under each department label using the fitted model and averages those predictions over the observed case mix. This avoids choosing one arbitrary categorical issue reference.
 
 The resulting estimates remain model-based associations. They must not be described as the causal effect of reassigning a case to another department unless a separate causal design justifies that interpretation.
 
 ## Known-truth validity benchmark
 
-`ancova-validity` runs deterministic synthetic scenarios where the data-generating truth is known.
+`reasoned-validity` runs deterministic synthetic scenarios where the data-generating truth is known.
 
 ### Known-effect recovery
 
@@ -106,7 +106,7 @@ Passing these scenarios validates software behaviour on known synthetic cases. I
 
 ## v1 evaluation applicability gate
 
-`ancova-applicability` makes **method follows the question** executable.
+`reasoned-applicability` makes **method follows the question** executable.
 
 It represents:
 
@@ -162,7 +162,7 @@ See [`evaluation-applicability.md`](evaluation-applicability.md).
 
 v1.0 deliberately does not implement every logistic, survival, hierarchical or causal method merely to increase feature count.
 
-The final research-project requirement is that ANCOVA Ops does not silently use the wrong method. Alternative model implementation is post-v1 work that should be justified by a concrete research question or real use case.
+The final research-project requirement is that ReasonedOps does not silently use the wrong method. Alternative model implementation is post-v1 work that should be justified by a concrete research question or real use case.
 
 A `recommend_alternative` result is therefore a valid output, not an incomplete code path.
 
@@ -203,25 +203,25 @@ Real private pilot or production data remains outside the repository's current a
 
 ```bash
 # Continuous-outcome workflow
-ancova-analyze
-ancova-analyze --json
+reasoned-analyze
+reasoned-analyze --json
 
 # Management report with applicability gate
-ancova-management-report
+reasoned-management-report
 
 # Known-truth validity scenarios
-ancova-validity
-ancova-validity --json
+reasoned-validity
+reasoned-validity --json
 
 # Standalone method applicability
-ancova-applicability \
+reasoned-applicability \
   --outcome-type continuous \
   --comparison department_outcome \
   --overlap-status supported \
   --json
 ```
 
-A development CSV can be supplied to `ancova-analyze` when it includes an approved `data_provenance` value and all required model fields.
+A development CSV can be supplied to `reasoned-analyze` when it includes an approved `data_provenance` value and all required model fields.
 
 ## Interpretation boundary
 

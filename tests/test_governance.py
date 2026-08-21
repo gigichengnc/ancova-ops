@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from ancova_ops.governance import (
+from reasoned_ops.governance import (
     GovernancePolicyError,
     assert_analytics_columns,
     assert_development_provenance,

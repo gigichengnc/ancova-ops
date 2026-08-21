@@ -2,9 +2,9 @@ import json
 
 import pytest
 
-from ancova_ops.governance import GovernancePolicyError
-from ancova_ops.management_report import build_management_report, main, render_markdown
-from ancova_ops.synthetic import generate_outcomes
+from reasoned_ops.governance import GovernancePolicyError
+from reasoned_ops.management_report import build_management_report, main, render_markdown
+from reasoned_ops.synthetic import generate_outcomes
 
 
 def test_management_report_separates_raw_and_adjusted_results() -> None:
@@ -28,7 +28,7 @@ def test_markdown_keeps_management_and_causal_boundaries_visible() -> None:
     report = build_management_report(generate_outcomes(n=160, seed=22))
     markdown = render_markdown(report)
 
-    assert "# ANCOVA Ops Management Outcome Report" in markdown
+    assert "# ReasonedOps Management Outcome Report" in markdown
     assert "## Executive summary" in markdown
     assert "## Evaluation applicability gate" in markdown
     assert "**Evaluation applicability:**" in markdown

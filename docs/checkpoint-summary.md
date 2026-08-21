@@ -1,6 +1,6 @@
 # v0.5.0 Checkpoint Summary
 
-ANCOVA Ops v0.5.0 is the first repository checkpoint where Phases 0–4 are presented as one coherent research/software system rather than a sequence of isolated implementation phases.
+ReasonedOps v0.5.0 is the first repository checkpoint where Phases 0–4 are presented as one coherent research/software system rather than a sequence of isolated implementation phases.
 
 ## Included at this checkpoint
 

@@ -760,7 +760,7 @@ def _complexity_conclusion(
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Run the ANCOVA Ops synthetic longitudinal recurrence benchmark."
+        description="Run the ReasonedOps synthetic longitudinal recurrence benchmark."
     )
     parser.add_argument("--entities", type=int, default=240)
     parser.add_argument("--days", type=int, default=720)
@@ -790,7 +790,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(payload, indent=2, sort_keys=True))
         return 0
 
-    print("ANCOVA Ops synthetic longitudinal benchmark")
+    print("ReasonedOps synthetic longitudinal benchmark")
     print(f"Provenance: {report.provenance}")
     print(
         f"Snapshots: {report.snapshot_count} "

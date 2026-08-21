@@ -226,7 +226,7 @@ def _duplicates(values: Iterable[str]) -> set[str]:
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Validate ANCOVA Ops development-stage data-governance guardrails."
+        description="Validate ReasonedOps development-stage data-governance guardrails."
     )
     parser.add_argument(
         "--policy",

@@ -1,6 +1,6 @@
-from ancova_ops.analytics import build_ancova_report
-from ancova_ops.management_report import build_management_report, render_markdown
-from ancova_ops.validity import (
+from reasoned_ops.analytics import build_ancova_report
+from reasoned_ops.management_report import build_management_report, render_markdown
+from reasoned_ops.validity import (
     generate_measured_confounding_scenario,
     main,
     run_validity_benchmark,

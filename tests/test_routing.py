@@ -1,5 +1,5 @@
-from ancova_ops.models import ServiceCase
-from ancova_ops.routing import baseline_route
+from reasoned_ops.models import ServiceCase
+from reasoned_ops.routing import baseline_route
 
 
 def test_repeated_high_context_maintenance_case_is_escalated() -> None:

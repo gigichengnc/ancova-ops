@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from ancova_ops.evaluation import (
+from reasoned_ops.evaluation import (
     EvaluationCase,
     EvaluationPrediction,
     baseline_predict,
@@ -106,7 +106,7 @@ def test_cli_can_compare_candidate_with_baseline(capsys) -> None:
             "--fixture",
             str(FIXTURE_PATH),
             "--candidate",
-            "ancova_ops.evaluation:baseline_predict",
+            "reasoned_ops.evaluation:baseline_predict",
             "--candidate-name",
             "same-baseline",
             "--json",

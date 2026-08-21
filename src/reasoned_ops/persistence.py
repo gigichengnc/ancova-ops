@@ -74,7 +74,7 @@ def default_database_path() -> str:
     ignored by Git. Set ANCOVA_OPS_DB_PATH to use a different database.
     """
 
-    return os.environ.get("ANCOVA_OPS_DB_PATH", ".ancova_ops/ancova_ops.sqlite3")
+    return os.environ.get("ANCOVA_OPS_DB_PATH", ".reasoned_ops/reasoned_ops.sqlite3")
 
 
 def _utc_now() -> str:

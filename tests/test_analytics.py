@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from ancova_ops.analytics import (
+from reasoned_ops.analytics import (
     COVARIATES,
     adjusted_department_estimates,
     build_ancova_report,
@@ -10,7 +10,7 @@ from ancova_ops.analytics import (
     heteroskedasticity_diagnostics,
     multicollinearity_diagnostics,
 )
-from ancova_ops.synthetic import generate_outcomes
+from reasoned_ops.synthetic import generate_outcomes
 
 
 def test_synthetic_data_is_explicitly_labelled() -> None:

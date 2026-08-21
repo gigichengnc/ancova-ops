@@ -2,7 +2,7 @@
 
 ## Status
 
-ANCOVA Ops is currently a **synthetic-only development project**. The repository is **not approved for real private resident or customer service records**.
+ReasonedOps is currently a **synthetic-only development project**. The repository is **not approved for real private resident or customer service records**.
 
 This document defines project controls for development and future pilot planning. It is not a substitute for jurisdiction-specific legal, privacy, information-security or institutional review before a real deployment.
 
@@ -209,13 +209,13 @@ For a new longitudinal feature, also add a longitudinal registry entry with stat
 Run:
 
 ```bash
-ancova-governance-check
+reasoned-governance-check
 ```
 
 Machine-readable output:
 
 ```bash
-ancova-governance-check --json
+reasoned-governance-check --json
 ```
 
 CI runs this check so a pull request cannot quietly change the repository from synthetic-only development into private-data use without making the policy change visible.

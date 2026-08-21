@@ -2,7 +2,7 @@
 
 ## Purpose
 
-ANCOVA Ops needs a stable benchmark before more complex NLP, LLM or machine-learning routing is introduced. A candidate system should not be described as an improvement simply because a few demonstrations look better.
+ReasonedOps needs a stable benchmark before more complex NLP, LLM or machine-learning routing is introduced. A candidate system should not be described as an improvement simply because a few demonstrations look better.
 
 Phase 1 therefore evaluates every routing system on the same labelled fixture set and reports the same metrics.
 
@@ -70,19 +70,19 @@ These values describe performance on this small fixture only. They are not produ
 After installing the development package:
 
 ```bash
-ancova-evaluate
+reasoned-evaluate
 ```
 
 Machine-readable output:
 
 ```bash
-ancova-evaluate --json
+reasoned-evaluate --json
 ```
 
 A different fixture can be supplied explicitly:
 
 ```bash
-ancova-evaluate --fixture path/to/fixture.json
+reasoned-evaluate --fixture path/to/fixture.json
 ```
 
 ## Compare a candidate system
@@ -90,7 +90,7 @@ ancova-evaluate --fixture path/to/fixture.json
 A candidate predictor can be supplied with `module:function` syntax:
 
 ```bash
-ancova-evaluate \
+reasoned-evaluate \
   --candidate my_package.my_router:predict \
   --candidate-name experimental-router-v1
 ```
@@ -100,7 +100,7 @@ The callable must accept an `EvaluationCase` and return an `EvaluationPrediction
 Example interface:
 
 ```python
-from ancova_ops.evaluation import EvaluationCase, EvaluationPrediction
+from reasoned_ops.evaluation import EvaluationCase, EvaluationPrediction
 
 
 def predict(case: EvaluationCase) -> EvaluationPrediction:

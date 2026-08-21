@@ -2,6 +2,23 @@
 
 All notable project checkpoints are documented here.
 
+## [1.2.0] - 2026-08-21
+
+### Changed
+
+- Completed the project rename at the implementation level: `src/reasoned_ops` is now the single application package.
+- Removed the temporary `src/ancova_ops` compatibility namespace introduced during the v1.1 migration.
+- Replaced remaining internal imports and current-facing command/path references with the canonical ReasonedOps namespace.
+- Replaced temporary showcase/management/applicability wrappers with self-contained ReasonedOps implementations.
+- Rewrote the README around one concrete request → routing → human review → outcome → evaluation workflow rather than architecture-first explanation.
+- Reworked the generated showcase so it demonstrates one service case and the later management evidence check directly.
+- Updated project-status, release-readiness, hackathon-origin, storefront and showcase documentation for the clean v1.2 identity.
+- Added regression coverage preventing the legacy source namespace from reappearing.
+
+### Evidence and deployment status
+
+This release changes naming consistency, code organisation and reviewer usability. It does not add real-world validation. Quantitative development evidence remains synthetic or hand-authored, and real private-data pilot use and production deployment remain not approved.
+
 ## [1.1.1] - 2026-08-21
 
 ### Changed

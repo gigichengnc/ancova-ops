@@ -3,15 +3,15 @@ import json
 import pandas as pd
 import pytest
 
-from ancova_ops.adaptive import (
+from reasoned_ops.adaptive import (
     POLICY_VERSION,
     PolicyRegistry,
     build_offline_comparison,
     chronological_split,
     train_outcome_aware_policy,
 )
-from ancova_ops.routing import ROUTER_VERSION
-from ancova_ops.synthetic import generate_logged_routing_history
+from reasoned_ops.routing import ROUTER_VERSION
+from reasoned_ops.synthetic import generate_logged_routing_history
 
 
 def test_chronological_split_has_no_future_leakage() -> None:

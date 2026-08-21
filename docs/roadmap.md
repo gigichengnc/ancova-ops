@@ -1,6 +1,6 @@
 # Roadmap — Research Project Complete at v1.0
 
-ANCOVA Ops is a finite research/portfolio project built around:
+ReasonedOps is a finite research/portfolio project built around:
 
 > **Operate → Audit → Evaluate**
 
@@ -87,7 +87,7 @@ Pilot-specific privacy/legal, consent, access-control and retention implementati
 - [x] package/project version alignment;
 - [x] changelog and status/readiness docs;
 - [x] external-facing README;
-- [x] one-command `ancova-showcase`;
+- [x] one-command `reasoned-showcase`;
 - [x] Apache License 2.0;
 - [x] CI-gated GitHub release workflow;
 - [x] root `CITATION.cff` and citation guide.
@@ -109,7 +109,7 @@ Pilot-specific privacy/legal, consent, access-control and retention implementati
 - [x] measured-confounding versus naive scenario;
 - [x] no-overlap refusal scenario;
 - [x] slope-interaction scenario;
-- [x] `ancova-validity` CLI, tests and CI smoke;
+- [x] `reasoned-validity` CLI, tests and CI smoke;
 - [x] Python 3.11/3.12 CI green and v0.6.0 merged.
 
 ## v1.0.0 — Evaluation applicability and project freeze ✅
@@ -136,7 +136,7 @@ Goal: make **method follows the question** executable rather than forcing ANCOVA
 - [x] repeated/clustered data → clustered/hierarchical recommendation;
 - [x] routing-policy question → offline policy evaluation recommendation;
 - [x] causal intent → causal design/identification recommendation;
-- [x] `ancova-applicability` CLI and deterministic tests;
+- [x] `reasoned-applicability` CLI and deterministic tests;
 - [x] management report integration;
 - [x] one-command showcase integration;
 - [x] applicability methodology guide.

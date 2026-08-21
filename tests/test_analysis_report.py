@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from ancova_ops.analysis_report import main
+from reasoned_ops.analysis_report import main
 
 
 def test_analysis_cli_emits_machine_readable_report(capsys: pytest.CaptureFixture[str]) -> None:

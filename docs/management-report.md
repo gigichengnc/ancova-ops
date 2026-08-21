@@ -11,31 +11,31 @@ It is deliberately a self-contained Markdown report rather than a deployed dashb
 Synthetic development data:
 
 ```bash
-ancova-management-report
+reasoned-management-report
 ```
 
 This writes the default report to:
 
 ```text
-.ancova_ops/reports/management-report.md
+.reasoned_ops/reports/management-report.md
 ```
 
 Choose explicit Markdown and JSON outputs:
 
 ```bash
-ancova-management-report \
+reasoned-management-report \
   --synthetic-n 500 \
   --seed 2026 \
-  --output .ancova_ops/reports/management-report.md \
-  --json-output .ancova_ops/reports/management-report.json
+  --output .reasoned_ops/reports/management-report.md \
+  --json-output .reasoned_ops/reports/management-report.json
 ```
 
 Approved development CSV:
 
 ```bash
-ancova-management-report \
+reasoned-management-report \
   --csv path/to/development-data.csv \
-  --output .ancova_ops/reports/management-report.md
+  --output .reasoned_ops/reports/management-report.md
 ```
 
 CSV inputs must still pass the existing development governance boundary and contain an approved `data_provenance` value. The command does not bypass the synthetic-only policy.
