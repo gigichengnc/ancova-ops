@@ -2,6 +2,26 @@
 
 All notable project checkpoints are documented here.
 
+## [1.1.0] - 2026-08-21
+
+### Renamed
+
+- Renamed the project from **ANCOVA Ops** to **ReasonedOps** so the name reflects the actual product architecture: **Operate → Audit → Evaluate**.
+- Renamed the canonical GitHub repository to `gigichengnc/reasoned-ops`.
+- Renamed the Python distribution to `reasoned-ops` and added the canonical `reasoned_ops` package namespace.
+- Renamed the public CLI surface from `ancova-*` to `reasoned-*`.
+- Updated README, citation metadata, package URLs, CI smoke commands and public examples to the ReasonedOps identity.
+
+### Compatibility
+
+- The legacy `ancova_ops` namespace is retained temporarily for compatibility with historical local examples and development references.
+- Historical release notes before v1.1.0 intentionally retain the former project name and old command names.
+- ANCOVA/regression remains an evaluation method inside ReasonedOps; the statistical method itself is not renamed.
+
+### Evidence and deployment status
+
+This is a naming/package migration checkpoint. It does not add a new evidence class or change the project completion boundary. Current quantitative evidence remains synthetic or hand-authored development evidence. Real private-data pilot use and production deployment remain not approved.
+
 ## [1.0.0] - 2026-08-20
 
 ### Added
