@@ -7,8 +7,7 @@ from pathlib import Path
 import pandas as pd
 
 from ancova_ops.analysis_report import load_input
-from ancova_ops.management_report import ManagementReport
-from ancova_ops.management_report import _json_safe
+from ancova_ops.management_report import ManagementReport, _json_safe
 from ancova_ops.management_report import build_management_report as _build_management_report
 from ancova_ops.management_report import render_markdown as _render_markdown
 
@@ -17,9 +16,9 @@ DEFAULT_OUTPUT = Path(".reasoned_ops/reports/management-report.md")
 __all__ = [
     "ManagementReport",
     "build_management_report",
+    "main",
     "render_markdown",
     "write_management_report",
-    "main",
 ]
 
 
