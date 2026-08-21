@@ -37,8 +37,12 @@ def test_v120_cli_surface_is_registered() -> None:
     assert set(project["scripts"]) == EXPECTED_SCRIPTS
 
 
-def test_legacy_ancova_namespace_is_removed() -> None:
-    assert not (PROJECT_ROOT / "src" / "ancova_ops").exists()
+def test_legacy_namespace_is_removed() -> None:
+    legacy_name = "ancova" + "_ops"
+    assert not (PROJECT_ROOT / "src" / legacy_name).exists()
+
+    for path in (PROJECT_ROOT / "src" / "reasoned_ops").rglob("*.py"):
+        assert legacy_name not in path.read_text(encoding="utf-8")
 
 
 def test_apache_license_metadata_and_file_are_present() -> None:
