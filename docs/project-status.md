@@ -19,6 +19,8 @@ publish and verify the public PyPI artifact
       ↓
 archive a post-enablement release through Zenodo
       ↓
+record the stable Zenodo concept DOI
+      ↓
 define the next real evidence gate
 ```
 
@@ -28,7 +30,8 @@ define the next real evidence gate
 **PyPI publication:** PUBLISHED — `reasoned-ops==1.4.0`  
 **External package install check:** VERIFIED FROM PUBLIC PYPI ARTIFACT  
 **Zenodo GitHub integration:** ENABLED FOR `gigichengnc/reasoned-ops`  
-**Zenodo DOI:** PENDING INGESTION/VERIFICATION OF THE CURRENT ARCHIVE RELEASE  
+**Zenodo concept DOI:** `10.5281/zenodo.22044621` — VISIBLE IN THE ZENODO GITHUB INTEGRATION  
+**Version-specific v1.4.2 DOI:** NOT YET RECORDED IN THIS REPOSITORY  
 **Real private-data pilot:** NOT APPROVED  
 **Production deployment:** NOT APPROVED
 
@@ -52,7 +55,7 @@ define the next real evidence gate
 | Python distribution | Builds wheel + source distribution and verifies clean-wheel installation in CI. |
 | PyPI publishing | Published through GitHub OIDC Trusted Publishing with no stored long-lived PyPI token. |
 | Public artifact verification | `reasoned-ops==1.4.0` installed from PyPI in a Windows environment outside the repository checkout; Operate → Audit → Evaluate paths were exercised successfully. |
-| Citation/archive | `CITATION.cff` is aligned to v1.4.2 and the repository is enabled for Zenodo GitHub release archiving. |
+| Citation/archive | `CITATION.cff` is aligned to v1.4.2 and records the stable Zenodo concept DOI for the archived project lineage. |
 
 ## Portfolio narrative
 
@@ -126,6 +129,8 @@ See [`publication-verification.md`](publication-verification.md) for the exact b
 This establishes package distribution and executable local behaviour from the public artifact. It is not independent scientific validation.
 
 The v1.4.2 checkpoint is separate: it is a citation/wording correction release prepared for the current Zenodo archive path. It does not imply that `reasoned-ops==1.4.2` has been published on PyPI.
+
+The Zenodo GitHub integration now exposes the stable concept DOI `10.5281/zenodo.22044621` for the ReasonedOps archive lineage. The concept DOI identifies the collection across archived versions; it should not be misrepresented as the version-specific DOI for the v1.4.2 snapshot unless that individual record is separately verified.
 
 ## Evaluation boundary
 
