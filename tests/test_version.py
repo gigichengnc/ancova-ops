@@ -2,20 +2,21 @@ import tomllib
 from pathlib import Path
 
 import ancova_ops
+import reasoned_ops
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_VERSION = "1.0.0"
-EXPECTED_REPOSITORY = "https://github.com/gigichengnc/ancova-ops"
+EXPECTED_VERSION = "1.1.0"
+EXPECTED_REPOSITORY = "https://github.com/gigichengnc/reasoned-ops"
 EXPECTED_SCRIPTS = {
-    "ancova-analyze",
-    "ancova-applicability",
-    "ancova-evaluate",
-    "ancova-governance-check",
-    "ancova-longitudinal",
-    "ancova-management-report",
-    "ancova-policy",
-    "ancova-showcase",
-    "ancova-validity",
+    "reasoned-analyze",
+    "reasoned-applicability",
+    "reasoned-evaluate",
+    "reasoned-governance-check",
+    "reasoned-longitudinal",
+    "reasoned-management-report",
+    "reasoned-policy",
+    "reasoned-showcase",
+    "reasoned-validity",
 }
 
 
@@ -26,13 +27,15 @@ def _project_metadata() -> dict[str, object]:
 def test_package_version_matches_project_metadata() -> None:
     project = _project_metadata()
 
-    assert ancova_ops.__version__ == project["version"]
+    assert reasoned_ops.__version__ == project["version"]
+    assert reasoned_ops.__version__ == EXPECTED_VERSION
     assert ancova_ops.__version__ == EXPECTED_VERSION
 
 
-def test_v100_cli_surface_is_registered() -> None:
+def test_v110_cli_surface_is_registered() -> None:
     project = _project_metadata()
 
+    assert project["name"] == "reasoned-ops"
     assert set(project["scripts"]) == EXPECTED_SCRIPTS
 
 
@@ -53,6 +56,7 @@ def test_citation_metadata_matches_release_metadata() -> None:
     assert project["urls"]["Repository"] == EXPECTED_REPOSITORY
     assert "cff-version: 1.2.0" in citation
     assert f'version: "{EXPECTED_VERSION}"' in citation
+    assert 'title: "ReasonedOps"' in citation
     assert "license: Apache-2.0" in citation
     assert 'given-names: "Gigi"' in citation
     assert 'family-names: "Cheng"' in citation
