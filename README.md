@@ -1,4 +1,4 @@
-# ReasonedOps: From an AI Concierge Concept to Evidence-Aware Service Operations
+# ReasonedOps
 
 [![CI](https://github.com/gigichengnc/reasoned-ops/actions/workflows/ci.yml/badge.svg)](https://github.com/gigichengnc/reasoned-ops/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/gigichengnc/reasoned-ops?display_name=tag)](https://github.com/gigichengnc/reasoned-ops/releases/latest)
@@ -6,23 +6,34 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue.svg)](pyproject.toml)
 
-ReasonedOps originated from my participation in **HKMU Hackathon 2026** and evolved into a runnable, auditable service-operations research prototype.
+**Route service requests, preserve machine/human decision history, and refuse management comparisons the observed data cannot support.**
 
-The early concept asked whether an AI-assisted concierge could understand a resident request, consider urgency and communication context, and route the case to the right team. The current implementation deliberately narrows that ambition: **Operate uses transparent, deterministic rule-based request features and routing logic. It does not claim a trained NLP model.**
-
-As the project evolved, a second problem became more important:
-
-> After an operational system starts producing data, how do we stop managers from drawing conclusions that the data cannot actually support?
-
-ReasonedOps now separates three responsibilities:
+ReasonedOps is a local service-operations research prototype organized around three responsibilities:
 
 > **Operate → Audit → Evaluate**
 
-It is not designed to make management decisions automatically. It is designed to make **unsupported management conclusions harder to reach**, while preserving enough history to inspect how a recommendation and later conclusion were produced.
+- **Operate:** transparent rule/phrase request features and deterministic routing, exposed through FastAPI.
+- **Audit:** preserve the original request, machine recommendation, human confirm/override, effective route, and outcome separately.
+- **Evaluate:** inspect raw outcomes, comparison support and method applicability before producing an adjusted result; a department ranking can be withheld when the design is not identifiable.
 
-The project was originally developed under the name **ANCOVA Ops**. It was renamed **ReasonedOps** because ANCOVA/regression is only one method inside the Evaluate layer, not the project itself.
+## Run it
 
-**HKMU Hackathon 2026 is referenced only to describe the project's origin. ReasonedOps is independently developed and is not presented as an official HKMU product or endorsement.**
+Install the currently verified public package and generate the reviewer showcase:
+
+```bash
+pip install reasoned-ops==1.4.3
+reasoned-showcase
+```
+
+Or run the service API:
+
+```bash
+uvicorn reasoned_ops.api:app --reload
+```
+
+> **Evidence boundary:** Operate is a deterministic rule/phrase baseline. **It does not claim a trained NLP model.** Public routing evidence is hand-authored; outcome, policy and longitudinal evidence is synthetic. No representative real private-data pilot or production deployment is claimed. Observed-data diagnostics also cannot prove that unmeasured confounding is absent.
+
+ReasonedOps originated from an **HKMU Hackathon 2026** concierge concept and was later rebuilt independently into the current evidence-aware workflow. The project was previously named **ANCOVA Ops**; ANCOVA/regression is now only one method inside Evaluate, not the product identity. HKMU is referenced only as project origin, not as an endorsement.
 
 ## Portfolio snapshot
 
