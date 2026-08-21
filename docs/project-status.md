@@ -1,4 +1,4 @@
-# Project Status — ReasonedOps v1.3.0
+# Project Status — ReasonedOps v1.4.0
 
 ReasonedOps is a completed local research/software prototype and retrospective rebuild of an **HKMU Hackathon 2026** concierge concept.
 
@@ -13,11 +13,15 @@ rebuild as Operate → Audit → Evaluate
       ↓
 validate software behaviour with public development evidence
       ↓
+package the reusable Python implementation
+      ↓
 define the next real evidence gate
 ```
 
 **Research/portfolio project:** COMPLETED  
-**Current portfolio/code checkpoint:** v1.3.0  
+**Current portfolio/code checkpoint:** v1.4.0  
+**Python distribution build:** READY  
+**PyPI first upload:** ACCOUNT-SIDE PUBLISHER SETUP PENDING  
 **Real private-data pilot:** NOT APPROVED  
 **Production deployment:** NOT APPROVED
 
@@ -38,10 +42,12 @@ define the next real evidence gate
 | Longitudinal research | Benchmarks recurrence/time-to-next-case models on synthetic histories. |
 | Governance check | Enforces the repository's synthetic/private-data development policy. |
 | Rebuild record | Preserves the reconstructed original concept, before/after comparison, concept audit and model decisions. |
+| Python distribution | Builds wheel + source distribution and verifies clean-wheel installation in CI. |
+| PyPI publishing | Dedicated manual Trusted Publishing workflow using GitHub OIDC; first account-side registration still required. |
 
 ## Portfolio narrative
 
-From v1.3.0, the repository is intentionally presented as a **rebuild case study**, not as a startup-style product landing page.
+The repository is intentionally presented as a **rebuild case study**, not as a startup-style product landing page.
 
 Start with:
 
@@ -49,7 +55,8 @@ Start with:
 2. [`before-vs-after.md`](before-vs-after.md) — original concept vs current rebuild;
 3. [`original-concept-audit.md`](original-concept-audit.md) — assumptions preserved/corrected/deferred;
 4. [`model-decisions.md`](model-decisions.md) — why methods/models were selected, rejected or deferred;
-5. [`../README.md`](../README.md) — runnable overview and portfolio story.
+5. [`../README.md`](../README.md) — runnable overview and portfolio story;
+6. [`pypi.md`](pypi.md) — package reuse and Trusted Publishing procedure.
 
 ## Canonical codebase
 
@@ -72,6 +79,33 @@ reasoned-policy
 reasoned-longitudinal
 reasoned-governance-check
 ```
+
+The Python distribution name is:
+
+```text
+reasoned-ops
+```
+
+The import namespace remains:
+
+```python
+import reasoned_ops
+```
+
+## Distribution boundary
+
+CI now separately validates the packaged artifact rather than assuming an editable source install proves distribution quality.
+
+The distribution job builds:
+
+```text
+wheel
+source distribution
+```
+
+then installs the wheel into a clean virtual environment and checks import, routing behaviour and a packaged CLI entry point.
+
+PyPI upload is intentionally not claimed as complete until the repository owner registers the matching Trusted Publisher, publishes a release tag and verifies installation from PyPI itself.
 
 ## Evaluation boundary
 
@@ -100,7 +134,7 @@ Current quantitative development evidence is limited to:
 - synthetic logged-policy data;
 - synthetic longitudinal histories.
 
-There is no representative real-company or real-resident/customer pilot dataset in v1.3.0.
+There is no representative real-company or real-resident/customer pilot dataset in v1.4.0.
 
 ## What this project does not prove
 
@@ -114,6 +148,8 @@ The repository does **not** prove that ReasonedOps:
 - delivers a measured commercial return on investment.
 
 Those claims require a separate real-data pilot, governance approval and a defensible evaluation design.
+
+Publishing a package to PyPI would make reuse easier; it would not change these evidence boundaries.
 
 ## Next evidence gate
 
