@@ -2,6 +2,7 @@ from reasoned_ops.analytics import build_ancova_report
 from reasoned_ops.management_report import build_management_report, render_markdown
 from reasoned_ops.validity import (
     generate_measured_confounding_scenario,
+    generate_unmeasured_confounding_scenario,
     main,
     run_validity_benchmark,
 )
@@ -15,6 +16,7 @@ def test_validity_benchmark_passes_known_synthetic_scenarios() -> None:
     assert report["scenarios"]["measured_confounding"]["pass"] is True
     assert report["scenarios"]["no_overlap"]["pass"] is True
     assert report["scenarios"]["slope_interaction"]["pass"] is True
+    assert report["scenarios"]["unmeasured_confounding_blind_spot"]["pass"] is True
 
 
 def test_case_mix_adjustment_beats_deliberately_naive_model() -> None:
@@ -23,6 +25,30 @@ def test_case_mix_adjustment_beats_deliberately_naive_model() -> None:
 
     assert scenario["adjusted_absolute_error_hours"] < 0.75
     assert scenario["adjusted_absolute_error_hours"] < scenario["naive_absolute_error_hours"]
+
+
+def test_unmeasured_confounding_scenario_exposes_false_negative_gate() -> None:
+    report = run_validity_benchmark(n=1200, seed=23)
+    scenario = report["scenarios"]["unmeasured_confounding_blind_spot"]
+
+    assert scenario["scenario_type"] == "known_limitation"
+    assert scenario["hidden_column_removed_before_evaluation"] is True
+    assert scenario["identifiability_status"] == "supported"
+    assert scenario["gate_disposition"] == "use"
+    assert scenario["sign_reversal"] is True
+    assert scenario["adjusted_absolute_error_hours"] >= 3.0
+    assert "unmeasured confounding" in scenario["interpretation_boundary"].lower()
+
+
+def test_hidden_confounder_is_explicit_in_generator_but_not_required_by_evaluator() -> None:
+    data = generate_unmeasured_confounding_scenario(n=400, seed=35)
+
+    assert "latent_case_burden" in data.columns
+    observed = data.drop(columns=["latent_case_burden"])
+    report = build_ancova_report(observed)
+
+    assert report.identifiability["status"] == "supported"
+    assert report.adjusted_estimates
 
 
 def test_no_overlap_withholds_department_comparison() -> None:
@@ -62,3 +88,4 @@ def test_validity_cli_returns_success(capsys) -> None:
 
     assert exit_code == 0
     assert '"overall_pass": true' in captured.out
+    assert '"unmeasured_confounding_blind_spot"' in captured.out
