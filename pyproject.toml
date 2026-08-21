@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "reasoned-ops"
-version = "1.2.0"
+version = "1.3.0"
 description = "Evidence-aware service operations with explainable routing, auditable human review and guarded outcome evaluation"
 readme = "README.md"
 license = "Apache-2.0"
