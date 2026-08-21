@@ -1,12 +1,12 @@
-from ancova_ops.analytics import build_ancova_report
-from ancova_ops.applicability import (
+from reasoned_ops.analytics import build_ancova_report
+from reasoned_ops.applicability import (
     EvaluationQuestion,
     assess_evaluation_question,
     assess_from_ancova_report,
     main,
 )
-from ancova_ops.synthetic import generate_outcomes
-from ancova_ops.validity import generate_measured_confounding_scenario
+from reasoned_ops.synthetic import generate_outcomes
+from reasoned_ops.validity import generate_measured_confounding_scenario
 
 
 def test_supported_continuous_department_comparison_uses_ancova_style() -> None:

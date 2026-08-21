@@ -174,7 +174,7 @@ def evaluate_predictor(
         prediction = predictor(case)
         if not isinstance(prediction, EvaluationPrediction):
             raise TypeError(
-                "predictor must return ancova_ops.evaluation.EvaluationPrediction"
+                "predictor must return reasoned_ops.evaluation.EvaluationPrediction"
             )
 
         if prediction.department == case.expected_department:
@@ -324,7 +324,7 @@ def _print_text_report(report: EvaluationReport) -> None:
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Evaluate ANCOVA Ops routing systems on the same labelled fixture set."
+        description="Evaluate ReasonedOps routing systems on the same labelled fixture set."
     )
     parser.add_argument(
         "--fixture",

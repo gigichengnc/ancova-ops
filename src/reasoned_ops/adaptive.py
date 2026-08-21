@@ -14,7 +14,7 @@ from .routing import CATEGORY_TO_DEPARTMENT, ROUTER_VERSION
 from .synthetic import LOGGED_ROUTING_DEPARTMENTS, generate_logged_routing_history
 
 POLICY_VERSION = "outcome-aware-category-mean-v1"
-DEFAULT_REGISTRY_PATH = Path(".ancova_ops/policy-registry.json")
+DEFAULT_REGISTRY_PATH = Path(".reasoned_ops/policy-registry.json")
 PROPENSITY_PREFIX = "propensity_"
 REQUIRED_LOGGED_COLUMNS = (
     "case_id",

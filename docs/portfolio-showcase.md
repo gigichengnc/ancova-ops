@@ -1,6 +1,6 @@
 # Portfolio Showcase — v1.0
 
-The v1.0 `ancova-showcase` command is the reviewer-facing entry point for the completed ANCOVA Ops research prototype:
+The v1.0 `reasoned-showcase` command is the reviewer-facing entry point for the completed ReasonedOps research prototype:
 
 > **Operate → Audit → Evaluate**
 
@@ -9,27 +9,27 @@ The showcase does not introduce a new model or a new evidence class. It orchestr
 ## Run the showcase
 
 ```bash
-ancova-showcase
+reasoned-showcase
 ```
 
 Default Markdown output:
 
 ```text
-.ancova_ops/showcase/showcase.md
+.reasoned_ops/showcase/showcase.md
 ```
 
 Generate Markdown plus JSON:
 
 ```bash
-ancova-showcase \
-  --output .ancova_ops/showcase/showcase.md \
-  --json-output .ancova_ops/showcase/showcase.json
+reasoned-showcase \
+  --output .reasoned_ops/showcase/showcase.md \
+  --json-output .reasoned_ops/showcase/showcase.json
 ```
 
 Print the structured payload:
 
 ```bash
-ancova-showcase --json
+reasoned-showcase --json
 ```
 
 ## What the v1 report contains
@@ -71,7 +71,7 @@ Production deployment: NOT READY / NOT APPROVED
 
 The showcase is designed to answer:
 
-- What does ANCOVA Ops do end to end?
+- What does ReasonedOps do end to end?
 - How do Operate, Audit and Evaluate fit together?
 - Can the evaluation layer refuse a comparison when the data cannot support it?
 - Does the method-selection gate redirect incompatible questions instead of forcing ANCOVA?
@@ -82,13 +82,13 @@ The generated report is a software/research portfolio artifact. It must not be u
 ## Fast CI-sized run
 
 ```bash
-ancova-showcase \
+reasoned-showcase \
   --outcome-rows 120 \
   --logged-rows 400 \
   --longitudinal-entities 80 \
   --longitudinal-days 540 \
-  --output /tmp/ancova-showcase.md \
-  --json-output /tmp/ancova-showcase.json
+  --output /tmp/reasoned-showcase.md \
+  --json-output /tmp/reasoned-showcase.json
 ```
 
 This smaller run preserves the same evidence and governance boundaries.
@@ -97,7 +97,7 @@ This smaller run preserves the same evidence and governance boundaries.
 
 A concise v1 description is:
 
-> ANCOVA Ops is a completed evidence-aware service-operations research prototype organised around Operate, Audit and Evaluate. It combines explainable routing, auditable human review, outcome capture, comparison-support checks and an evaluation applicability gate that can use, caution, reject or redirect an analytical question before management interprets the result.
+> ReasonedOps is a completed evidence-aware service-operations research prototype organised around Operate, Audit and Evaluate. It combines explainable routing, auditable human review, outcome capture, comparison-support checks and an evaluation applicability gate that can use, caution, reject or redirect an analytical question before management interprets the result.
 
 A shorter principle is:
 
@@ -109,4 +109,4 @@ New model families, private-data pilot work, production deployment, DOI/PyPI pub
 
 ## License
 
-ANCOVA Ops repository material distributed under the project license is licensed under Apache-2.0. See the root [`LICENSE`](../LICENSE). Third-party dependencies and separately identified third-party material retain their own licences and notices.
+ReasonedOps repository material distributed under the project license is licensed under Apache-2.0. See the root [`LICENSE`](../LICENSE). Third-party dependencies and separately identified third-party material retain their own licences and notices.

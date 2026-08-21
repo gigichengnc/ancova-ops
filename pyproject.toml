@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "reasoned-ops"
-version = "1.1.1"
+version = "1.2.0"
 description = "Evidence-aware service operations with explainable routing, auditable human review and guarded outcome evaluation"
 readme = "README.md"
 license = "Apache-2.0"
@@ -70,5 +70,4 @@ line-length = 100
 target-version = "py311"
 
 [tool.ruff.lint.per-file-ignores]
-"src/ancova_ops/longitudinal.py" = ["F401", "ISC004", "RUF046"]
 "src/reasoned_ops/longitudinal.py" = ["F401", "ISC004", "RUF046"]

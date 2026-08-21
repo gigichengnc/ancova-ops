@@ -15,7 +15,7 @@ from .analytics import (
 )
 from .synthetic import OUTCOME_DEPARTMENT_EFFECT, generate_outcomes
 
-VALIDITY_BENCHMARK_VERSION = "ancova-validity-v1"
+VALIDITY_BENCHMARK_VERSION = "reasoned-validity-v1"
 NAIVE_FORMULA = (
     "resolution_hours ~ C(department) + urgency + frustration + complexity "
     "+ previous_related_cases"
@@ -239,7 +239,7 @@ def _contrast(
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            "Run synthetic validity scenarios for ANCOVA Ops outcome evaluation: known-effect "
+            "Run synthetic validity scenarios for ReasonedOps outcome evaluation: known-effect "
             "recovery, measured confounding, no-overlap refusal and slope-interaction detection."
         )
     )
@@ -265,7 +265,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.json:
         print(json.dumps(report, indent=2, sort_keys=True))
     else:
-        print("ANCOVA Ops evaluation validity benchmark")
+        print("ReasonedOps evaluation validity benchmark")
         print(f"Overall pass: {report['overall_pass']}")
         for name, scenario in report["scenarios"].items():
             print(f"- {name}: {'PASS' if scenario['pass'] else 'FAIL'}")

@@ -1,11 +1,10 @@
 import tomllib
 from pathlib import Path
 
-import ancova_ops
 import reasoned_ops
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_VERSION = "1.1.1"
+EXPECTED_VERSION = "1.2.0"
 EXPECTED_REPOSITORY = "https://github.com/gigichengnc/reasoned-ops"
 EXPECTED_SCRIPTS = {
     "reasoned-analyze",
@@ -29,14 +28,17 @@ def test_package_version_matches_project_metadata() -> None:
 
     assert reasoned_ops.__version__ == project["version"]
     assert reasoned_ops.__version__ == EXPECTED_VERSION
-    assert ancova_ops.__version__ == EXPECTED_VERSION
 
 
-def test_v111_cli_surface_is_registered() -> None:
+def test_v120_cli_surface_is_registered() -> None:
     project = _project_metadata()
 
     assert project["name"] == "reasoned-ops"
     assert set(project["scripts"]) == EXPECTED_SCRIPTS
+
+
+def test_legacy_ancova_namespace_is_removed() -> None:
+    assert not (PROJECT_ROOT / "src" / "ancova_ops").exists()
 
 
 def test_apache_license_metadata_and_file_are_present() -> None:

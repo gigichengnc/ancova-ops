@@ -8,19 +8,19 @@ from typing import Any
 
 import pandas as pd
 
-from ancova_ops.analytics import build_ancova_report
-from ancova_ops.governance import (
+from reasoned_ops.analytics import build_ancova_report
+from reasoned_ops.governance import (
     assert_development_provenance,
     load_policy,
     validate_policy,
 )
-from ancova_ops.synthetic import generate_outcomes
+from reasoned_ops.synthetic import generate_outcomes
 
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            "Run the ANCOVA Ops outcome-evaluation workflow with case-mix/overlap checks, "
+            "Run the ReasonedOps outcome-evaluation workflow with case-mix/overlap checks, "
             "diagnostics, adjusted department estimates where identifiable, uncertainty and warnings."
         )
     )
@@ -83,7 +83,7 @@ def _print_text(payload: dict[str, object]) -> None:
     assert isinstance(warnings, list)
     assert isinstance(identifiability, dict)
 
-    print("ANCOVA Ops outcome evaluation")
+    print("ReasonedOps outcome evaluation")
     print(f"Formula: {payload['formula']}")
     print(f"Provenance: {', '.join(payload['provenance'])}")
     print(

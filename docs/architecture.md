@@ -2,7 +2,7 @@
 
 ## Design goal
 
-ANCOVA Ops separates operational decision support from downstream evaluation. The system turns an unstructured service request into a structured, explainable routing recommendation, preserves human intervention and observed outcomes, and then uses those records in separate statistical and offline research workflows.
+ReasonedOps separates operational decision support from downstream evaluation. The system turns an unstructured service request into a structured, explainable routing recommendation, preserves human intervention and observed outcomes, and then uses those records in separate statistical and offline research workflows.
 
 ANCOVA is an **outcome-analysis layer**, not a per-message scoring algorithm.
 
@@ -76,19 +76,19 @@ Human review changes the effective operational state without overwriting the ori
 
 ## Layer 4 — Routing evaluation
 
-`ancova-evaluate` runs a deterministic hand-authored fixture through the routing pipeline. It reports department accuracy, expected-human-review recall and explanation coverage.
+`reasoned-evaluate` runs a deterministic hand-authored fixture through the routing pipeline. It reports department accuracy, expected-human-review recall and explanation coverage.
 
 The fixture is a software-development benchmark, not representative production data.
 
 ## Layer 5 — Data-governance gate
 
-`config/data-governance.json` defines the current development boundary. `ancova-governance-check` validates it in CI.
+`config/data-governance.json` defines the current development boundary. `reasoned-governance-check` validates it in CI.
 
 The repository is synthetic-only for model/analytics development. Real private resident/customer records, direct identifiers, unsupported psychological profiling and unapproved longitudinal personalisation are prohibited.
 
 ## Layer 6 — Outcome analytics
 
-`ancova-analyze` fits the pre-specified ANCOVA/regression workflow and exposes:
+`reasoned-analyze` fits the pre-specified ANCOVA/regression workflow and exposes:
 
 - required-field missingness and complete-case counts;
 - department group sizes;
@@ -104,19 +104,19 @@ Adjusted estimates are model-based associations. They are not causal effects wit
 
 ## Layer 7 — Management reporting
 
-`ancova-management-report` converts the technical analysis into a self-contained Markdown/JSON evidence report. It keeps raw observed summaries separate from adjusted estimates and carries statistical warnings into the management view.
+`reasoned-management-report` converts the technical analysis into a self-contained Markdown/JSON evidence report. It keeps raw observed summaries separate from adjusted estimates and carries statistical warnings into the management view.
 
 The report is not a staff-performance league table.
 
 ## Layer 8 — Offline adaptive-routing research
 
-`ancova-policy evaluate` uses deterministic synthetic logged-routing history with timestamps and known action propensities. Candidate policies are trained on an earlier window and compared on a later window with support-aware inverse-propensity methods.
+`reasoned-policy evaluate` uses deterministic synthetic logged-routing history with timestamps and known action propensities. Candidate policies are trained on an earlier window and compared on a later window with support-aware inverse-propensity methods.
 
 The lifecycle registry supports candidate registration, named human approval, activation history and rollback. Registry activation does **not** replace the router behind `/v1/route`; deployment integration is intentionally separate.
 
 ## Layer 9 — Longitudinal benchmark
 
-`ancova-longitudinal` generates synthetic entity-level service histories with recurrence and seasonality, creates pre-cutoff feature snapshots, and applies a purged chronological split so training follow-up cannot overlap the validation period.
+`reasoned-longitudinal` generates synthetic entity-level service histories with recurrence and seasonality, creates pre-cutoff feature snapshots, and applies a purged chronological split so training follow-up cannot overlap the validation period.
 
 The current benchmark compares:
 

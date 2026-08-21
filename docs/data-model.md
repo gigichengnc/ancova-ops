@@ -92,7 +92,7 @@ Phase 1 uses a local SQLite database with five main schema objects:
 4. `routing_reviews` — append-only human confirmations and overrides;
 5. `case_outcomes` — latest observed outcome record for a case.
 
-The default development path is `.ancova_ops/ancova_ops.sqlite3`. It can be changed with the
+The default development path is `.reasoned_ops/reasoned_ops.sqlite3`. It can be changed with the
 `ANCOVA_OPS_DB_PATH` environment variable. Local SQLite files are ignored by Git.
 
 Schema version `2` adds `routing_reviews`. Databases created under schema version `1` are migrated

@@ -1,5 +1,5 @@
-import ancova_ops
-from ancova_ops.showcase import build_showcase_payload, render_showcase_markdown
+import reasoned_ops
+from reasoned_ops.showcase import build_showcase_payload, render_showcase_markdown
 
 
 def test_showcase_preserves_evidence_and_deployment_boundaries() -> None:
@@ -11,7 +11,7 @@ def test_showcase_preserves_evidence_and_deployment_boundaries() -> None:
         longitudinal_days=540,
     )
 
-    assert payload["showcase_version"] == ancova_ops.__version__
+    assert payload["showcase_version"] == reasoned_ops.__version__
     assert payload["project_identity"]["architecture"] == ["operate", "audit", "evaluate"]
     assert payload["project_identity"]["research_project_status"] == (
         "completed_v1_research_prototype"
@@ -37,7 +37,7 @@ def test_showcase_preserves_evidence_and_deployment_boundaries() -> None:
     )
 
     report = render_showcase_markdown(payload)
-    assert "ANCOVA Ops v1.0 Portfolio Showcase" in report
+    assert "ReasonedOps v1.0 Portfolio Showcase" in report
     assert "Operate → Audit → Evaluate" in report
     assert "Applicability gate" in report
     assert "COMPLETED / FROZEN AT v1.0" in report

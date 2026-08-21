@@ -7,7 +7,7 @@ ReasonedOps distinguishes four different meanings of "ready":
 3. **pilot ready** — approved to process real private service data in a controlled study;
 4. **production ready** — approved to operate as a real service-routing system.
 
-The research project was completed at v1.0.0. v1.1.0 is a naming/package migration from **ANCOVA Ops** to **ReasonedOps** and does not increase the empirical evidence class.
+The research project was completed at v1.0.0. v1.1.0 is a naming/package migration from **ReasonedOps** to **ReasonedOps** and does not increase the empirical evidence class.
 
 ## Research-project readiness
 
@@ -39,7 +39,7 @@ The research project was completed at v1.0.0. v1.1.0 is a naming/package migrati
 - [x] README and `CITATION.cff` use ReasonedOps;
 - [x] package URLs point to the renamed repository;
 - [x] CI smoke commands use the new CLI surface;
-- [x] legacy `ancova_ops` namespace is explicitly treated as temporary compatibility, not the canonical API;
+- [x] legacy `reasoned_ops` namespace is explicitly treated as temporary compatibility, not the canonical API;
 - [x] historical changelog entries preserve the former name intentionally.
 
 ## Citation/archive readiness

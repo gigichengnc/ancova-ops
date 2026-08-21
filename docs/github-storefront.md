@@ -1,6 +1,6 @@
 # GitHub Storefront Recommendations
 
-This page records repository-level presentation settings for ANCOVA Ops. These settings improve discoverability and reviewer comprehension; they do not change the evidence class, modelling scope or deployment readiness of the project.
+This page records repository-level presentation settings for ReasonedOps. These settings improve discoverability and reviewer comprehension; they do not change the evidence class, modelling scope or deployment readiness of the project.
 
 ## Recommended About description
 
@@ -29,7 +29,7 @@ Use a focused set rather than filling every available topic slot:
 
 Primary text:
 
-> ANCOVA Ops
+> ReasonedOps
 
 Secondary text:
 
@@ -52,7 +52,7 @@ The README should expose information in this order:
 1. Project name and CI/release/license/runtime badges.
 2. One-sentence product/research positioning.
 3. Current maturity and evidence boundary.
-4. `ancova-showcase` as the fastest reviewer path.
+4. `reasoned-showcase` as the fastest reviewer path.
 5. Architecture and capability map.
 6. API, modelling and governance details.
 

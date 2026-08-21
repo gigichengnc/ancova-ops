@@ -29,7 +29,7 @@ Do not implement ANCOVA as a sentiment classifier or message filter. Do not forc
 - Use English for code, documentation, issues, PRs and commit messages.
 - Use **ReasonedOps** as the canonical project name.
 - Use `reasoned_ops` for new Python imports and `reasoned-*` for public CLI examples.
-- Treat `ancova_ops` as temporary legacy compatibility only.
+- Treat `reasoned_ops` as temporary legacy compatibility only.
 - Prefer transparent baseline logic before complex ML.
 - Do not claim project performance from synthetic data.
 - Label synthetic, hand-authored, benchmark, pilot and measured data distinctly.

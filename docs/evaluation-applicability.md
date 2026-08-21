@@ -2,13 +2,13 @@
 
 ## Purpose
 
-ANCOVA Ops v1.0 completes the research prototype around:
+ReasonedOps v1.0 completes the research prototype around:
 
 > **Operate → Audit → Evaluate**
 
 The applicability gate is the final guardrail in the Evaluate layer. It asks whether the declared analytical question, outcome type and data structure support the current method family before an adjusted result is interpreted.
 
-The gate does not attempt to implement every statistical method. It makes method selection and refusal explicit so that ANCOVA/regression is not forced onto a question simply because the project is called ANCOVA Ops.
+The gate does not attempt to implement every statistical method. It makes method selection and refusal explicit so that ANCOVA/regression is not forced onto a question simply because the project is called ReasonedOps.
 
 ## High-level dispositions
 
@@ -38,7 +38,7 @@ The gate represents:
 The current CLI is:
 
 ```bash
-ancova-applicability \
+reasoned-applicability \
   --outcome-type continuous \
   --comparison department_outcome \
   --overlap-status supported \
@@ -143,7 +143,7 @@ disposition: recommend_alternative
 method family: offline_policy_evaluation
 ```
 
-Observed outcomes under one route are not automatically counterfactual outcomes under another. ANCOVA Ops already keeps policy evaluation as a separate offline research workflow.
+Observed outcomes under one route are not automatically counterfactual outcomes under another. ReasonedOps already keeps policy evaluation as a separate offline research workflow.
 
 ### Causal question
 
@@ -195,6 +195,6 @@ The gate is a decision-support guardrail for analytical method selection, not an
 
 ## v1.0 project boundary
 
-At v1.0, ANCOVA Ops deliberately stops short of implementing every alternative analysis family. Logistic, survival, hierarchical and causal methods are recommendations unless separately implemented in an existing dedicated research workflow.
+At v1.0, ReasonedOps deliberately stops short of implementing every alternative analysis family. Logistic, survival, hierarchical and causal methods are recommendations unless separately implemented in an existing dedicated research workflow.
 
 The research/portfolio project is considered complete when the gate, validity tests, management output, showcase and CI all work together. Future modelling or deployment should require a concrete external reason rather than being added simply because further complexity is possible.

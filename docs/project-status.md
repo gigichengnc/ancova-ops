@@ -1,6 +1,6 @@
 # Project Status — ReasonedOps v1.1.0
 
-ReasonedOps is the renamed continuation of the completed v1 research/portfolio prototype formerly called **ANCOVA Ops**.
+ReasonedOps is the renamed continuation of the completed v1 research/portfolio prototype formerly called **ReasonedOps**.
 
 > **Operate → Audit → Evaluate**
 
@@ -20,7 +20,7 @@ Its purpose is not to make management decisions automatically. Its purpose is to
 | Python distribution | `reasoned-ops` |
 | Python package | `reasoned_ops` |
 | CLI prefix | `reasoned-` |
-| Legacy compatibility namespace | `ancova_ops` |
+| Legacy compatibility namespace | `reasoned_ops` |
 
 Historical release notes before v1.1.0 intentionally retain the former name and old command names.
 

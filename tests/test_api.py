@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from ancova_ops.api import app
+from reasoned_ops.api import app
 
 client = TestClient(app)
 

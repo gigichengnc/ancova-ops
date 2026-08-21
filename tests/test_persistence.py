@@ -4,8 +4,8 @@ import sqlite3
 
 import pytest
 
-from ancova_ops.models import RoutingDecision, ServiceCase
-from ancova_ops.persistence import (
+from reasoned_ops.models import RoutingDecision, ServiceCase
+from reasoned_ops.persistence import (
     SCHEMA_VERSION,
     CaseConflictError,
     CaseOutcome,

@@ -110,7 +110,7 @@ Every report sets `deployment_eligible = false` because the current project has 
 
 ## Human approval and policy lifecycle
 
-`PolicyRegistry` stores a local append-only lifecycle record under `.ancova_ops/policy-registry.json` by default. That directory is ignored by Git.
+`PolicyRegistry` stores a local append-only lifecycle record under `.reasoned_ops/policy-registry.json` by default. That directory is ignored by Git.
 
 A candidate lifecycle is:
 
@@ -143,25 +143,25 @@ That separation is intentional: evaluation, approval and operational deployment 
 Run the deterministic synthetic offline study:
 
 ```bash
-ancova-policy evaluate
+reasoned-policy evaluate
 ```
 
 Register the evaluated candidate in a local lifecycle registry:
 
 ```bash
-ancova-policy evaluate --register
+reasoned-policy evaluate --register
 ```
 
 Inspect the registry:
 
 ```bash
-ancova-policy status
+reasoned-policy status
 ```
 
 Record explicit human approval:
 
 ```bash
-ancova-policy approve \
+reasoned-policy approve \
   --version outcome-aware-category-mean-v1 \
   --reviewer reviewer-001 \
   --rationale "Reviewed synthetic offline evidence for controlled staging."
@@ -170,7 +170,7 @@ ancova-policy approve \
 Activate the approved candidate in the registry:
 
 ```bash
-ancova-policy activate \
+reasoned-policy activate \
   --version outcome-aware-category-mean-v1 \
   --actor ops-lead
 ```
@@ -178,7 +178,7 @@ ancova-policy activate \
 Rollback:
 
 ```bash
-ancova-policy rollback \
+reasoned-policy rollback \
   --version baseline-route-v1 \
   --actor ops-lead \
   --rationale "Rollback drill."

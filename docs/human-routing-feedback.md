@@ -2,7 +2,7 @@
 
 ## Purpose
 
-ANCOVA Ops keeps the system recommendation and the human operational decision as separate records.
+ReasonedOps keeps the system recommendation and the human operational decision as separate records.
 A staff correction must never overwrite the machine/rule recommendation that produced it.
 
 This distinction is necessary for auditability and later evaluation. If a routing model recommends

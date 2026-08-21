@@ -46,7 +46,7 @@ The time-to-event target records days until the next case, censored at 90 days.
 
 A chronological split by cutoff time alone is not sufficient. A training snapshot near the validation boundary could use future outcome information that occurs during the validation period.
 
-ANCOVA Ops therefore uses a **purged chronological split**:
+ReasonedOps therefore uses a **purged chronological split**:
 
 1. validation snapshots are selected from the later cutoff dates;
 2. training snapshots must come from earlier cutoffs;
@@ -126,19 +126,19 @@ If recency/frequency, survival-style or tree models already explain the useful s
 Run the benchmark:
 
 ```bash
-ancova-longitudinal
+reasoned-longitudinal
 ```
 
 Machine-readable output:
 
 ```bash
-ancova-longitudinal --json
+reasoned-longitudinal --json
 ```
 
 A smaller deterministic smoke run can be used in CI:
 
 ```bash
-ancova-longitudinal --entities 100 --days 600 --seed 31 --json
+reasoned-longitudinal --entities 100 --days 600 --seed 31 --json
 ```
 
 ## Limitations
