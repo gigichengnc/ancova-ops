@@ -4,4 +4,4 @@ from .models import RoutingDecision, ServiceCase
 from .routing import baseline_route
 
 __all__ = ["RoutingDecision", "ServiceCase", "baseline_route"]
-__version__ = "1.2.0"
+__version__ = "1.3.0"
