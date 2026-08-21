@@ -178,6 +178,7 @@ The important point is not only that a department is returned. The system also r
 ### 2. Audit — preserve what the machine and human each decided
 
 The machine recommendation is not final authority.
+
 A staff member can confirm or override the route. ReasonedOps preserves the original machine decision rather than replacing it.
 
 Conceptually:
