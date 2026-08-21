@@ -3,13 +3,12 @@
 [![CI](https://github.com/gigichengnc/reasoned-ops/actions/workflows/ci.yml/badge.svg)](https://github.com/gigichengnc/reasoned-ops/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/gigichengnc/reasoned-ops?display_name=tag)](https://github.com/gigichengnc/reasoned-ops/releases/latest)
 [![PyPI](https://img.shields.io/pypi/v/reasoned-ops.svg)](https://pypi.org/project/reasoned-ops/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22044621.svg)](https://doi.org/10.5281/zenodo.22044621)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue.svg)](pyproject.toml)
 
 ReasonedOps originated from my participation in **HKMU Hackathon 2026** and evolved into a runnable, auditable service-operations research prototype.
 
-The project began by asking whether an AI-assisted concierge could understand a resident request, consider urgency and communication context, and route the case to the right team.
+The early concept asked whether an AI-assisted concierge could understand a resident request, consider urgency and communication context, and route the case to the right team. The current implementation deliberately narrows that ambition: **Operate uses transparent, deterministic rule-based request features and routing logic. It does not claim a trained NLP model.**
 
 As the project evolved, a second problem became more important:
 
@@ -19,9 +18,9 @@ ReasonedOps now separates three responsibilities:
 
 > **Operate → Audit → Evaluate**
 
-It is not designed to make management decisions automatically. It is designed to make **unsupported management conclusions harder to reach**.
+It is not designed to make management decisions automatically. It is designed to make **unsupported management conclusions harder to reach**, while preserving enough history to inspect how a recommendation and later conclusion were produced.
 
-The project was originally developed under the name **ANCOVA Ops**. It was renamed **ReasonedOps** because ANCOVA/regression is only one method inside the Evaluate layer, not the product itself.
+The project was originally developed under the name **ANCOVA Ops**. It was renamed **ReasonedOps** because ANCOVA/regression is only one method inside the Evaluate layer, not the project itself.
 
 **HKMU Hackathon 2026 is referenced only to describe the project's origin. ReasonedOps is independently developed and is not presented as an official HKMU product or endorsement.**
 
@@ -31,24 +30,25 @@ The project was originally developed under the name **ANCOVA Ops**. It was renam
 | --- | --- |
 | Original problem | Understand and route unstructured service requests more intelligently |
 | Original setting | Property-management / concierge service requests |
-| Evolution question | Can the same system also preserve accountability and stop misleading outcome comparisons? |
-| Operate | Runnable FastAPI request-intelligence + explainable routing workflow |
+| Evolution question | Can the same system preserve accountability and stop misleading outcome comparisons? |
+| Operate | **Rule-based request features + deterministic explainable routing baseline** exposed through FastAPI |
 | Audit | SQLite persistence for original case, machine route, human review, effective route and outcome |
 | Evaluate | Raw summaries, overlap/identifiability checks, method applicability, guarded regression/ANCOVA reporting |
 | Refusal behaviour | Can withhold a department ranking when the observed design cannot support it |
+| Known limitation benchmark | Explicitly reproduces a case where hidden confounding is invisible to implemented checks and the gate still says `use` |
 | Other research | Offline adaptive-policy evaluation + leakage-aware longitudinal benchmark |
 | Model escalation | LSTM / sequence modelling deferred until it can beat simpler baselines on the same benchmark |
-| Validation | Hand-authored fixtures + deterministic synthetic known-truth scenarios |
+| Validation | Hand-authored fixtures + deterministic synthetic known-truth and known-limitation scenarios |
 | Python distribution | Wheel + source distribution build and clean-wheel installation validated in CI |
-| PyPI status | **Published:** `reasoned-ops==1.4.0` via GitHub OIDC Trusted Publishing |
-| Zenodo archive | **v1.4.2 DOI:** `10.5281/zenodo.22044621` |
-| Public artifact verification | PyPI package installed outside the repository checkout; Operate → Audit → Evaluate paths exercised successfully |
+| PyPI status | **Published and externally exercised:** `reasoned-ops==1.4.0` |
+| Zenodo archive | **v1.4.2 version DOI:** `10.5281/zenodo.22044621` |
+| Main-branch status | Post-v1.4.2 audit corrections are present on `main`; a final aligned release is pending |
 | Real-world performance claim | **Not made**; representative real-pilot evidence does not exist in this repository |
 | Development data boundary | Synthetic / hand-authored public development evidence only |
 | Production status | **Not approved** |
 | Project identity | **ReasonedOps — Operate → Audit → Evaluate** |
 
-Install the released package:
+Install the currently published package:
 
 ```bash
 pip install reasoned-ops==1.4.0
@@ -76,9 +76,7 @@ department queue
 outcome feedback
 ```
 
-That direction contained several useful ideas: natural-language intake, human-centred triage, recurring-case awareness, and learning from outcomes.
-
-But the early concept also mixed together tasks that should have been separated.
+That direction contained useful ideas: natural-language intake, human-centred triage, recurring-case awareness, and learning from outcomes. It also mixed together tasks that should have been separated and implied model sophistication that the current baseline does not claim.
 
 The reconstructed starting point is preserved under [`original/`](original/README.md).
 
@@ -90,6 +88,7 @@ As development continued, several questions in the early concept were not techni
 - **A final route was not enough for accountability.** Later evaluation needs to know what the system recommended, why, whether a person changed it, and what outcome followed.
 - **Raw department averages can be badly misleading.** A team that handles harder cases may look slower even when its process is not worse.
 - **A statistical model should be allowed to say “do not compare”.** If department and case type do not overlap, no attractive adjusted ranking should be manufactured.
+- **Observed-data diagnostics cannot certify that every relevant confounder was measured.** A clean-looking frame can still support a badly biased adjusted answer.
 - **The project name had become too narrow.** A system that can recommend logistic, survival, cluster-aware, or offline-policy methods is not really an “ANCOVA product”.
 - **More complex AI was not automatically progress.** Sequence/LSTM work is deferred until the same benchmark shows incremental value over simpler approaches.
 - **Proposal targets are not measured evidence.** Presentation-era percentages are not treated as ReasonedOps performance results.
@@ -101,25 +100,26 @@ The detailed audit is in [`docs/original-concept-audit.md`](docs/original-concep
 | Early Hackathon-stage concept | ReasonedOps today | Why the change matters |
 | --- | --- | --- |
 | AI concierge / routing as the centre | **Operate → Audit → Evaluate** | Routing alone cannot show whether the process later improved |
-| NLP + emotional/context signals | Transparent operational request intelligence | Keeps triage signals separate from unsupported psychological claims |
+| NLP + emotional/context signals | **Rule-based operational request features** | The current baseline is transparent and does not pretend a keyword/rule system is a trained NLP model |
 | ANCOVA described near emotion filtering | ANCOVA only after accumulated outcomes exist | Statistical outcome analysis is not message understanding |
 | Department recommendation | Versioned route + human-readable reasons | The recommendation can be reconstructed and challenged |
 | Human-centred idea | Append-only human confirm / override history | Human judgement becomes part of the audit trail |
 | Outcome feedback | Outcome stored separately from routing history | Later outcomes do not rewrite the earlier decision |
 | Compare service performance | Check department × case-type overlap first | Different teams may be handling fundamentally different work |
 | Adjusted model produces answer | `supported`, `weak_overlap`, or `not_identifiable` | The software can refuse an unsupported ranking |
+| Diagnostics look clean | Known-limitation benchmark for omitted confounding | Passing observed checks does not prove the adjusted answer is correct |
 | ANCOVA as intellectual centre | Applicability gate selects or rejects method families | Method follows the question |
 | Adaptive routing ambition | Offline policy evaluation with deployment lock | Historical-policy research is not silently promoted to live automation |
 | Longitudinal history | Leakage-aware synthetic benchmark | Future information must not leak into historical evaluation |
 | More advanced sequence model later | LSTM explicitly deferred | Complexity must earn its place |
 
-See [`docs/before-vs-after.md`](docs/before-vs-after.md) for the fuller technical comparison.
+See [`docs/before-vs-after.md`](docs/before-vs-after.md) for the fuller comparison.
 
 ## What actually runs
 
 ReasonedOps is a **local research/software prototype**, not only a conceptual document.
 
-### A concrete service case
+### 1. Operate — rule-based structure and routing
 
 Imagine this request arrives:
 
@@ -127,9 +127,7 @@ Imagine this request arrives:
 The air conditioner is leaking again. This is the third time and the wet floor could be dangerous.
 ```
 
-### 1. Operate — structure and route the request
-
-From PyPI:
+From the currently published package:
 
 ```bash
 pip install reasoned-ops==1.4.0
@@ -173,20 +171,16 @@ intelligence_version
 router_version
 ```
 
-The important point is not only that a department is returned. The system also records **why** the recommendation was made and which logic/version produced it.
+These fields are produced by a **transparent rule/keyword baseline plus declared thresholds**. Terms such as `frustration` are operational text features, not psychological measurements. The baseline exists so future NLP/ML approaches have something explicit to outperform rather than replacing a simple method merely because a more complex model is available.
 
 ### 2. Audit — preserve what the machine and human each decided
 
-The machine recommendation is not final authority.
-
-A staff member can confirm or override the route. ReasonedOps preserves the original machine decision rather than replacing it.
-
-Conceptually:
+The machine recommendation is not final authority. A staff member can confirm or override the route, while ReasonedOps preserves the original machine decision rather than replacing it.
 
 ```text
 Original request
       ↓
-Machine recommendation
+Machine / rule recommendation
       ↓
 Human confirmation / override
       ↓
@@ -195,23 +189,13 @@ Effective route
 Observed outcome
 ```
 
-This makes later questions auditable:
-
-```text
-Why was this case sent there?
-What did the system originally recommend?
-Did a staff member change it?
-Which system version was used?
-What happened afterward?
-```
+This makes later questions auditable: what the system recommended, which version produced it, why it recommended that route, whether a staff member changed it, and what happened afterward.
 
 ### 3. Record the outcome separately
 
-When the case is complete, an outcome can be stored through the API.
+When the case is complete, the outcome can be stored separately from the routing decision. Later knowledge therefore does not rewrite the historical decision.
 
-The outcome is a separate record from the routing decision so the system does not rewrite the historical decision after learning what happened.
-
-### 4. Evaluate — management asks a harder question
+### 4. Evaluate — ask whether the management comparison is supportable
 
 Suppose a dashboard later shows:
 
@@ -224,22 +208,52 @@ A naive conclusion is:
 
 > Maintenance performs worse.
 
-ReasonedOps asks a different question first:
+ReasonedOps asks first:
 
 > Did Maintenance and Security actually handle comparable cases?
 
-If Maintenance mainly handled complex repairs and Security mainly handled simpler complaints, the observed design may not support a department comparison at all.
-
-In that situation the correct result can be:
+If department and case type do not provide enough overlap, the correct result can be:
 
 ```text
 REJECT
 Do not produce an adjusted department ranking from this design.
 ```
 
-If overlap is sufficient, the evaluation layer can then use an appropriate adjusted workflow and report uncertainty and warnings.
+If overlap is sufficient, an adjusted workflow can be used with diagnostics, uncertainty and explicit non-causal boundaries.
 
-That refusal behaviour is one of the main results of the project's evolution.
+## The validity benchmark now tests a blind spot too
+
+The current `reasoned-validity` benchmark includes five deterministic synthetic scenarios:
+
+```text
+known_effect_recovery
+measured_confounding
+no_overlap
+slope_interaction
+unmeasured_confounding_blind_spot
+```
+
+The first four exercise behaviour the implemented workflow is expected to handle. The fifth is deliberately different.
+
+For `unmeasured_confounding_blind_spot`, the data generator creates a true latent case-burden variable that affects both department assignment and resolution time. The benchmark then **removes that variable before the ordinary Evaluate pipeline sees the data**.
+
+The expected result is intentionally uncomfortable:
+
+```text
+observed overlap looks supported
+        ↓
+implemented diagnostics do not see the omitted variable
+        ↓
+applicability gate returns USE
+        ↓
+adjusted department contrast is badly biased and reverses the known true direction
+```
+
+`PASS` for this scenario therefore means **the benchmark successfully reproduced and disclosed a known false-negative mode**. It does **not** mean ReasonedOps detected hidden confounding.
+
+The existing `use` interpretation boundary explicitly says that the gate does not prove model correctness, absence of unmeasured confounding, or causal identification. The new benchmark turns that disclosure into executable evidence of what the current safeguards cannot detect.
+
+This distinction matters: ReasonedOps can refuse some unsupported comparisons that are visible in observed data, but it cannot certify that unrecorded causes do not exist.
 
 ## One-command reviewer path
 
@@ -255,51 +269,11 @@ The command executes the current development workflows and writes:
 .reasoned_ops/showcase/showcase.md
 ```
 
-The generated report walks through one service request and then shows how the later evidence checks behave.
-
-The results are synthetic / hand-authored development evidence, not production performance estimates.
-
-## Reuse it from another Python project
-
-ReasonedOps is published on PyPI, so another Python project can depend on it instead of copying source files.
-
-Install the current verified release:
-
-```bash
-pip install reasoned-ops==1.4.0
-```
-
-The public Python surface starts with:
-
-```python
-from reasoned_ops import ServiceCase, baseline_route
-
-case = ServiceCase(
-    case_id="example-001",
-    message="The air conditioner is leaking again.",
-    previous_related_cases=2,
-)
-
-decision = baseline_route(case)
-print(decision.department)
-print(decision.reasons)
-```
-
-For reusable project dependencies, prefer an explicit compatible version range such as:
-
-```text
-reasoned-ops>=1.4,<2
-```
-
-Pin an exact version when reproducibility is more important than automatically receiving compatible updates.
-
-See [`docs/pypi.md`](docs/pypi.md) for package reuse and release publishing, and [`docs/publication-verification.md`](docs/publication-verification.md) for the public-artifact verification record.
+The generated report walks through one service request and later evidence checks. The results are synthetic / hand-authored development evidence, not production performance estimates.
 
 ## Public release verification
 
-After `reasoned-ops==1.4.0` was published, the package was installed from public PyPI in a Windows environment outside the repository checkout.
-
-That verification exercised:
+`reasoned-ops==1.4.0` was installed from public PyPI in a Windows environment outside the repository checkout. That verification exercised:
 
 ```text
 PyPI install + import version 1.4.0
@@ -311,20 +285,10 @@ Audit
 persisted machine route + human override + effective route + outcome
         ↓
 Evaluate
-known-effect recovery + confounding adjustment + no-overlap refusal + interaction detection
+known-effect recovery + measured-confounding adjustment + no-overlap refusal + interaction detection
 ```
 
-The deterministic validity benchmark reported:
-
-```text
-Overall pass: True
-- known_effect_recovery: PASS
-- measured_confounding: PASS
-- no_overlap: PASS
-- slope_interaction: PASS
-```
-
-This establishes that the public package is **installable and executable as a local research/software prototype**. It does not establish independent scientific effectiveness, causal business impact, private-data approval, or production readiness.
+That public-artifact verification predates the post-v1.4.2 unmeasured-confounding benchmark now present on `main`. It establishes installability and execution of the published artifact; it does not establish independent scientific effectiveness, causal business impact, private-data approval, or production readiness.
 
 See [`docs/publication-verification.md`](docs/publication-verification.md).
 
@@ -332,9 +296,10 @@ See [`docs/publication-verification.md`](docs/publication-verification.md).
 
 The project deliberately records several decisions **not** to escalate complexity or claims.
 
-- transparent routing remains the reference baseline;
+- rule-based transparent routing remains the reference baseline;
 - ANCOVA was moved downstream instead of being forced into message understanding;
 - no-overlap department comparisons are withheld;
+- hidden confounding is acknowledged as an observational blind spot rather than treated as detectable by ordinary diagnostics;
 - binary, censored, clustered and policy-counterfactual questions can be redirected to other method families;
 - regression/ANCOVA output is non-causal by default;
 - adaptive routing remains offline;
@@ -350,9 +315,9 @@ SERVICE REQUEST
       |
       v
 OPERATE
-request intelligence
+rule-based request features
       ↓
-explainable routing recommendation
+deterministic explainable routing recommendation
       |
       +------> human confirmation / override
                        |
@@ -383,38 +348,16 @@ ANCOVA is one tool inside **Evaluate**. It is not the project identity.
 
 ## Evidence and validation
 
-The repository separates several forms of development evidence:
+The repository separates several evidence classes:
 
-### Hand-authored routing fixture
+- **Hand-authored routing fixture:** deterministic routing behaviour, expected-human-review cases and explanation coverage. This is an implementation benchmark, not external accuracy.
+- **Synthetic known-truth outcome scenarios:** known-effect recovery, measured-confounding adjustment, no-overlap refusal and slope-interaction detection.
+- **Synthetic known-limitation scenario:** hidden confounding deliberately omitted from the observed frame to demonstrate a false-negative mode the implemented checks cannot identify.
+- **Synthetic adaptive-policy logs:** deterministic logged-policy data with known propensities, chronological validation, support diagnostics and deployment locks.
+- **Synthetic longitudinal histories:** simpler recurrence/time approaches compared under leakage-aware chronological validation.
+- **Public artifact execution:** the published PyPI artifact installed and exercised outside the repository checkout.
 
-A small fixture checks deterministic routing behaviour, expected-human-review cases and explanation coverage.
-
-It is an implementation benchmark, not external accuracy.
-
-### Synthetic known-truth outcome scenarios
-
-The validity benchmark deliberately constructs situations where the data-generating truth is known. It checks whether the software can:
-
-- approximately recover known effects;
-- reduce measured case-mix confounding;
-- refuse a structural no-overlap comparison;
-- detect a deliberately introduced slope interaction.
-
-These scenarios validate software/statistical behaviour, not real service impact.
-
-### Synthetic adaptive-policy logs
-
-Offline policy research uses deterministic logged-policy data with known propensities, chronological validation, support diagnostics and deployment locks.
-
-### Synthetic longitudinal histories
-
-The longitudinal benchmark compares simpler recurrence/time approaches under leakage-aware chronological validation.
-
-### Public artifact execution
-
-The PyPI verification demonstrates that the packaged release can be installed and its current local workflow executed outside the repository checkout.
-
-That is distribution/execution evidence, not a new real-world outcome evidence class.
+None of these evidence classes establishes real service improvement or causal effectiveness.
 
 ## Reproducibility
 
@@ -433,14 +376,7 @@ The GitHub Actions CI matrix runs on Python **3.11** and **3.12** and checks:
 - portfolio showcase;
 - data-governance policy.
 
-A separate distribution job also checks:
-
-- `python -m build`;
-- one wheel + one source distribution;
-- installation of the built wheel into a clean virtual environment;
-- import/version consistency from that installed wheel;
-- a routing smoke check;
-- an installed CLI entry point.
+A separate distribution job checks wheel/sdist build, clean-environment wheel installation, import/version consistency, routing smoke behaviour and an installed CLI entry point.
 
 Main command-line entry points are:
 
@@ -475,10 +411,8 @@ The repository intentionally keeps **the project's own historical development** 
 
 ## Documentation guide
 
-Start here:
-
 - [`original/README.md`](original/README.md) — reconstructed early Hackathon-stage concept;
-- [`docs/before-vs-after.md`](docs/before-vs-after.md) — clearest early-vs-current comparison;
+- [`docs/before-vs-after.md`](docs/before-vs-after.md) — early-vs-current comparison;
 - [`docs/original-concept-audit.md`](docs/original-concept-audit.md) — what was preserved, corrected, narrowed or deferred;
 - [`docs/model-decisions.md`](docs/model-decisions.md) — why methods/models were selected, rejected or deferred;
 - [`docs/architecture.md`](docs/architecture.md) — current technical architecture;
@@ -489,7 +423,7 @@ Start here:
 - [`docs/pypi.md`](docs/pypi.md) — package reuse and Trusted Publishing procedure;
 - [`docs/publication-verification.md`](docs/publication-verification.md) — verification of the public PyPI artifact;
 - [`docs/citation.md`](docs/citation.md) — Zenodo DOI and citation/archive guidance;
-- [`docs/project-status.md`](docs/project-status.md) — current completion and deployment status.
+- [`docs/project-status.md`](docs/project-status.md) — completion and deployment status.
 
 ## Current limitations
 
@@ -497,8 +431,11 @@ ReasonedOps demonstrates a disciplined service-operations workflow; it does **no
 
 Important limitations remain:
 
+- Operate is a deterministic rule/keyword baseline, not a trained NLP model;
 - routing evaluation is hand-authored development evidence;
 - outcome, adaptive-policy and longitudinal quantitative evidence is synthetic;
+- observed-data diagnostics cannot rule out unmeasured confounding;
+- the validity benchmark now demonstrates one such false-negative mode explicitly;
 - no representative real private-data pilot has been run;
 - adjusted regression results are not causal effects by default;
 - authentication/RBAC and production security are outside the research prototype;
@@ -546,13 +483,15 @@ audit assumptions
       ↓
 separate operational and analytical tasks
       ↓
-build explainable routing
+build a transparent routing baseline
       ↓
 preserve decision history
       ↓
 capture outcomes separately
       ↓
 check whether comparisons are supportable
+      ↓
+expose an observed-data blind spot
       ↓
 select, caution, reject or redirect the method
       ↓
