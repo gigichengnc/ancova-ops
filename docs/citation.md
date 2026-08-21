@@ -18,9 +18,10 @@ The citation metadata records:
 - release date;
 - Apache-2.0 license;
 - repository URL;
+- the stable Zenodo concept DOI for the archived ReasonedOps version collection;
 - a short research-software abstract and keywords.
 
-No DOI, ORCID, email address or affiliation is invented. Those fields should only be added when a verified identifier or public attribution is intentionally supplied.
+No ORCID, email address, affiliation or version-specific DOI is invented. Those fields should only be added when a verified identifier or public attribution is intentionally supplied.
 
 ## Why there is no `.zenodo.json`
 
@@ -30,9 +31,17 @@ Add `.zenodo.json` later only if a concrete Zenodo-specific requirement justifie
 
 ## Current Zenodo status
 
-The GitHub account is connected to Zenodo and `gigichengnc/reasoned-ops` has been enabled for automatic preservation of **new** GitHub releases.
+The GitHub account is connected to Zenodo and `gigichengnc/reasoned-ops` is enabled for automatic preservation of new GitHub releases.
 
-v1.4.1 was the first checkpoint created after that enablement. v1.4.2 is the preferred current citation checkpoint because it corrects project-origin wording so the software is described as one project that evolved from its Hackathon starting point, rather than as a rebuild of another project.
+The Zenodo GitHub integration now displays the DOI:
+
+```text
+10.5281/zenodo.22044621
+```
+
+This repository records that identifier as the **Zenodo concept DOI** for the collection of archived ReasonedOps versions. A concept DOI is intentionally stable across versions and is therefore appropriate for the README project badge and for identifying the archived project lineage.
+
+v1.4.1 was the first checkpoint created after Zenodo enablement. v1.4.2 is the preferred current citation checkpoint because it corrects project-origin wording so the software is described as one project that evolved from its Hackathon starting point, rather than as a rebuild of another project.
 
 Current sequence:
 
@@ -41,42 +50,50 @@ Zenodo integration enabled
       ↓
 release v1.4.2 after successful main CI
       ↓
-Zenodo ingests the GitHub release
+Zenodo archive created / linked
       ↓
-verify archived metadata + DOI
+concept DOI visible: 10.5281/zenodo.22044621
       ↓
-add the verified DOI back to CITATION.cff
+record concept DOI in README + CITATION.cff
+      ↓
+optionally record the exact v1.4.2 version DOI after separately verifying that record
 ```
 
-Do not add a DOI to the repository before the actual Zenodo record is visible and verified.
+## Concept DOI vs version DOI
+
+Zenodo versioning distinguishes two identifiers:
+
+- **Concept DOI** — identifies the collection of all archived versions and remains stable as later versions are added.
+- **Version DOI** — identifies one immutable archived snapshot.
+
+ReasonedOps currently records `10.5281/zenodo.22044621` as the concept DOI because that is the DOI shown for the enabled repository in the Zenodo GitHub integration.
+
+Do not describe this concept DOI as the version-specific DOI for v1.4.2 unless the individual v1.4.2 record is separately opened and verified. If that version DOI is later recorded, `CITATION.cff` can contain both identifiers with explicit descriptions rather than replacing or ambiguously relabelling the concept DOI.
 
 ## Archiving a release in Zenodo
 
 Repository metadata readiness and Zenodo account integration are separate steps.
 
-The current process is:
+Current status:
 
 1. GitHub account connected to Zenodo — **complete**.
 2. `gigichengnc/reasoned-ops` enabled in the Zenodo GitHub integration — **complete**.
-3. Create GitHub Release v1.4.2 after successful `main` CI.
-4. Wait for Zenodo to ingest the release and create/update the software record.
-5. Review creator, title, version, license and archive metadata.
-6. Record the verified DOI in repository citation metadata.
+3. Current archive checkpoint is v1.4.2 — **complete**.
+4. Stable concept DOI is visible in the Zenodo GitHub integration — **complete**.
+5. Concept DOI is recorded in repository citation metadata — **in this publication close-out change**.
+6. Exact v1.4.2 version DOI and record-level metadata can be recorded after separate verification — **optional follow-up for version-specific citation**.
 
 The earlier v1.4.0 release existed before Zenodo enablement. v1.4.2 is therefore the preferred current post-enablement citation checkpoint with corrected project-origin wording.
 
-## After a DOI exists
+## README badge
 
-Once Zenodo has minted a DOI for the v1.4.2 ReasonedOps release:
+The README uses the stable concept DOI for the Zenodo badge:
 
-1. verify the creator, title, version, license and release metadata in Zenodo;
-2. add the verified version DOI to `CITATION.cff` using the `doi` field;
-3. update README citation guidance if a DOI badge or direct citation link is desired;
-4. distinguish the version DOI from any Zenodo concept DOI if both are shown;
-5. keep the package/checkpoint version, GitHub release tag and CFF version aligned for future archive releases;
-6. run CI before publishing another release.
+```text
+10.5281/zenodo.22044621
+```
 
-A Zenodo DOI makes the software release persistently identifiable and citable. It does **not** constitute peer review and does not upgrade synthetic or hand-authored development results into real-world evidence.
+Using the concept DOI avoids needing to replace the project-level badge every time a future archived release receives its own version DOI.
 
 ## PyPI and Zenodo version note
 
@@ -95,3 +112,5 @@ Citation/archive readiness does not change the operational status of ReasonedOps
 - production deployment remains not approved;
 - adaptive-policy activation remains separated from the live route path;
 - sequence modelling remains deferred until incremental value is demonstrated.
+
+A Zenodo DOI makes the software persistently identifiable and citable. It does **not** constitute peer review and does not upgrade synthetic or hand-authored development results into real-world evidence.
