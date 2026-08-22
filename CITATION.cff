@@ -7,6 +7,7 @@ authors:
     given-names: "Gigi"
 version: "1.4.4"
 date-released: 2026-08-21
+doi: "10.5281/zenodo.22051819"
 license: Apache-2.0
 repository-code: "https://github.com/gigichengnc/reasoned-ops"
 url: "https://github.com/gigichengnc/reasoned-ops"
