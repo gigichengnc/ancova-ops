@@ -4,50 +4,41 @@ ReasonedOps uses the root [`CITATION.cff`](../CITATION.cff) as its citation meta
 
 HKMU Hackathon 2026 is referenced only as project-origin context and does not imply official HKMU endorsement.
 
-## Current release candidate
+## Verified v1.4.4 archive
 
-The current code checkpoint is **v1.4.4**. Its release-candidate `CITATION.cff` records the title, author, version, date, Apache-2.0 licence, repository URL and evidence boundary, but intentionally has **no DOI yet**.
+Zenodo has ingested the immutable GitHub release `v1.4.4` and published the exact version DOI:
 
-A v1.4.3 DOI must not be copied into v1.4.4 metadata. The v1.4.4 immutable version DOI only exists after Zenodo ingests the exact `v1.4.4` GitHub release.
+```text
+v1.4.4  →  10.5281/zenodo.22051819
+```
 
-## Verified historical version DOIs
+The current-branch `CITATION.cff` records this verified DOI. This DOI-sync commit does **not** rewrite the immutable `v1.4.4` tag and must not replace that tag as the PyPI build source.
+
+## Verified version DOIs
 
 ```text
 v1.4.1  →  10.5281/zenodo.22044222
 v1.4.2  →  10.5281/zenodo.22044621
 v1.4.3  →  10.5281/zenodo.22046490
+v1.4.4  →  10.5281/zenodo.22051819
 ```
 
-v1.4.3 is the latest fully verified public chain at the time of v1.4.4 release preparation:
+## v1.4.4 provenance rule
+
+The intended publication chain is:
 
 ```text
-Git tag v1.4.3
-      ↓
-GitHub Release v1.4.3
-      ↓
-Zenodo DOI 10.5281/zenodo.22046490
-      ↓
-PyPI reasoned-ops==1.4.3
-      ↓
-fresh Windows verification
-```
-
-## v1.4.4 publication rule
-
-The same provenance rule applies to v1.4.4:
-
-```text
-one immutable Git tag v1.4.4
+Git tag v1.4.4
       = source of GitHub Release v1.4.4
       = source of Zenodo v1.4.4 archive
       = source of PyPI reasoned-ops==1.4.4
 ```
 
-After Zenodo mints the v1.4.4 version DOI, current-branch citation metadata may be updated to record that verified identifier. That later DOI-sync commit must not replace the immutable `v1.4.4` tag as the PyPI build source.
+The first three checkpoints are now established. PyPI publication must still use the immutable exact input tag `v1.4.4`, not a later default-branch DOI-sync commit.
 
 ## Version DOI vs concept DOI
 
-Each verified identifier above is treated as a **version DOI** for its archived snapshot. The repository does not infer or invent an all-versions concept DOI from numeric patterns or from a latest-version badge. A concept DOI should only be recorded if Zenodo independently exposes a distinct `Cite all versions` identifier.
+Every identifier listed above is treated as a **version DOI** for its archived snapshot. The repository does not infer or invent an all-versions concept DOI from numeric patterns or from a latest-version badge. A concept DOI should only be recorded if Zenodo independently exposes a distinct `Cite all versions` identifier.
 
 ## Why there is no `.zenodo.json`
 
