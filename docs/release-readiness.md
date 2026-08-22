@@ -5,7 +5,6 @@ v1.4.4 is a narrow post-audit bugfix release. It does not add a trained NLP mode
 ## Code checkpoint
 
 - [x] package and runtime version are `1.4.4`;
-- [x] `CITATION.cff` is `1.4.4` and does not reuse the v1.4.3 DOI;
 - [x] request matching uses word/phrase boundaries rather than raw substring matching;
 - [x] emergency language enters a critical human-triage path;
 - [x] safety context and explicit security incidents require human review;
@@ -20,10 +19,11 @@ v1.4.4 is a narrow post-audit bugfix release. It does not add a trained NLP mode
 
 ## Public release checklist
 
-- [ ] merge the v1.4.4 release-prep documentation after CI;
-- [ ] manually dispatch the **Release checkpoint** workflow on the final `main` commit; the workflow creates Git tag / GitHub Release `v1.4.4` targeting that commit;
-- [ ] verify Zenodo ingests exactly `v1.4.4` and record the new immutable version DOI;
-- [ ] sync the verified v1.4.4 DOI to current citation metadata without changing the immutable tag;
+- [x] merge the v1.4.4 release-prep documentation after CI;
+- [x] manually dispatch the **Release checkpoint** workflow and create Git tag / GitHub Release `v1.4.4`;
+- [x] verify Zenodo ingests exactly `v1.4.4`;
+- [x] verify immutable v1.4.4 version DOI: `10.5281/zenodo.22051819`;
+- [x] sync the verified v1.4.4 DOI to current citation metadata without changing the immutable tag;
 - [ ] manually publish PyPI from input tag exactly `v1.4.4`;
 - [ ] verify PyPI reports `reasoned-ops==1.4.4`;
 - [ ] install 1.4.4 in a fresh environment and verify `reasoned_ops.__version__ == "1.4.4"`;
@@ -32,16 +32,17 @@ v1.4.4 is a narrow post-audit bugfix release. It does not add a trained NLP mode
 - [ ] record the observed v1.4.4 results in `publication-verification.md`;
 - [ ] freeze v1 again.
 
-Until those publication steps are complete, **v1.4.3 remains the latest externally verified public artifact**:
+Current public-artifact state:
 
 ```text
-GitHub / Zenodo / PyPI: v1.4.3
-Zenodo DOI: 10.5281/zenodo.22046490
+GitHub release: v1.4.4
+Zenodo:        v1.4.4 — 10.5281/zenodo.22051819
+PyPI:          v1.4.3 externally verified; v1.4.4 pending
 ```
 
 ## Evidence / deployment boundary
 
-The current evidence remains synthetic or hand-authored development evidence. Passing the release checklist establishes artifact provenance and executable behaviour; it does not establish real-world routing accuracy, service improvement, causal effects, absence of unmeasured confounding, private-data approval or production readiness.
+Passing the release checklist establishes artifact provenance and executable behaviour; it does not establish real-world routing accuracy, service improvement, causal effects, absence of unmeasured confounding, private-data approval or production readiness.
 
 Real private-data pilot status: **NOT APPROVED**.  
 Production deployment status: **NOT APPROVED**.
