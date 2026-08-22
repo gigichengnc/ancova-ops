@@ -78,6 +78,8 @@ def test_current_docs_do_not_reintroduce_identity_contradictions() -> None:
     external_rebuild_phrases = {
         "rebuild of an hkmu hackathon",
         "retrospective rebuild of an hkmu hackathon",
+        "rebuilt independently",
+        "was later rebuilt",
     }
 
     paths = [
@@ -107,6 +109,7 @@ def test_current_identity_describes_project_evolution_not_external_rebuild() -> 
 
     assert "originated from my participation in **HKMU Hackathon 2026**" in readme
     assert "A retrospective rebuild of an **HKMU Hackathon 2026**" not in readme
+    assert "rebuilt independently" not in readme.lower()
     assert "originated from the author's participation in HKMU Hackathon 2026" in pypi
     assert "retrospective rebuild of an HKMU Hackathon 2026" not in pypi
     assert "originated from the author's participation in HKMU Hackathon 2026" in citation

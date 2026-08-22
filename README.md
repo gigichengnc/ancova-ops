@@ -33,7 +33,7 @@ uvicorn reasoned_ops.api:app --reload
 
 > **Evidence boundary:** Operate is a deterministic rule/phrase baseline. **It does not claim a trained NLP model.** Public routing evidence is hand-authored; outcome, policy and longitudinal evidence is synthetic. No representative real private-data pilot or production deployment is claimed. Observed-data diagnostics also cannot prove that unmeasured confounding is absent.
 
-ReasonedOps originated from an **HKMU Hackathon 2026** concierge concept and was later rebuilt independently into the current evidence-aware workflow. The project was previously named **ANCOVA Ops**; ANCOVA/regression is now only one method inside Evaluate, not the product identity. HKMU is referenced only as project origin, not as an endorsement.
+ReasonedOps originated from my participation in **HKMU Hackathon 2026** and evolved into the current evidence-aware workflow. The project was previously named **ANCOVA Ops**; ANCOVA/regression is now only one method inside Evaluate, not the product identity. HKMU is referenced only as project origin, not as an endorsement.
 
 ## Portfolio snapshot
 
