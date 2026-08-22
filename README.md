@@ -18,10 +18,10 @@ ReasonedOps is a local service-operations research prototype organized around th
 
 ## Run it
 
-Install the currently verified public package and generate the reviewer showcase:
+Install the frozen v1 public package and generate the reviewer showcase:
 
 ```bash
-pip install reasoned-ops==1.4.3
+pip install reasoned-ops==1.4.4
 reasoned-showcase
 ```
 
@@ -51,26 +51,25 @@ ReasonedOps originated from my participation in **HKMU Hackathon 2026** and evol
 | Model escalation | LSTM / sequence modelling deferred until it can beat simpler baselines on the same benchmark |
 | Validation | Hand-authored fixtures + deterministic synthetic known-truth and known-limitation scenarios |
 | Python distribution | Wheel + source distribution build and clean-wheel installation validated in CI |
-| Previously verified public release | **v1.4.3** — GitHub / Zenodo / PyPI aligned and externally exercised |
-| Current code checkpoint | **v1.4.4 release candidate** — post-audit routing, applicability and diagnostics bugfixes |
-| PyPI status | Currently published and externally exercised: `reasoned-ops==1.4.3`; v1.4.4 is not public until exact-tag release verification is complete |
-| Zenodo archives | v1.4.1 → `10.5281/zenodo.22044222`; v1.4.2 → `10.5281/zenodo.22044621`; v1.4.3 → `10.5281/zenodo.22046490` |
-| v1.4.4 provenance | **Pending release**; no DOI is claimed before Zenodo ingests the exact v1.4.4 tag |
+| Frozen public release | **v1.4.4** — GitHub / Zenodo / PyPI aligned and externally exercised |
+| PyPI status | **Published and externally exercised: `reasoned-ops==1.4.4`** |
+| Zenodo archives | v1.4.1 → `10.5281/zenodo.22044222`; v1.4.2 → `10.5281/zenodo.22044621`; v1.4.3 → `10.5281/zenodo.22046490`; v1.4.4 → `10.5281/zenodo.22051819` |
+| v1.4.4 provenance | Exact Git tag → GitHub Release → Zenodo archive → PyPI package; later docs commits do not rewrite the tag |
 | Real-world performance claim | **Not made**; representative real-pilot evidence does not exist in this repository |
 | Development data boundary | Synthetic / hand-authored public development evidence only |
 | Production status | **Not approved** |
-| Project status | v1 reopened only for the v1.4.4 audit bugfix close-out; freeze again after public-artifact alignment |
+| Project status | **COMPLETED / FROZEN V1** |
 | Project identity | **ReasonedOps — Operate → Audit → Evaluate** |
 
-Install the currently verified public package:
+Install the frozen public package:
 
 ```bash
-pip install reasoned-ops==1.4.3
+pip install reasoned-ops==1.4.4
 ```
 
-The v1.4.4 hardening checkpoint exists because a further adversarial review found reproducible Operate and evidence-gate issues after v1.4.3: substring collisions such as `current`/`rent` and `feedback`/`fee`, emergency/safety requests that did not reliably enter human review, a standalone applicability CLI that could be told overlap was `supported`, and VIF warnings calculated on categorical dummy columns. Those findings are fixed with regression coverage before v1 is frozen again.
+The v1.4.4 hardening checkpoint exists because a further adversarial review found reproducible Operate and evidence-gate issues after v1.4.3: substring collisions such as `current`/`rent` and `feedback`/`fee`, emergency/safety requests that did not reliably enter human review, a standalone applicability CLI that could be told overlap was `supported`, and VIF warnings calculated on categorical dummy columns. Those findings were fixed with regression coverage and then published as the aligned v1.4.4 patch release.
 
-The v1.4.4 release will use the **same Git tag** as the source for the GitHub release, Zenodo archive and PyPI publication. The release-candidate `CITATION.cff` therefore intentionally carries no v1.4.3 DOI; the exact v1.4.4 DOI will only be recorded after Zenodo mints it.
+The same immutable **`v1.4.4` Git tag** is the source of the GitHub release, Zenodo v1.4.4 archive and PyPI `reasoned-ops==1.4.4` build. Zenodo version DOI: **`10.5281/zenodo.22051819`**.
 
 For the clearest summary of how the project changed, start with [`docs/before-vs-after.md`](docs/before-vs-after.md).
 
@@ -145,14 +144,14 @@ Imagine this request arrives:
 The air conditioner is leaking again. This is the third time and the wet floor could be dangerous.
 ```
 
-From the currently verified public package:
+From the frozen public package:
 
 ```bash
-pip install reasoned-ops==1.4.3
+pip install reasoned-ops==1.4.4
 uvicorn reasoned_ops.api:app --reload
 ```
 
-Or from the current v1.4.4 repository checkpoint:
+Or from a repository checkout:
 
 ```bash
 python -m venv .venv
@@ -291,22 +290,28 @@ The generated report walks through one service request and later evidence checks
 
 ## Public release verification
 
-The previously verified `reasoned-ops==1.4.3` package was published from the exact Git tag `v1.4.3`, after the same release had been archived by Zenodo.
+The frozen `reasoned-ops==1.4.4` package was published from the exact Git tag `v1.4.4`, after the same release had been archived by Zenodo.
 
 The publishing workflow verified:
 
 ```text
-requested tag: v1.4.3
-release commit: 461b5fc81c2b31fc5fcc51c585004d059bb85586
-package version: 1.4.3
+requested tag: v1.4.4
+release commit: 9b2724354f43a5ed03fca6f3998f88be8c2bb513
+package version: 1.4.4
+Zenodo version DOI: 10.5281/zenodo.22051819
 ```
 
-Both the wheel and source distribution were accepted by PyPI, with Trusted Publishing / Sigstore attestations generated during publication.
+Both the wheel and source distribution were accepted by PyPI with `200 OK`, and Trusted Publishing / Sigstore attestations were generated. Recorded SHA-256 digests:
+
+```text
+wheel: 7b83297b8dc7e74408b353a743b4d0a0e2fca05e0cca832d1c38df710f7997d4
+sdist: 37dd14d34af83ef7bcf1f6f687bce7cb6fa0c902466b6998f89e0b3e7b530f55
+```
 
 The public package was then installed in a Windows environment outside the repository checkout. Observed results included:
 
 ```text
-reasoned_ops.__version__ = 1.4.3
+reasoned_ops.__version__ = 1.4.4
 
 reasoned-validity --n 1200 --seed 23
 Overall pass: True
@@ -317,16 +322,9 @@ Overall pass: True
 - unmeasured_confounding_blind_spot: PASS
 ```
 
-A routing smoke check on the recurring leaking-air-conditioner request returned:
+A recurring leaking-air-conditioner smoke check returned maintenance / high / human review. A `fire` + `smoke` raw-router check entered `emergency_response` with human review, while the integrated FastAPI regression path verifies emergency requests receive `critical` priority. The negative-control request `I want to give feedback about the current service.` did not misclassify `feedback` as `fee` or `current` as `rent`.
 
-```text
-department = maintenance
-priority = high
-requires_human_review = True
-secondary_notify = community_management
-```
-
-That establishes installability, exact-version provenance and executable local behaviour for v1.4.3. It does **not** establish independent scientific effectiveness, causal business impact, private-data approval, or production readiness. v1.4.4 must repeat the same exact-tag public-artifact verification before becoming the new frozen checkpoint.
+That establishes installability, exact-version provenance and executable local behaviour for v1.4.4. It does **not** establish independent scientific effectiveness, causal business impact, private-data approval, or production readiness.
 
 See [`docs/publication-verification.md`](docs/publication-verification.md).
 
@@ -393,7 +391,7 @@ The repository separates several evidence classes:
 - **Synthetic known-limitation scenario:** hidden confounding deliberately omitted from the observed frame to demonstrate a false-negative mode the implemented checks cannot identify.
 - **Synthetic adaptive-policy logs:** deterministic logged-policy data with known propensities, chronological validation, support diagnostics and deployment locks.
 - **Synthetic longitudinal histories:** simpler recurrence/time approaches compared under leakage-aware chronological validation.
-- **Public artifact execution:** v1.4.3 is the currently externally exercised PyPI artifact; v1.4.4 remains a release candidate until exact-tag publication and fresh-environment verification are complete.
+- **Public artifact execution:** v1.4.4 is published from the exact tag and externally exercised on Windows; this verifies executable behaviour and provenance, not real-world accuracy.
 
 None of these evidence classes establishes real service improvement or causal effectiveness.
 
@@ -484,7 +482,7 @@ Important limitations remain:
 
 The next meaningful step is **not another model**.
 
-ReasonedOps v1 was reopened only to correct reproducible audit findings in v1.4.3. After v1.4.4 is archived, published from the exact tag and externally rechecked, v1 should be frozen again. If the project is later resumed for a real use case, the next gate is:
+ReasonedOps v1.4.4 is now the completed, frozen v1 checkpoint. If the project is later resumed for a real use case, the next gate is:
 
 ```text
 specific organisation / service process
